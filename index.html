@@ -3,832 +3,854 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>PigChain - Digital Pig Companion Generator</title>
-  <!-- Modern fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <title>Pig Generator 95 - Enhanced Edition</title>
   <style>
-    /* ====== CSS VARIABLES ====== */
-    :root {
-      --primary-pink: #ff6b9d;
-      --primary-purple: #c44569;
-      --accent-gold: #f8c573;
-      --bg-dark: #1a1a2e;
-      --bg-light: #16213e;
-      --text-light: #ffffff;
-      --text-muted: #a8a8a8;
-      --card-bg: rgba(255, 255, 255, 0.05);
-      --glass-bg: rgba(255, 255, 255, 0.1);
-      --shadow-glow: 0 8px 32px rgba(255, 107, 157, 0.3);
-    }
-
-    /* ====== BODY & GLOBAL STYLES ====== */
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
     body {
-      font-family: 'Inter', sans-serif;
-      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
-      color: var(--text-light);
-      overflow-x: hidden;
-      min-height: 100vh;
+      margin: 0;
+      font-family: 'MS Sans Serif', sans-serif;
+      background: linear-gradient(45deg, #008080 0%, #20b2aa 100%);
+      color: #000;
+      overflow: hidden;
+    }
+    
+    .desktop {
       position: relative;
+      height: 100vh;
+      background-image: 
+        radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(255, 119, 198, 0.15) 0%, transparent 50%);
     }
-
-    /* Animated background particles */
-    .bg-particles {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      pointer-events: none;
-      z-index: -1;
-    }
-
-    .particle {
+    
+    .icon {
       position: absolute;
-      width: 4px;
-      height: 4px;
-      background: var(--primary-pink);
-      border-radius: 50%;
-      animation: float 15s infinite;
-      opacity: 0.6;
-    }
-
-    @keyframes float {
-      0%, 100% { transform: translateY(0px) rotate(0deg); }
-      50% { transform: translateY(-100px) rotate(180deg); }
-    }
-
-    /* ====== GLASSMORPHISM COMPONENTS ====== */
-    .glass-card {
-      background: var(--glass-bg);
-      backdrop-filter: blur(10px);
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      border-radius: 20px;
-      box-shadow: var(--shadow-glow);
-    }
-
-    /* ====== HERO SECTION ====== */
-    .hero {
+      top: 2rem;
+      left: 2rem;
       text-align: center;
-      padding: 80px 20px 60px;
-      position: relative;
+      width: 64px;
+      cursor: pointer;
+      color: white;
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.7);
+      transition: transform 0.1s ease;
+      user-select: none;
     }
-
-    .hero::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 300px;
-      height: 300px;
-      background: radial-gradient(circle, var(--primary-pink) 0%, transparent 70%);
-      opacity: 0.3;
-      border-radius: 50%;
-      filter: blur(80px);
-      z-index: -1;
+    
+    .icon:hover {
+      transform: scale(1.05);
     }
-
-    .hero h1 {
-      font-family: 'Space Grotesk', sans-serif;
-      font-size: clamp(3rem, 8vw, 5rem);
-      font-weight: 700;
-      background: linear-gradient(135deg, var(--primary-pink), var(--accent-gold));
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-      margin-bottom: 20px;
-      text-shadow: 0 0 30px rgba(255, 107, 157, 0.5);
+    
+    .icon:active {
+      transform: scale(0.95);
     }
-
-    .hero p {
-      font-size: 1.25rem;
-      margin: 30px auto;
-      max-width: 600px;
-      line-height: 1.6;
-      color: var(--text-muted);
-      font-weight: 300;
-    }
-
-    .hero .links {
-      margin-top: 40px;
+    
+    .icon-image {
+      width: 64px;
+      height: 64px;
+      background: linear-gradient(135deg, #ff69b4, #ff1493);
+      border-radius: 8px;
       display: flex;
+      align-items: center;
       justify-content: center;
-      gap: 20px;
-      flex-wrap: wrap;
+      font-size: 32px;
+      margin-bottom: 4px;
+      box-shadow: 2px 2px 4px rgba(0,0,0,0.3);
     }
-
-    .hero .nav-link {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      color: var(--text-light);
-      padding: 12px 24px;
-      background: var(--glass-bg);
-      backdrop-filter: blur(10px);
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      border-radius: 50px;
-      text-decoration: none;
-      transition: all 0.3s ease;
-      font-weight: 500;
+    
+    .icon-label {
+      font-size: 11px;
+      margin-top: 0.25rem;
+      font-weight: bold;
     }
-
-    .hero .nav-link:hover {
-      background: var(--primary-pink);
-      transform: translateY(-2px);
-      box-shadow: 0 10px 25px rgba(255, 107, 157, 0.4);
-    }
-
-    /* ====== 3D SCENE CONTAINER ====== */
-    .scene-container {
-      position: relative;
-      height: 400px;
-      margin: 40px auto;
-      max-width: 800px;
-      border-radius: 20px;
-      overflow: hidden;
-    }
-
-    #pig-scene {
-      width: 100%;
-      height: 100%;
-      border-radius: 20px;
-    }
-
-    /* ====== WALLET CONNECT ====== */
-    .wallet-connect {
-      text-align: center;
-      margin: 40px 0;
-    }
-
-    .wallet-btn {
-      font-family: 'Space Grotesk', sans-serif;
-      font-size: 1.1rem;
-      font-weight: 600;
-      padding: 16px 32px;
-      background: linear-gradient(135deg, #5141fa, #7b68ee);
-      color: white;
-      border: none;
-      border-radius: 50px;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .wallet-btn::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: -100%;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
-      transition: left 0.5s;
-    }
-
-    .wallet-btn:hover::before {
-      left: 100%;
-    }
-
-    .wallet-btn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 10px 25px rgba(81, 65, 250, 0.4);
-    }
-
-    .wallet-address {
-      margin-top: 15px;
-      padding: 10px 20px;
-      background: var(--glass-bg);
-      backdrop-filter: blur(10px);
-      border-radius: 25px;
-      display: inline-block;
-      font-family: 'Space Grotesk', monospace;
-      font-size: 0.9rem;
-      color: var(--accent-gold);
-      border: 1px solid rgba(255, 255, 255, 0.2);
-    }
-
-    /* ====== GENERATOR ====== */
-    .generator {
-      max-width: 500px;
-      margin: 40px auto;
-      padding: 40px;
-      text-align: center;
-    }
-
-    .generator input {
-      width: 100%;
-      font-size: 1.1rem;
-      padding: 16px 24px;
-      margin-bottom: 20px;
-      background: var(--glass-bg);
-      backdrop-filter: blur(10px);
-      border: 2px solid rgba(255, 255, 255, 0.2);
-      border-radius: 50px;
-      color: var(--text-light);
-      outline: none;
-      transition: all 0.3s ease;
-    }
-
-    .generator input::placeholder {
-      color: var(--text-muted);
-    }
-
-    .generator input:focus {
-      border-color: var(--primary-pink);
-      box-shadow: 0 0 20px rgba(255, 107, 157, 0.3);
-    }
-
-    .generate-btn {
-      font-family: 'Space Grotesk', sans-serif;
-      font-size: 1.1rem;
-      font-weight: 600;
-      padding: 16px 40px;
-      background: linear-gradient(135deg, var(--primary-pink), var(--primary-purple));
-      color: white;
-      border: none;
-      border-radius: 50px;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .generate-btn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 15px 30px rgba(255, 107, 157, 0.4);
-    }
-
-    /* ====== LOADING ANIMATION ====== */
-    .loading-container {
+    
+    .window {
+      width: 400px;
+      background: #c0c0c0;
+      border: 2px outset #c0c0c0;
+      box-shadow: 4px 4px 8px rgba(0,0,0,0.3);
+      position: fixed;
+      top: 15%;
+      left: calc(50% - 200px);
       display: none;
-      text-align: center;
-      margin: 60px auto;
+      font-size: 11px;
+      border-radius: 0;
     }
-
-    .loading-pig {
-      width: 80px;
-      height: 80px;
-      margin: 0 auto 20px;
-      position: relative;
-    }
-
-    .loading-pig::before {
-      content: '🐷';
-      font-size: 4rem;
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      animation: bounce 1.5s infinite;
-    }
-
-    @keyframes bounce {
-      0%, 20%, 50%, 80%, 100% { transform: translate(-50%, -50%) translateY(0); }
-      40% { transform: translate(-50%, -50%) translateY(-20px); }
-      60% { transform: translate(-50%, -50%) translateY(-10px); }
-    }
-
-    .loading-text {
-      font-size: 1.2rem;
-      color: var(--primary-pink);
-      font-weight: 500;
-    }
-
-    /* ====== PIG SHOWCASE ====== */
-    .pig-showcase {
-      margin: 60px auto;
-      max-width: 1200px;
-      padding: 0 20px;
-    }
-
-    .pig-showcase h2 {
-      text-align: center;
-      font-family: 'Space Grotesk', sans-serif;
-      font-size: 2.5rem;
-      color: var(--primary-pink);
-      margin-bottom: 40px;
-      font-weight: 600;
-    }
-
-    .pig-card {
-      background: var(--glass-bg);
-      backdrop-filter: blur(15px);
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      border-radius: 25px;
-      padding: 40px;
-      margin: 20px auto;
-      max-width: 800px;
-      box-shadow: var(--shadow-glow);
-      transition: all 0.3s ease;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .pig-card::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: 3px;
-      background: linear-gradient(90deg, var(--primary-pink), var(--accent-gold));
-    }
-
-    .pig-card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 20px 40px rgba(255, 107, 157, 0.4);
-    }
-
-    .pig-display {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 40px;
-      align-items: center;
-    }
-
-    .pig-ascii {
-      font-family: 'Courier New', monospace;
-      font-size: 0.9rem;
-      line-height: 1.2;
-      background: rgba(0, 0, 0, 0.3);
-      padding: 20px;
-      border-radius: 15px;
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      white-space: pre;
-      overflow-x: auto;
-    }
-
-    .pig-details {
-      display: grid;
-      gap: 15px;
-    }
-
-    .detail-item {
+    
+    .window-header {
+      background: linear-gradient(90deg, #0000ff 0%, #4169e1 100%);
+      color: white;
+      padding: 2px 4px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 12px 20px;
-      background: rgba(255, 255, 255, 0.05);
-      border-radius: 12px;
-      border: 1px solid rgba(255, 255, 255, 0.1);
+      font-weight: bold;
+      font-size: 11px;
     }
-
-    .detail-label {
-      font-weight: 600;
-      color: var(--text-muted);
+    
+    .window-content {
+      padding: 12px;
+      background: #c0c0c0;
     }
-
-    .detail-value {
-      color: var(--text-light);
-      font-weight: 500;
-    }
-
-    .happiness-bar {
-      width: 100%;
-      height: 8px;
-      background: rgba(255, 255, 255, 0.1);
-      border-radius: 4px;
-      overflow: hidden;
-      margin-top: 8px;
-    }
-
-    .happiness-fill {
-      height: 100%;
-      background: linear-gradient(90deg, var(--primary-pink), var(--accent-gold));
-      border-radius: 4px;
-      transition: width 1s ease;
-    }
-
-    .action-buttons {
-      display: flex;
-      gap: 15px;
-      margin-top: 30px;
-      justify-content: center;
-    }
-
-    .action-btn {
-      font-family: 'Space Grotesk', sans-serif;
-      font-weight: 500;
-      padding: 12px 24px;
-      border: none;
-      border-radius: 25px;
+    
+    .close-btn {
+      width: 16px;
+      height: 14px;
+      background: #c0c0c0;
+      border: 1px outset #c0c0c0;
+      font-size: 9px;
       cursor: pointer;
-      transition: all 0.3s ease;
-      text-decoration: none;
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .download-btn {
-      background: linear-gradient(135deg, var(--primary-purple), #8e44ad);
-      color: white;
-    }
-
-    .share-btn {
-      background: linear-gradient(135deg, #1DA1F2, #1991db);
-      color: white;
-    }
-
-    .action-btn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
-    }
-
-    /* ====== INFO SECTIONS ====== */
-    .info-section {
-      max-width: 1000px;
-      margin: 80px auto;
-      padding: 60px 40px;
-      background: var(--glass-bg);
-      backdrop-filter: blur(15px);
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      border-radius: 25px;
-      box-shadow: var(--shadow-glow);
-    }
-
-    .info-section h2 {
-      font-family: 'Space Grotesk', sans-serif;
-      font-size: 2.5rem;
-      color: var(--primary-pink);
-      margin-bottom: 30px;
-      text-align: center;
-      font-weight: 600;
-    }
-
-    .info-section h3 {
-      font-family: 'Space Grotesk', sans-serif;
-      color: var(--accent-gold);
-      font-size: 1.5rem;
-      margin: 40px 0 20px;
-      font-weight: 600;
-    }
-
-    .info-section p {
-      line-height: 1.8;
-      margin-bottom: 20px;
-      color: var(--text-muted);
-      font-size: 1.1rem;
-    }
-
-    .info-section ol {
-      list-style: none;
-      counter-reset: step-counter;
-    }
-
-    .info-section ol li {
-      counter-increment: step-counter;
-      margin-bottom: 20px;
-      padding: 20px;
-      background: rgba(255, 255, 255, 0.05);
-      border-radius: 15px;
-      position: relative;
-      padding-left: 80px;
-    }
-
-    .info-section ol li::before {
-      content: counter(step-counter);
-      position: absolute;
-      left: 20px;
-      top: 50%;
-      transform: translateY(-50%);
-      width: 40px;
-      height: 40px;
-      background: linear-gradient(135deg, var(--primary-pink), var(--primary-purple));
-      border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
       font-weight: bold;
-      color: white;
     }
-
-    /* ====== BREED GRID ====== */
-    .breed-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 25px;
-      margin-top: 40px;
+    
+    .close-btn:active {
+      border: 1px inset #c0c0c0;
     }
-
-    .breed-card {
-      background: rgba(255, 255, 255, 0.05);
-      backdrop-filter: blur(10px);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      border-radius: 20px;
-      padding: 25px;
-      transition: all 0.3s ease;
+    
+    .pig-sprite {
+      width: 120px;
+      height: 120px;
+      margin: 0 auto 12px;
+      border: 2px inset #c0c0c0;
+      background: #000;
       position: relative;
-      overflow: hidden;
     }
-
-    .breed-card::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: 2px;
-      background: linear-gradient(90deg, var(--primary-pink), var(--accent-gold));
-      transform: scaleX(0);
-      transition: transform 0.3s ease;
+    
+    #pigCanvas {
+      width: 100%;
+      height: 100%;
+      display: block;
     }
-
-    .breed-card:hover::before {
-      transform: scaleX(1);
+    
+    .taskbar {
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+      background: linear-gradient(180deg, #dfdfdf 0%, #c0c0c0 100%);
+      border-top: 1px solid #808080;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 2px 4px;
+      font-size: 11px;
+      height: 28px;
+      box-sizing: border-box;
     }
-
-    .breed-card:hover {
-      transform: translateY(-5px);
-      border-color: rgba(255, 107, 157, 0.3);
-      box-shadow: 0 15px 30px rgba(255, 107, 157, 0.2);
+    
+    .start-btn {
+      background: linear-gradient(180deg, #dfdfdf 0%, #c0c0c0 100%);
+      border: 1px outset #c0c0c0;
+      padding: 2px 8px;
+      font-size: 11px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-weight: bold;
     }
-
-    .breed-card h4 {
-      font-family: 'Space Grotesk', sans-serif;
-      color: var(--primary-pink);
-      font-size: 1.3rem;
-      margin-bottom: 15px;
-      font-weight: 600;
+    
+    .start-btn:active {
+      border: 1px inset #c0c0c0;
     }
-
-    .breed-card p {
-      color: var(--text-muted);
-      line-height: 1.6;
+    
+    input, .btn {
+      margin: 4px 0;
+      padding: 4px 6px;
+      width: 100%;
+      font-size: 11px;
+      border: 1px inset #c0c0c0;
+      box-sizing: border-box;
+      font-family: 'MS Sans Serif', sans-serif;
     }
-
-    /* ====== LOG AREA ====== */
-    .log {
-      max-width: 800px;
-      margin: 40px auto;
-      background: rgba(0, 0, 0, 0.5);
-      backdrop-filter: blur(10px);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      border-radius: 15px;
-      padding: 20px;
-      font-family: 'Courier New', monospace;
-      font-size: 0.9rem;
-      max-height: 200px;
-      overflow-y: auto;
-      color: #00ff00;
+    
+    input:focus {
+      outline: none;
+      background: #ffffff;
     }
-
-    .log span.info { color: #00ff00; }
-    .log span.warning { color: #ffeb3b; }
-    .log span.error { color: #ff4444; }
-    .log span.success { color: #00ff88; }
-
-    /* ====== FOOTER ====== */
-    footer {
-      margin-top: 100px;
-      padding: 40px 20px;
-      background: linear-gradient(135deg, rgba(255, 107, 157, 0.1), rgba(196, 69, 105, 0.1));
-      backdrop-filter: blur(10px);
-      border-top: 1px solid rgba(255, 255, 255, 0.1);
+    
+    .btn {
+      background: linear-gradient(180deg, #dfdfdf 0%, #c0c0c0 100%);
+      border: 1px outset #c0c0c0;
+      cursor: pointer;
       text-align: center;
-      color: var(--text-muted);
-      font-weight: 300;
+      font-weight: bold;
     }
-
-    /* ====== RESPONSIVE ====== */
-    @media (max-width: 768px) {
-      .pig-display {
-        grid-template-columns: 1fr;
-        gap: 30px;
-      }
-      
-      .action-buttons {
-        flex-direction: column;
-      }
-      
-      .hero .links {
-        flex-direction: column;
-        align-items: center;
-      }
-      
-      .breed-grid {
-        grid-template-columns: 1fr;
-      }
-      
-      .info-section {
-        margin: 40px 20px;
-        padding: 40px 20px;
-      }
-      
-      .scene-container {
-        height: 300px;
-        margin: 20px;
-      }
+    
+    .btn:hover {
+      background: linear-gradient(180deg, #efefef 0%, #d0d0d0 100%);
     }
+    
+    .btn:active {
+      border: 1px inset #c0c0c0;
+      background: linear-gradient(180deg, #c0c0c0 0%, #dfdfdf 100%);
+    }
+    
+    .btn:disabled {
+      background: #c0c0c0;
+      color: #808080;
+      cursor: not-allowed;
+    }
+    
+    .progress-container {
+      background: #c0c0c0;
+      border: 1px inset #c0c0c0;
+      height: 16px;
+      margin: 8px 0;
+      width: 100%;
+      box-sizing: border-box;
+    }
+    
+    .progress-bar {
+      height: 100%;
+      background: linear-gradient(90deg, #0000ff 0%, #4169e1 100%);
+      width: 0%;
+      transition: width 0.3s ease;
+    }
+    
+    .result {
+      margin-top: 12px;
+      text-align: left;
+      font-size: 11px;
+      background: white;
+      border: 1px inset #c0c0c0;
+      padding: 8px;
+      min-height: 200px;
+    }
+    
+    .result-header {
+      text-align: center;
+      font-weight: bold;
+      margin-bottom: 12px;
+      color: #000080;
+    }
+    
+    .attribute-row {
+      display: flex;
+      justify-content: space-between;
+      margin: 4px 0;
+      padding: 2px 0;
+      border-bottom: 1px dotted #c0c0c0;
+    }
+    
+    .attribute-label {
+      font-weight: bold;
+      color: #800000;
+    }
+    
+    .error {
+      color: #ff0000;
+      font-size: 10px;
+      margin: 4px 0;
+      font-weight: bold;
+    }
+    
+    .loading-text {
+      text-align: center;
+      font-size: 10px;
+      margin: 4px 0;
+      color: #000080;
+      font-style: italic;
+    }
+    
+    .clock {
+      font-family: 'Courier New', monospace;
+      font-weight: bold;
+      background: #c0c0c0;
+      border: 1px inset #c0c0c0;
+      padding: 2px 6px;
+      font-size: 11px;
+    }
+    
+    .form-group {
+      margin-bottom: 8px;
+    }
+    
+    label {
+      display: block;
+      margin-bottom: 2px;
+      font-weight: bold;
+      color: #000080;
+    }
+    
+    .pig-stats {
+      background: #f0f0f0;
+      border: 1px inset #c0c0c0;
+      padding: 6px;
+      margin-top: 8px;
+      font-size: 10px;
+    }
+    
+    .rarity-indicator {
+      display: inline-block;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      margin-left: 4px;
+    }
+    
+    .rarity-common { background: #808080; }
+    .rarity-uncommon { background: #00ff00; }
+    .rarity-rare { background: #0080ff; }
+    .rarity-epic { background: #8000ff; }
+    .rarity-legendary { background: #ff8000; }
   </style>
 </head>
 <body>
-  <!-- Background Particles -->
-  <div class="bg-particles" id="particles"></div>
-
-  <!-- Hero Section -->
-  <div class="hero">
-    <h1>PigChain</h1>
-    <p>Connect your Phantom wallet and adopt your very own uniquely generated 3D Pig companion!</p>
-    <div class="links">
-      <a href="#how-it-works" class="nav-link">
-        <span>🐽</span> How It Works
-      </a>
-      <a href="#pig-lore" class="nav-link">
-        <span>🐷</span> Pig Breeds & Traits
-      </a>
+  <div class="desktop">
+    <div class="icon" ondblclick="openWindow()">
+      <div class="icon-image">🐷</div>
+      <div class="icon-label">Pig Generator</div>
     </div>
-  </div>
 
-  <!-- 3D Scene Container -->
-  <div class="scene-container">
-    <canvas id="pig-scene"></canvas>
-  </div>
-
-  <!-- Wallet Connect Section -->
-  <div class="wallet-connect">
-    <button id="connect-wallet" class="wallet-btn">Connect Phantom Wallet</button>
-    <div id="wallet-address" class="wallet-address"></div>
-  </div>
-
-  <!-- Generator -->
-  <div class="generator glass-card" id="generator-section" style="display: none;">
-    <input type="text" id="pig-id" placeholder="Enter your unique ID to generate your pig...">
-    <button id="generate-button" class="generate-btn">🐷 Adopt My Pig</button>
-  </div>
-
-  <!-- Loading Animation -->
-  <div class="loading-container" id="loading-container">
-    <div class="loading-pig"></div>
-    <p class="loading-text">Generating Your Unique Pig...</p>
-  </div>
-
-  <!-- Pig Showcase -->
-  <div class="pig-showcase" id="pig-showcase" style="display: none;">
-    <h2>Your Pig Companion</h2>
-    <!-- Generated Pig will appear here -->
-  </div>
-
-  <!-- Log Area -->
-  <div class="log" id="logArea"></div>
-
-  <!-- How It Works Section -->
-  <div class="info-section glass-card" id="how-it-works">
-    <h2>How It Works</h2>
-    <p>Each Pig is uniquely generated from your wallet address and an optional unique ID you provide. Our advanced algorithm ensures every pig is truly one-of-a-kind:</p>
-    <ol>
-      <li><strong>Connect Wallet:</strong> Use your Phantom wallet to connect securely to the blockchain.</li>
-      <li><strong>ID Input:</strong> Enter a unique identifier or use your wallet address as the base.</li>
-      <li><strong>Cryptographic Hashing:</strong> Your data transforms into a unique numerical signature.</li>
-      <li><strong>Trait Generation:</strong> This determines breed, colors, personality, accessories, and happiness.</li>
-      <li><strong>3D Visualization:</strong> Watch your pig come to life in our interactive 3D viewer.</li>
-    </ol>
-    <p>This fusion of blockchain technology and generative art creates a truly personal digital companion that's permanently yours!</p>
-  </div>
-
-  <!-- Pig Breeds & Traits Section -->
-  <div class="info-section glass-card" id="pig-lore">
-    <h2>Pig Breeds & Traits</h2>
-    <p>Discover the diverse world of digital pigs! Each breed comes with unique characteristics, visual traits, and personality quirks. From noble Hampshires to adorable Pot-bellied companions:</p>
-
-    <div class="breed-grid">
-      <div class="breed-card">
-        <h4>Hampshire</h4>
-        <p>Distinguished black pigs with signature white belts. Known for exceptional meat quality and remarkably calm temperament. These pigs are the aristocrats of the barnyard.</p>
+    <div class="window" id="appWindow">
+      <div class="window-header">
+        <span>🐷 Pig Generator 95 - Enhanced Edition</span>
+        <div class="close-btn" onclick="closeWindow()">×</div>
       </div>
-      <div class="breed-card">
-        <h4>Yorkshire</h4>
-        <p>Majestic white pigs renowned for their nurturing nature and impressive size. Excellent mothers with gentle dispositions, making them beloved farm favorites.</p>
-      </div>
-      <div class="breed-card">
-        <h4>Duroc</h4>
-        <p>Beautiful red-colored pigs with characteristic droopy ears. Hardy survivors with rapid growth rates and notably docile personalities.</p>
-      </div>
-      <div class="breed-card">
-        <h4>Berkshire</h4>
-        <p>Elegant black pigs adorned with distinctive white markings on face, legs, and tail. Producers of premium marbled meat with exceptional flavor.</p>
-      </div>
-      <div class="breed-card">
-        <h4>Landrace</h4>
-        <p>Gracefully long-bodied white pigs with large, expressive droopy ears. Champion mothers known for high milk production and nurturing instincts.</p>
-      </div>
-      <div class="breed-card">
-        <h4>Pot-bellied</h4>
-        <p>Charming small, round pigs originally from Vietnam. Highly intelligent and social creatures that form strong bonds with their human companions.</p>
-      </div>
-      <div class="breed-card">
-        <h4>Tamworth</h4>
-        <p>Golden-red pigs with alert, upright ears. Natural foragers with exceptional bacon-producing qualities and adventurous spirits.</p>
-      </div>
-      <div class="breed-card">
-        <h4>Mangalitsa</h4>
-        <p>The legendary "wooly pig" with distinctive curly hair. Rare heritage breed prized for producing exceptional lard and uniquely flavorful meat.</p>
+      <div class="window-content">
+        <div class="form-group">
+          <label for="twitter">Twitter/X Handle:</label>
+          <input type="text" id="twitter" placeholder="elonmusk" maxlength="15">
+        </div>
+        <div class="form-group">
+          <label for="customId">Optional Seed (for variations):</label>
+          <input type="text" id="customId" placeholder="lucky7, birthday2024, etc." maxlength="20">
+        </div>
+        <button class="btn" onclick="generatePig()" id="generateBtn">🎲 Generate My Pig</button>
+        <button class="btn" onclick="randomPig()" id="randomBtn">🎰 Surprise Me!</button>
+        <div id="error" class="error"></div>
+        <div class="progress-container">
+          <div class="progress-bar" id="progressBar"></div>
+        </div>
+        <div id="loadingText" class="loading-text"></div>
+        <div class="result" id="result" style="display: none;"></div>
       </div>
     </div>
 
-    <h3>✨ Rarity and Collectibility</h3>
-    <p>Some pigs develop extraordinary rare traits - legendary skin colors, mythical accessories, or maximum happiness levels. Experiment with different IDs to discover ultra-rare combinations and build your collection!</p>
+    <div class="taskbar">
+      <div class="start-btn" onclick="openWindow()">
+        🪟 Start
+      </div>
+      <div class="clock" id="clock"></div>
+    </div>
   </div>
 
-  <!-- Footer -->
-  <footer>
-    <p>© 2025 PigChain | Bringing Digital Pig Companions to Life Through Blockchain Innovation</p>
-  </footer>
-
-  <!-- Three.js -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-  
-  <!-- Main Script -->
   <script>
-  (function() {
-    // Create animated background particles
-    function createParticles() {
-      const container = document.getElementById('particles');
-      const particleCount = 50;
-      
-      for (let i = 0; i < particleCount; i++) {
-        const particle = document.createElement('div');
-        particle.className = 'particle';
-        particle.style.left = Math.random() * 100 + '%';
-        particle.style.top = Math.random() * 100 + '%';
-        particle.style.animationDelay = Math.random() * 15 + 's';
-        particle.style.animationDuration = (15 + Math.random() * 10) + 's';
-        container.appendChild(particle);
-      }
-    }
-    createParticles();
-
-    // Three.js Scene Setup
-    let scene, camera, renderer, pigModel;
+    // Three.js pig creation
+    let scene, camera, renderer, pigMesh;
     
     function initThreeJS() {
-      const canvas = document.getElementById('pig-scene');
-      const container = canvas.parentElement;
+      const canvas = document.getElementById('pigCanvas');
+      if (!canvas) return;
       
-      // Scene
       scene = new THREE.Scene();
-      scene.background = new THREE.Color(0x1a1a2e);
+      scene.background = new THREE.Color(0xf0f0f0);
       
-      // Camera
-      camera = new THREE.PerspectiveCamera(75, container.offsetWidth / container.offsetHeight, 0.1, 1000);
-      camera.position.set(0, 0, 5);
+      camera = new THREE.PerspectiveCamera(50, 1, 0.1, 1000);
+      camera.position.set(0, 1, 3);
       
-      // Renderer
       renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true });
-      renderer.setSize(container.offsetWidth, container.offsetHeight);
+      renderer.setSize(116, 116);
       renderer.shadowMap.enabled = true;
       renderer.shadowMap.type = THREE.PCFSoftShadowMap;
       
       // Lighting
-      const ambientLight = new THREE.AmbientLight(0x404040, 0.6);
+      const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
       scene.add(ambientLight);
       
-      const directionalLight = new THREE.DirectionalLight(0xff6b9d, 1);
-      directionalLight.position.set(5, 5, 5);
+      const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
+      directionalLight.position.set(2, 2, 2);
       directionalLight.castShadow = true;
       scene.add(directionalLight);
-      
-      const pointLight = new THREE.PointLight(0xf8c573, 0.8);
-      pointLight.position.set(-5, 3, 3);
-      scene.add(pointLight);
-      
-      // Create a simple pig model
-      createPigModel();
-      
-      // Animation loop
-      animate();
-      
-      // Handle resize
-      window.addEventListener('resize', onWindowResize);
     }
     
-    function createPigModel() {
-      const group = new THREE.Group();
+    function createPig(attributes) {
+      // Clear previous pig
+      if (pigMesh) {
+        scene.remove(pigMesh);
+      }
       
-      // Body
-      const bodyGeometry = new THREE.SphereGeometry(1, 16, 12);
-      bodyGeometry.scale(1.2, 0.8, 1);
-      const bodyMaterial = new THREE.MeshPhongMaterial({ 
-        color: 0xffb6c1,
-        shininess: 30
-      });
-      const body = new THREE.Mesh(bodyGeometry, bodyMaterial);
+      const pigGroup = new THREE.Group();
+      
+      // Get colors based on skin type
+      const skinColors = {
+        'Rosy Pink': 0xffb6c1,
+        'Charcoal Black': 0x2f2f2f,
+        'Spotted': 0xffb6c1,
+        'Russet Red': 0x8b4513,
+        'Ginger': 0xd2691e,
+        'Pearl White': 0xf8f8ff,
+        'Chocolate Brown': 0x8b4513,
+        'Golden': 0xffd700,
+        'Silver': 0xc0c0c0
+      };
+      
+      const pigColor = skinColors[attributes.skin] || 0xffb6c1;
+      const material = new THREE.MeshPhongMaterial({ color: pigColor });
+      
+      // Body (main sphere)
+      const bodyGeometry = new THREE.SphereGeometry(0.6, 16, 12);
+      bodyGeometry.scale(1.2, 0.8, 1.0); // Make it more pig-like
+      const body = new THREE.Mesh(bodyGeometry, material);
+      body.position.y = 0;
       body.castShadow = true;
-      group.add(body);
+      pigGroup.add(body);
       
       // Head
-      const headGeometry = new THREE.SphereGeometry(0.6, 16, 12);
-      const headMaterial = new THREE.MeshPhongMaterial({ 
-        color: 0xffb6c1,
-        shininess: 30
-      });
-      const head = new THREE.Mesh(headGeometry, headMaterial);
-      head.position.set(0, 0.3, 1.2);
+      const headGeometry = new THREE.SphereGeometry(0.4, 12, 10);
+      const head = new THREE.Mesh(headGeometry, material);
+      head.position.set(0, 0.3, 0.6);
       head.castShadow = true;
+      pigGroup.add(head);
+      
+      // Snout
+      const snoutGeometry = new THREE.SphereGeometry(0.15, 8, 6);
+      const snoutMaterial = new THREE.MeshPhongMaterial({ color: pigColor });
+      const snout = new THREE.Mesh(snoutGeometry, snoutMaterial);
+      snout.position.set(0, 0.25, 0.85);
+      snout.scale.set(1.2, 0.8, 0.6);
+      pigGroup.add(snout);
+      
+      // Nostrils
+      const nostrilGeometry = new THREE.SphereGeometry(0.03, 6, 4);
+      const nostrilMaterial = new THREE.MeshPhongMaterial({ color: 0x000000 });
+      const nostril1 = new THREE.Mesh(nostrilGeometry, nostrilMaterial);
+      const nostril2 = new THREE.Mesh(nostrilGeometry, nostrilMaterial);
+      nostril1.position.set(-0.05, 0.25, 0.9);
+      nostril2.position.set(0.05, 0.25, 0.9);
+      pigGroup.add(nostril1, nostril2);
+      
+      // Eyes
+      const eyeGeometry = new THREE.SphereGeometry(0.06, 8, 6);
+      const eyeMaterial = new THREE.MeshPhongMaterial({ color: 0x000000 });
+      const eye1 = new THREE.Mesh(eyeGeometry, eyeMaterial);
+      const eye2 = new THREE.Mesh(eyeGeometry, eyeMaterial);
+      eye1.position.set(-0.15, 0.4, 0.75);
+      eye2.position.set(0.15, 0.4, 0.75);
+      pigGroup.add(eye1, eye2);
+      
+      // Ears
+      const earGeometry = new THREE.ConeGeometry(0.12, 0.2, 6);
+      const ear1 = new THREE.Mesh(earGeometry, material);
+      const ear2 = new THREE.Mesh(earGeometry, material);
+      ear1.position.set(-0.25, 0.55, 0.4);
+      ear2.position.set(0.25, 0.55, 0.4);
+      ear1.rotation.z = 0.3;
+      ear2.rotation.z = -0.3;
+      pigGroup.add(ear1, ear2);
+      
+      // Legs
+      const legGeometry = new THREE.CylinderGeometry(0.08, 0.1, 0.4, 8);
+      const legMaterial = new THREE.MeshPhongMaterial({ color: pigColor });
+      
+      for (let i = 0; i < 4; i++) {
+        const leg = new THREE.Mesh(legGeometry, legMaterial);
+        const angle = (i * Math.PI) / 2;
+        leg.position.set(
+          Math.cos(angle) * 0.4,
+          -0.6,
+          Math.sin(angle) * 0.3
+        );
+        leg.castShadow = true;
+        pigGroup.add(leg);
+      }
+      
+      // Tail
+      const tailGeometry = new THREE.SphereGeometry(0.05, 6, 6);
+      const tail = new THREE.Mesh(tailGeometry, material);
+      tail.position.set(0, 0.1, -0.7);
+      tail.scale.set(0.8, 0.8, 1.5);
+      pigGroup.add(tail);
+      
+      // Add spots for spotted pigs
+      if (attributes.skin === 'Spotted') {
+        const spotMaterial = new THREE.MeshPhongMaterial({ color: 0x654321 });
+        for (let i = 0; i < 5; i++) {
+          const spot = new THREE.Mesh(new THREE.SphereGeometry(0.1, 6, 4), spotMaterial);
+          spot.position.set(
+            (Math.random() - 0.5) * 1.2,
+            (Math.random() - 0.5) * 0.8,
+            (Math.random() - 0.5) * 1.0 + 0.3
+          );
+          spot.scale.set(1, 0.3, 1);
+          pigGroup.add(spot);
+        }
+      }
+      
+      // Add accessory based on type
+      if (attributes.accessory === 'Top Hat') {
+        const hatGeometry = new THREE.CylinderGeometry(0.2, 0.25, 0.3, 12);
+        const hatMaterial = new THREE.MeshPhongMaterial({ color: 0x000000 });
+        const hat = new THREE.Mesh(hatGeometry, hatMaterial);
+        hat.position.set(0, 0.65, 0.5);
+        pigGroup.add(hat);
+        
+        const brimGeometry = new THREE.CylinderGeometry(0.35, 0.35, 0.05, 16);
+        const brim = new THREE.Mesh(brimGeometry, hatMaterial);
+        brim.position.set(0, 0.5, 0.5);
+        pigGroup.add(brim);
+      } else if (attributes.accessory === 'Crown') {
+        const crownGeometry = new THREE.CylinderGeometry(0.22, 0.25, 0.15, 8);
+        const crownMaterial = new THREE.MeshPhongMaterial({ color: 0xffd700 });
+        const crown = new THREE.Mesh(crownGeometry, crownMaterial);
+        crown.position.set(0, 0.6, 0.5);
+        pigGroup.add(crown);
+        
+        // Crown points
+        for (let i = 0; i < 5; i++) {
+          const point = new THREE.Mesh(new THREE.ConeGeometry(0.03, 0.1, 4), crownMaterial);
+          const angle = (i * Math.PI * 2) / 5;
+          point.position.set(
+            Math.cos(angle) * 0.22,
+            0.72,
+            0.5 + Math.sin(angle) * 0.22
+          );
+          pigGroup.add(point);
+        }
+      }
+      
+      // Scale based on rarity
+      const scaleMultiplier = attributes.rarity.name === 'Legendary' ? 1.2 : 
+                             attributes.rarity.name === 'Epic' ? 1.1 : 1.0;
+      pigGroup.scale.multiplyScalar(scaleMultiplier);
+      
+      scene.add(pigGroup);
+      pigMesh = pigGroup;
+      
+      // Animation loop
+      function animate() {
+        if (pigMesh) {
+          pigMesh.rotation.y += 0.01;
+          pigMesh.position.y = Math.sin(Date.now() * 0.003) * 0.05;
+        }
+        renderer.render(scene, camera);
+        requestAnimationFrame(animate);
+      }
+      animate();
+    }
+    const breeds = [
+      "Yorkshire", "Duroc", "Berkshire", "Hampshire", "Landrace", 
+      "Tamworth", "Gloucestershire", "Mangalitsa", "Ossabaw", "Kunekune"
+    ];
+    
+    const skins = [
+      "Rosy Pink", "Charcoal Black", "Spotted", "Russet Red", 
+      "Ginger", "Pearl White", "Chocolate Brown", "Golden", "Silver"
+    ];
+    
+    const traits = [
+      "Curious", "Lazy", "Playful", "Genius", "Bold", "Mellow", 
+      "Adventurous", "Shy", "Energetic", "Zen Master", "Mischievous", "Noble"
+    ];
+    
+    const accessories = [
+      "Top Hat", "Bow Tie", "Sunglasses", "Party Hat", "Monocle", 
+      "Scarf", "Crown", "Bandana", "Flower Crown", "Goggles", "Cape", "Necklace"
+    ];
+    
+    const moods = ["😑", "🙂", "😊", "😁", "🤩", "😎", "🤔", "😴", "🥳"];
+    
+    const hobbies = [
+      "Mud Wrestling", "Truffle Hunting", "Cooking", "Gaming", "Reading", 
+      "Gardening", "Dancing", "Singing", "Painting", "Yoga"
+    ];
+
+    // Improved hash function for better distribution
+    function hashString(str) {
+      let h1 = 2166136261;
+      let h2 = 2166136261;
+      for (let i = 0; i < str.length; i++) {
+        h1 ^= str.charCodeAt(i);
+        h1 = (h1 * 16777619) >>> 0;
+        h2 ^= str.charCodeAt(str.length - 1 - i);
+        h2 = (h2 * 16777619) >>> 0;
+      }
+      return h1 ^ h2;
+    }
+
+    function seededRandom(seed) {
+      let x = seed;
+      return function () {
+        x = (1664525 * x + 1013904223) >>> 0;
+        return x / 0xffffffff;
+      };
+    }
+
+    function getRarity(rand) {
+      const roll = rand();
+      if (roll > 0.99) return { name: "Legendary", class: "legendary" };
+      if (roll > 0.95) return { name: "Epic", class: "epic" };
+      if (roll > 0.85) return { name: "Rare", class: "rare" };
+      if (roll > 0.65) return { name: "Uncommon", class: "uncommon" };
+      return { name: "Common", class: "common" };
+    }
+
+    function getAttributes(seed) {
+      const rand = seededRandom(seed);
+      const rarity = getRarity(rand);
+      
+      return {
+        breed: breeds[Math.floor(rand() * breeds.length)],
+        skin: skins[Math.floor(rand() * skins.length)],
+        trait: traits[Math.floor(rand() * traits.length)],
+        accessory: accessories[Math.floor(rand() * accessories.length)],
+        mood: moods[Math.floor(rand() * moods.length)],
+        hobby: hobbies[Math.floor(rand() * hobbies.length)],
+        rarity: rarity,
+        cuteness: Math.floor(rand() * 100) + 1,
+        intelligence: Math.floor(rand() * 100) + 1,
+        luck: Math.floor(rand() * 100) + 1,
+        birthdate: getRandomDate(rand),
+        spriteIdx: seed % 16
+      };
+    }
+
+    function getRandomDate(rand) {
+      const start = new Date(2020, 0, 1);
+      const end = new Date();
+      const randomTime = start.getTime() + rand() * (end.getTime() - start.getTime());
+      return new Date(randomTime).toLocaleDateString();
+    }
+
+    function openWindow() {
+      const window = document.getElementById("appWindow");
+      window.style.display = "block";
+      
+      // Add a subtle window opening animation
+      window.style.transform = "scale(0.8)";
+      window.style.opacity = "0";
+      setTimeout(() => {
+        window.style.transition = "all 0.2s ease";
+        window.style.transform = "scale(1)";
+        window.style.opacity = "1";
+      }, 10);
+    }
+
+    function closeWindow() {
+      const window = document.getElementById("appWindow");
+      window.style.transition = "all 0.2s ease";
+      window.style.transform = "scale(0.8)";
+      window.style.opacity = "0";
+      setTimeout(() => {
+        window.style.display = "none";
+        window.style.transition = "";
+      }, 200);
+    }
+
+    function validateInput(twitter) {
+      if (!twitter) {
+        return "Please enter a Twitter/X handle (without @)";
+      }
+      if (twitter.length > 15) {
+        return "Handle too long (max 15 characters)";
+      }
+      if (!/^[a-zA-Z0-9_]+$/.test(twitter)) {
+        return "Handle can only contain letters, numbers, and underscores";
+      }
+      return null;
+    }
+
+    function generatePig() {
+      const twitter = document.getElementById("twitter").value.trim();
+      const customId = document.getElementById("customId").value.trim();
+      
+      const validationError = validateInput(twitter);
+      if (validationError) {
+        showError(validationError);
+        return;
+      }
+
+      const handle = twitter.startsWith("@") ? twitter : "@" + twitter;
+      const seed = hashString(handle.toLowerCase() + (customId || ""));
+      
+      runGeneration(handle, seed);
+    }
+
+    function randomPig() {
+      const randomHandle = "@random" + Math.floor(Math.random() * 999999);
+      const seed = hashString(randomHandle + Date.now());
+      
+      runGeneration(randomHandle, seed);
+    }
+
+    function runGeneration(handle, seed) {
+      const attr = getAttributes(seed);
+      const errorElem = document.getElementById("error");
+      const result = document.getElementById("result");
+      const progress = document.getElementById("progressBar");
+      const loadingText = document.getElementById("loadingText");
+      const generateBtn = document.getElementById("generateBtn");
+      const randomBtn = document.getElementById("randomBtn");
+
+      // Reset UI
+      result.style.display = "none";
+      result.innerHTML = "";
+      progress.style.width = "0%";
+      loadingText.innerText = "";
+      errorElem.innerText = "";
+      generateBtn.disabled = true;
+      randomBtn.disabled = true;
+
+      const loadingMessages = [
+        "Initializing pig matrix...",
+        "Scanning barnyard database...",
+        "Crunching the bacon...",
+        "Consulting pig oracle...",
+        "Generating oinks...",
+        "Finalizing snorts..."
+      ];
+
+      let pct = 0;
+      let messageIndex = 0;
+      
+      const interval = setInterval(() => {
+        pct += Math.floor(Math.random() * 15 + 10);
+        progress.style.width = Math.min(pct, 100) + "%";
+        
+        if (messageIndex < loadingMessages.length) {
+          loadingText.innerText = loadingMessages[messageIndex];
+          messageIndex++;
+        }
+        
+        if (pct >= 100) {
+          clearInterval(interval);
+          loadingText.innerText = "Generation complete!";
+          
+          setTimeout(() => {
+            displayResult(handle, attr);
+            generateBtn.disabled = false;
+            randomBtn.disabled = false;
+            loadingText.innerText = "";
+          }, 500);
+        }
+      }, 200);
+    }
+
+    function displayResult(handle, attr) {
+      const result = document.getElementById("result");
+      
+      result.innerHTML = `
+        <div class="result-header">
+          <div class="pig-sprite">
+            <canvas id="pigCanvas"></canvas>
+          </div>
+          <strong>${handle}'s Pig Companion</strong>
+          <span class="rarity-indicator rarity-${attr.rarity.class}" title="${attr.rarity.name} Pig"></span>
+        </div>
+        
+        <div class="attribute-row">
+          <span class="attribute-label">Name:</span>
+          <span>${generatePigName(attr)}</span>
+        </div>
+        <div class="attribute-row">
+          <span class="attribute-label">Breed:</span>
+          <span>${attr.breed}</span>
+        </div>
+        <div class="attribute-row">
+          <span class="attribute-label">Skin:</span>
+          <span>${attr.skin}</span>
+        </div>
+        <div class="attribute-row">
+          <span class="attribute-label">Personality:</span>
+          <span>${attr.trait}</span>
+        </div>
+        <div class="attribute-row">
+          <span class="attribute-label">Accessory:</span>
+          <span>${attr.accessory}</span>
+        </div>
+        <div class="attribute-row">
+          <span class="attribute-label">Favorite Hobby:</span>
+          <span>${attr.hobby}</span>
+        </div>
+        <div class="attribute-row">
+          <span class="attribute-label">Current Mood:</span>
+          <span>${attr.mood}</span>
+        </div>
+        <div class="attribute-row">
+          <span class="attribute-label">Born:</span>
+          <span>${attr.birthdate}</span>
+        </div>
+        <div class="attribute-row">
+          <span class="attribute-label">Rarity:</span>
+          <span>${attr.rarity.name}</span>
+        </div>
+        
+        <div class="pig-stats">
+          <strong>Stats:</strong><br>
+          Cuteness: ${attr.cuteness}/100 | 
+          Intelligence: ${attr.intelligence}/100 | 
+          Luck: ${attr.luck}/100
+        </div>
+      `;
+      
+      result.style.display = "block";
+      
+      // Initialize and create 3D pig
+      setTimeout(() => {
+        initThreeJS();
+        createPig(attr);
+      }, 100);
+    }
+
+    function generatePigName(attr) {
+      const firstNames = ["Bacon", "Hamlet", "Peppa", "Porky", "Wilbur", "Miss", "Sir", "Princess", "Duke", "Lady"];
+      const lastNames = ["Snortsworth", "Oinkington", "Truffles", "Pigglesworth", "Mudworth", "Squealer"];
+      
+      const seed = attr.spriteIdx + attr.cuteness;
+      const rand = seededRandom(seed);
+      
+      const first = firstNames[Math.floor(rand() * firstNames.length)];
+      const last = lastNames[Math.floor(rand() * lastNames.length)];
+      
+      return `${first} ${last}`;
+    }
+
+    function showError(message) {
+      const errorElem = document.getElementById("error");
+      errorElem.innerText = message;
+      setTimeout(() => {
+        errorElem.innerText = "";
+      }, 5000);
+    }
+
+    // Enhanced clock with date
+    function updateClock() {
+      const now = new Date();
+      const timeStr = now.toLocaleTimeString([], { 
+        hour: "2-digit", 
+        minute: "2-digit",
+        second: "2-digit"
+      });
+      const dateStr = now.toLocaleDateString([], {
+        month: "short",
+        day: "numeric"
+      });
+      document.getElementById("clock").innerText = `${dateStr} ${timeStr}`;
+    }
+
+    // Keyboard shortcuts
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' && document.getElementById("appWindow").style.display === "block") {
+        generatePig();
+      }
+      if (e.key === 'Escape') {
+        closeWindow();
+      }
+    });
+
+    // Initialize
+    updateClock();
+    setInterval(updateClock, 1000);
+
+    // Auto-focus on input when window opens
+    const originalOpenWindow = openWindow;
+    openWindow = function() {
+      originalOpenWindow();
+      setTimeout(() => {
+        document.getElementById("twitter").focus();
+      }, 250);
+    };
+  </script>
+</body>
+</html>
