@@ -56,6 +56,12 @@
       box-shadow: 2px 2px 4px rgba(0,0,0,0.3);
     }
     
+    /* X.com icon styling */
+    .x-icon {
+      background: linear-gradient(135deg, #000000, #434343);
+      color: white;
+    }
+    
     .icon-label {
       font-size: 11px;
       margin-top: 0.25rem;
@@ -401,9 +407,16 @@
 </head>
 <body>
   <div class="desktop">
+    <!-- Pig Generator Icon -->
     <div class="icon" ondblclick="openWindow()">
       <div class="icon-image">🐷</div>
       <div class="icon-label">Pig Generator</div>
+    </div>
+    
+    <!-- NEW X.com Icon -->
+    <div class="icon" style="left: 8rem;" ondblclick="openX()">
+      <div class="icon-image x-icon">𝕏</div>
+      <div class="icon-label">X.com</div>
     </div>
 
     <div class="window" id="appWindow">
@@ -772,6 +785,11 @@
         window.style.display = "none";
         window.style.transition = "";
       }, 200);
+    }
+    
+    // NEW FUNCTION: Open X.com profile
+    function openX() {
+      window.open('https://x.com/PigGen95', '_blank');
     }
 
     function validateInput(twitter) {
