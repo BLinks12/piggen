@@ -1,13 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Pig Generator 95 - Enhanced Edition</title>
   <style>
     body {
       margin: 0;
-      font-family: 'MS Sans Serif', Tahoma, Geneva, sans-serif; /* Added fallback fonts */
+      font-family: 'MS Sans Serif', Tahoma, sans-serif;
       background: linear-gradient(45deg, #008080 0%, #20b2aa 100%);
       color: #000;
       overflow: hidden;
@@ -26,7 +26,7 @@
           rgba(0, 0, 0, 0.05) 1px,
           transparent 1px,
           transparent 3px
-        ); /* Subtle scanline effect */
+        );
     }
     
     .icon {
@@ -34,46 +34,40 @@
       top: 2rem;
       left: 2rem;
       text-align: center;
-      width: 72px; /* Adjusted for new icon style */
+      width: 72px;
       cursor: pointer;
       color: white;
       text-shadow: 1px 1px 1px rgba(0,0,0,0.8);
       transition: transform 0.1s ease;
     }
     
-    .icon:hover {
-      transform: scale(1.05);
-    }
-    
-    .icon:active {
-      transform: scale(0.95);
-    }
+    .icon:hover { transform: scale(1.05); }
+    .icon:active { transform: scale(0.95); }
     
     .icon-image {
       width: 64px;
       height: 64px;
-      background: #c0c0c0; /* Classic grey */
+      background: #c0c0c0;
       border: 2px outset #dedede;
       display: flex;
       align-items: center;
       justify-content: center;
       margin-bottom: 4px;
       box-shadow: 2px 2px 4px rgba(0,0,0,0.3);
-      image-rendering: pixelated; /* For sharper pixel art if an image is used */
+      image-rendering: pixelated;
     }
 
-    /* Simple pixel pig placeholder */
     .pixel-pig-icon {
       width: 40px;
       height: 40px;
-      background-color: #ff99cc; /* Pig pink */
-      border: 1px solid #cc6699; /* Darker pink outline */
+      background-color: #ff99cc;
+      border: 1px solid #cc6699;
       position: relative;
       box-shadow: 
-        inset 2px 2px #ffcce5, /* Highlight */
-        inset -2px -2px #ff66aa; /* Shadow */
+        inset 2px 2px #ffcce5,
+        inset -2px -2px #ff66aa;
     }
-    .pixel-pig-icon::before, .pixel-pig-icon::after { /* Eyes */
+    .pixel-pig-icon::before, .pixel-pig-icon::after {
       content: '';
       position: absolute;
       width: 6px;
@@ -83,7 +77,7 @@
     }
     .pixel-pig-icon::before { left: 8px; }
     .pixel-pig-icon::after { right: 8px; }
-    .pixel-pig-snout { /* Snout */
+    .pixel-pig-snout {
       position: absolute;
       width: 16px;
       height: 10px;
@@ -94,84 +88,109 @@
       transform: translateX(-50%);
       box-shadow: inset 1px 1px #ffcce5, inset -1px -1px #ff66aa;
     }
-    .pixel-pig-snout::before, .pixel-pig-snout::after { /* Nostrils */
-        content: '';
-        position: absolute;
-        width: 3px;
-        height: 3px;
-        background-color: #7c3c60;
-        top: 3px;
+    .pixel-pig-snout::before, .pixel-pig-snout::after {
+      content: '';
+      position: absolute;
+      width: 3px;
+      height: 3px;
+      background-color: #7c3c60;
+      top: 3px;
     }
     .pixel-pig-snout::before { left: 3px; }
     .pixel-pig-snout::after { right: 3px; }
 
-    /* New X.com icon style */
     .pixel-x-icon {
       width: 40px;
       height: 40px;
       position: relative;
-      background-color: #000000; /* X black */
+      background-color: #000000;
       display: flex;
       align-items: center;
       justify-content: center;
     }
-    
     .pixel-x-icon::before, .pixel-x-icon::after {
       content: '';
       position: absolute;
       width: 30px;
       height: 6px;
-      background-color: #ffffff; /* White X */
+      background-color: #ffffff;
       border-radius: 2px;
     }
-    
-    .pixel-x-icon::before {
-      transform: rotate(45deg);
+    .pixel-x-icon::before { transform: rotate(45deg); }
+    .pixel-x-icon::after { transform: rotate(-45deg); }
+
+    .pixel-help-icon {
+      width: 40px;
+      height: 40px;
+      background-color: #000080;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid #ffffff;
     }
-    
-    .pixel-x-icon::after {
-      transform: rotate(-45deg);
+    .pixel-help-icon::before {
+      content: '?';
+      color: #ffffff;
+      font-size: 28px;
+      font-weight: bold;
+      font-family: 'MS Sans Serif', Arial, sans-serif;
+    }
+
+    .pixel-rarity-icon {
+      width: 40px;
+      height: 40px;
+      background: linear-gradient(45deg, #ffd700, #ff4500);
+      position: relative;
+      border: 1px solid #000000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .pixel-rarity-icon::before {
+      content: '★';
+      color: #ffffff;
+      font-size: 24px;
+      text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
     }
 
     .icon-label {
       font-size: 11px;
       margin-top: 0.25rem;
       font-weight: bold;
-      background-color: #008080; /* Desktop background for label highlighting */
+      background-color: #008080;
       padding: 1px 3px;
-      border: 1px solid transparent; /* For selection effect if needed */
+      border: 1px solid transparent;
     }
-    .icon:focus .icon-label, .icon:active .icon-label { /* Mimic selection */
-        background-color: #000080; /* Dark blue for selection */
-        border: 1px dotted #FFFFFF;
+    .icon:focus .icon-label, .icon:active .icon-label {
+      background-color: #000080;
+      border: 1px dotted #FFFFFF;
     }
     
     .window {
-      width: 420px; /* Slightly wider for comfort */
+      width: 420px;
       background: #c0c0c0;
-      border: 2px outset #dfdfdf; /* Lighter outset border */
+      border: 2px outset #dfdfdf;
       box-shadow: 3px 3px 6px rgba(0,0,0,0.4);
       position: fixed;
-      top: 50%; /* Centered */
+      top: 50%;
       left: 50%;
-      transform: translate(-50%, -50%) scale(0.95); /* Initial state for animation */
+      transform: translate(-50%, -50%) scale(0.95);
       opacity: 0;
       display: none;
-      font-size: 12px; /* Slightly larger base font for window */
-      border-radius: 0;
+      font-size: 12px;
       max-height: 90vh;
       z-index: 1000;
       transition: opacity 0.15s ease-out, transform 0.15s ease-out;
     }
-
-    .window.open { /* Class to trigger open animation */
-        display: block;
-        opacity: 1;
-        transform: translate(-50%, -50%) scale(1);
+    .window.open {
+      display: block;
+      opacity: 1;
+      transform: translate(-50%, -50%) scale(1);
     }
     
     .window-header {
-      background: linear-gradient(90deg, #000080 0%, #1084d0 100%); /* Classic dark blue to lighter blue */
+      background: linear-gradient(90deg, #000080 0%, #1084d0 100%);
       color: white;
       padding: 3px 5px;
       display: flex;
@@ -179,38 +198,52 @@
       align-items: center;
       font-weight: bold;
       font-size: 11px;
-      text-shadow: 1px 1px 1px #00000060; /* Subtle shadow for title */
-      height: 20px; /* Fixed height */
+      height: 20px;
     }
     
     .window-content {
       padding: 10px;
       background: #c0c0c0;
-      /* Inner shadow for depth */
       box-shadow: inset 2px 2px 2px #808080, inset -2px -2px 2px #dfdfdf;
-      max-height: calc(90vh - 50px); /* Adjust based on header/padding */
+      max-height: calc(90vh - 50px);
       overflow-y: auto;
     }
     
+    .rarity-content, .help-content {
+      font-size: 11px;
+      line-height: 1.5;
+      color: #000080;
+    }
+    .rarity-content h3, .help-content h3 {
+      margin-top: 0;
+      margin-bottom: 10px;
+      font-size: 13px;
+      color: #000080;
+      text-align: center;
+    }
+    .rarity-content p, .help-content p { margin: 8px 0; }
+    .rarity-content ul { padding-left: 20px; margin: 10px 0; }
+    .rarity-content li { margin-bottom: 6px; display: flex; align-items: center; }
+    .rarity-content li .rarity-indicator { margin-right: 8px; }
+    
     .close-btn {
       width: 16px;
-      height: 16px; /* Square */
+      height: 16px;
       background: #c0c0c0;
       border: 1px outset #dfdfdf;
       font-size: 10px;
-      font-family: "MS Sans Serif", "Arial Black", sans-serif; /* For a bolder X */
+      font-family: "MS Sans Serif", sans-serif;
       font-weight: 900;
       cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
-      line-height: 16px; /* Center X */
+      line-height: 16px;
       padding: 0;
       box-shadow: 1px 1px 1px rgba(0,0,0,0.2);
     }
-    
     .close-btn:active {
-      border: 1px inset #808080; /* Darker inset */
+      border: 1px inset #808080;
       background: #b0b0b0;
       box-shadow: none;
     }
@@ -219,8 +252,8 @@
       width: 120px;
       height: 120px;
       margin: 0 auto 12px;
-      border: 2px inset #808080; /* Darker inset for canvas */
-      background: #f0f0f0; /* Match canvas background if set */
+      border: 2px inset #808080;
+      background: #f0f0f0;
       position: relative;
       box-shadow: 1px 1px 2px rgba(0,0,0,0.2) inset;
     }
@@ -244,7 +277,7 @@
       font-size: 11px;
       height: 28px;
       box-sizing: border-box;
-      z-index: 2000; /* Above windows */
+      z-index: 2000;
     }
     
     .start-btn {
@@ -255,19 +288,16 @@
       cursor: pointer;
       display: flex;
       align-items: center;
-      gap: 5px; /* Increased gap */
+      gap: 5px;
       font-weight: bold;
       box-shadow: 1px 1px 2px rgba(0,0,0,0.2);
     }
-
-    .start-btn-icon { /* Simple styled "icon" */
-        width: 16px;
-        height: 16px;
-        background: linear-gradient(45deg, #ff5555, #ffdd00, #55ff55, #5555ff); /* Generic colorful logo */
-        border: 1px solid #808080;
-        display: inline-block;
+    .start-btn-icon {
+      width: 16px;
+      height: 16px;
+      background: linear-gradient(45deg, #ff5555, #ffdd00, #55ff55, #5555ff);
+      border: 1px solid #808080;
     }
-    
     .start-btn:active {
       border: 1px inset #808080;
       background: #b0b0b0;
@@ -276,19 +306,15 @@
     
     input, .btn {
       margin: 4px 0;
-      padding: 5px 7px; /* Slightly more padding */
+      padding: 5px 7px;
       width: 100%;
       font-size: 11px;
-      border: 1px inset #808080; /* Darker inset */
+      border: 1px inset #808080;
       box-sizing: border-box;
-      font-family: 'MS Sans Serif', Tahoma, Geneva, sans-serif;
-      background: #ffffff; /* White background for inputs */
+      font-family: 'MS Sans Serif', sans-serif;
+      background: #ffffff;
     }
-    
-    input:focus {
-      outline: 1px dotted #000000; /* Classic focus outline */
-      background: #ffffff; 
-    }
+    input:focus { outline: 1px dotted #000000; }
     
     .btn {
       background: #c0c0c0;
@@ -297,48 +323,41 @@
       text-align: center;
       font-weight: bold;
       box-shadow: 1px 1px 2px rgba(0,0,0,0.2);
-      padding: 6px 8px; /* More button-like padding */
+      padding: 6px 8px;
     }
-    
-    .btn:hover {
-      border-color: #efefef; /* Slightly brighter border on hover */
-    }
-    
+    .btn:hover { border-color: #efefef; }
     .btn:active {
       border: 1px inset #808080;
-      background: #b0b0b0; /* Darker grey when pressed */
+      background: #b0b0b0;
       box-shadow: none;
     }
-    
     .btn:disabled {
       background: #c0c0c0;
       color: #808080;
       cursor: not-allowed;
-      border: 1px outset #b0b0b0; /* Less prominent border */
+      border: 1px outset #b0b0b0;
       box-shadow: none;
     }
     
     .progress-container {
       background: #c0c0c0;
       border: 1px inset #808080;
-      height: 20px; /* Taller progress bar */
+      height: 20px;
       margin: 8px 0;
       width: 100%;
       box-sizing: border-box;
-      padding: 2px; /* Padding for chunky effect */
+      padding: 2px;
     }
-    
     .progress-bar {
       height: 100%;
-      background: #000080; /* Solid blue */
+      background: #000080;
       width: 0%;
-      transition: width 0.3s ease-in-out; /* Smoother transition */
-      /* Chunky progress bar effect */
+      transition: width 0.3s ease-in-out;
       background-image: repeating-linear-gradient(
         -45deg,
         #000080,
         #000080 5px,
-        #0000A0 5px, /* Slightly lighter blue for stripe */
+        #0000A0 5px,
         #0000A0 10px
       );
     }
@@ -347,39 +366,31 @@
       margin-top: 12px;
       text-align: left;
       font-size: 11px;
-      background: #ffffff; /* White background for contrast */
+      background: #ffffff;
       border: 1px inset #808080;
       padding: 10px;
       min-height: 200px;
     }
-    
     .result-header {
       text-align: center;
       font-weight: bold;
       margin-bottom: 12px;
-      color: #000080; /* Dark blue */
-      display: flex; /* For aligning pig and text */
+      color: #000080;
+      display: flex;
       flex-direction: column;
       align-items: center;
     }
-
     .result-header strong { margin-top: 8px; }
     
     .attribute-row {
       display: flex;
       justify-content: space-between;
-      margin: 5px 0; /* More spacing */
+      margin: 5px 0;
       padding: 3px 0;
-      border-bottom: 1px dotted #a0a0a0; /* Lighter dotted line */
+      border-bottom: 1px dotted #a0a0a0;
     }
-    .attribute-row:last-child {
-        border-bottom: none;
-    }
-    
-    .attribute-label {
-      font-weight: bold;
-      color: #800000; /* Dark red */
-    }
+    .attribute-row:last-child { border-bottom: none; }
+    .attribute-label { font-weight: bold; color: #800000; }
     
     .error {
       color: #ff0000;
@@ -389,9 +400,9 @@
       border: 1px solid #ff0000;
       background-color: #ffeeee;
       font-weight: bold;
-      display: none; /* Initially hidden */
+      display: none;
     }
-    .error.show { display: block; } /* Class to show error */
+    .error.show { display: block; }
     
     .loading-text {
       text-align: center;
@@ -402,7 +413,7 @@
     }
     
     .clock {
-      font-family: 'Consolas', 'Courier New', monospace; /* Monospace for clock */
+      font-family: 'Consolas', monospace;
       font-weight: bold;
       background: #c0c0c0;
       border: 1px inset #808080;
@@ -411,20 +422,17 @@
       margin-right: 2px;
     }
     
-    .form-group {
-      margin-bottom: 10px; /* More spacing */
-    }
-    
+    .form-group { margin-bottom: 10px; }
     label {
       display: block;
       margin-bottom: 3px;
       font-weight: bold;
-      color: #000080; /* Dark blue */
+      color: #000080;
       font-size: 11px;
     }
     
     .pig-stats {
-      background: #e0e0e0; /* Lighter grey for stats block */
+      background: #e0e0e0;
       border: 1px inset #a0a0a0;
       padding: 8px;
       margin-top: 10px;
@@ -433,19 +441,18 @@
     
     .rarity-indicator {
       display: inline-block;
-      width: 14px; /* Slightly larger */
+      width: 14px;
       height: 14px;
       border-radius: 50%;
       margin-left: 6px;
-      border: 1px solid #00000050; /* Subtle border */
+      border: 1px solid #00000050;
       vertical-align: middle;
     }
-    
-    .rarity-common { background: #909090; } /* Adjusted common color */
-    .rarity-uncommon { background: #66bb66; } /* Softer green */
-    .rarity-rare { background: #42a5f5; } /* Softer blue */
-    .rarity-epic { background: #ab47bc; } /* Softer purple */
-    .rarity-legendary { background: #ffa726; } /* Softer orange */
+    .rarity-common { background: #909090; }
+    .rarity-uncommon { background: #66bb66; }
+    .rarity-rare { background: #42a5f5; }
+    .rarity-epic { background: #ab47bc; }
+    .rarity-legendary { background: #ffa726; }
     
     .share-section {
       margin-top: 15px;
@@ -453,7 +460,6 @@
       justify-content: center;
       gap: 10px;
     }
-    
     .share-btn {
       display: flex;
       align-items: center;
@@ -465,25 +471,16 @@
       cursor: pointer;
       font-weight: bold;
       font-size: 11px;
-      width: auto; /* Auto width based on content */
+      width: auto;
       box-shadow: 1px 1px 2px rgba(0,0,0,0.2);
     }
-    
-    .share-btn:hover {
-      border-color: #efefef;
-    }
-    
+    .share-btn:hover { border-color: #efefef; }
     .share-btn:active {
       border: 1px inset #808080;
       background: #b0b0b0;
       box-shadow: none;
     }
-    
-    .twitter-icon {
-      color: #1DA1F2; /* Official Twitter blue */
-      font-weight: bold;
-      font-size: 14px; /* Make it stand out */
-    }
+    .twitter-icon { color: #1DA1F2; font-weight: bold; font-size: 14px; }
     
     .share-confirmation {
       position: fixed;
@@ -493,25 +490,20 @@
       background: #c0c0c0;
       border: 2px outset #dfdfdf;
       padding: 16px;
-      z-index: 3000; /* Above taskbar */
+      z-index: 3000;
       text-align: center;
       box-shadow: 4px 4px 10px rgba(0,0,0,0.5);
       display: none;
-      width: 320px; /* Consistent width */
+      width: 320px;
       font-size: 11px;
     }
-    
     .share-confirmation h3 {
       margin-top: 0;
       margin-bottom: 10px;
       color: #000080;
       font-size: 13px;
     }
-
-    .share-confirmation p {
-        margin-bottom: 12px;
-    }
-    
+    .share-confirmation p { margin-bottom: 12px; }
     .confirmation-buttons {
       display: flex;
       gap: 10px;
@@ -525,9 +517,8 @@
       color: #000080;
       font-weight: bold;
     }
-    
     .upload-progress {
-      height: 12px; /* Slimmer upload progress */
+      height: 12px;
       background: #c0c0c0;
       border: 1px inset #808080;
       margin: 8px 0;
@@ -535,10 +526,9 @@
       box-sizing: border-box;
       padding: 1px;
     }
-    
     .upload-progress-bar {
       height: 100%;
-      background: #000080; /* Solid blue */
+      background: #000080;
       width: 0%;
       transition: width 0.3s ease;
       background-image: repeating-linear-gradient(
@@ -553,42 +543,45 @@
     .share-preview {
       max-width: 100%;
       height: auto;
-      border: 2px inset #808080; /* Consistent inset border */
-      margin: 10px auto; /* Center it */
+      border: 2px inset #808080;
+      margin: 10px auto;
       display: none;
-      background-color: #f0f0f0; /* Background for the preview area */
+      background-color: #f0f0f0;
     }
-    
     .share-footer {
       margin-top: 12px;
       font-size: 10px;
-      color: #505050; /* Slightly darker grey */
+      color: #505050;
     }
-
   </style>
 </head>
 <body>
   <div class="desktop">
-    <!-- Pig Generator Icon -->
     <div class="icon" ondblclick="openAppWindow()" tabindex="0"> 
       <div class="icon-image">
-        <div class="pixel-pig-icon">
-          <div class="pixel-pig-snout"></div>
-        </div>
+        <div class="pixel-pig-icon"><div class="pixel-pig-snout"></div></div>
       </div>
       <div class="icon-label">PigGen95.exe</div>
     </div>
     
-    <!-- New X.com Icon -->
     <div class="icon" ondblclick="window.open('https://x.com/PigGen95', '_blank')" tabindex="0" style="top: 2rem; left: 8rem;">
-      <div class="icon-image">
-        <div class="pixel-x-icon"></div>
-      </div>
+      <div class="icon-image"><div class="pixel-x-icon"></div></div>
       <div class="icon-label">X.com</div>
     </div>
 
+    <div class="icon" ondblclick="openRarityWindow()" tabindex="0" style="top: 2rem; left: 14rem;">
+      <div class="icon-image"><div class="pixel-rarity-icon"></div></div>
+      <div class="icon-label">Rarity Guide</div>
+    </div>
+
+    <div class="icon" ondblclick="openHelpWindow()" tabindex="0" style="top: 2rem; left: 20rem;">
+      <div class="icon-image"><div class="pixel-help-icon"></div></div>
+      <div class="icon-label">Help</div>
+    </div>
+
     <div class="window" id="appWindow">
-      <div class="window-header" id="appWindowHeader"> <span>🐷 Pig Generator 95 - Enhanced</span>
+      <div class="window-header" id="appWindowHeader"> 
+        <span>Pig Generator 95 - Enhanced</span>
         <div class="close-btn" onclick="closeAppWindow()">×</div>
       </div>
       <div class="window-content">
@@ -600,21 +593,60 @@
           <label for="customId">Optional Seed (for variations):</label>
           <input type="text" id="customId" placeholder="e.g. lucky7, birthday2024" maxlength="20">
         </div>
-        <button class="btn" onclick="generatePig()" id="generateBtn">🎲 Generate My Pig</button>
-        <button class="btn" onclick="randomPig()" id="randomBtn">🎰 Surprise Me!</button>
+        <button class="btn" onclick="generatePig()" id="generateBtn">Generate My Pig</button>
         
-        <div id="error" class="error"></div> <div class="progress-container">
+        <div id="error" class="error"></div> 
+        <div class="progress-container">
           <div class="progress-bar" id="progressBar"></div>
         </div>
         <div id="loadingText" class="loading-text"></div>
         
-        <div class="result" id="result" style="display: none;">
-          </div>
+        <div class="result" id="result" style="display: none;"></div>
+      </div>
+    </div>
+
+    <div class="window" id="rarityWindow">
+      <div class="window-header" id="rarityWindowHeader">
+        <span>Rarity Guide</span>
+        <div class="close-btn" onclick="closeRarityWindow()">×</div>
+      </div>
+      <div class="window-content rarity-content">
+        <h3>Unlock the Secrets of Pig Rarity!</h3>
+        <p>Your luck determines the rarity of your pig! Will you get a <strong>Legendary</strong> pig that stands out in the digital barnyard? Here's what each rarity means:</p>
+        <ul>
+          <li><span class="rarity-indicator rarity-common"></span><strong>Common</strong>: The friendly, everyday pigs. Solid companions!</li>
+          <li><span class="rarity-indicator rarity-uncommon"></span><strong>Uncommon</strong>: A bit more special, with unique flair.</li>
+          <li><span class="rarity-indicator rarity-rare"></span><strong>Rare</strong>: These pigs turn heads with their style!</li>
+          <li><span class="rarity-indicator rarity-epic"></span><strong>Epic</strong>: Truly extraordinary pigs, rare and powerful!</li>
+          <li><span class="rarity-indicator rarity-legendary"></span><strong>Legendary</strong>: The ultimate prize! Only the luckiest get these majestic pigs!</li>
+        </ul>
+        <p>Keep generating to test your luck! Will your next pig be a <strong>Legendary</strong> superstar? Oink it to win it!</p>
+      </div>
+    </div>
+
+    <div class="window" id="helpWindow">
+      <div class="window-header" id="helpWindowHeader">
+        <span>Pig Generator 95 Help</span>
+        <div class="close-btn" onclick="closeHelpWindow()">×</div>
+      </div>
+      <div class="window-content help-content">
+        <h3>Welcome to Pig Generator 95!</h3>
+        <p>This retro app creates your very own unique pig companion! Here's how it works:</p>
+        <ul>
+          <li><strong>Open the App</strong>: Double-click the "PigGen95.exe" icon on the desktop.</li>
+          <li><strong>Enter Your Handle</strong>: Type your Twitter/X handle (without @) to generate a pig based on it.</li>
+          <li><strong>Add a Seed (Optional)</strong>: Enter a custom seed for different pig variations.</li>
+          <li><strong>Generate</strong>: Click "Generate My Pig" to create your one-of-a-kind pig.</li>
+          <li><strong>View Your Pig</strong>: See your pig's 3D sprite, stats, and rarity below.</li>
+          <li><strong>Share</strong>: Click "Share on X" to post your pig or "Copy Details" to save its stats.</li>
+        </ul>
+        <p>Have fun creating your digital piggy! Check the Rarity Guide to learn about your pig's exclusivity.</p>
       </div>
     </div>
 
     <div class="taskbar">
-      <div class="start-btn" onclick="toggleAppWindow()"> <span class="start-btn-icon"></span> Start
+      <div class="start-btn" onclick="toggleAppWindow()"> 
+        <span class="start-btn-icon"></span> Start
       </div>
       <div class="clock" id="clock"></div>
     </div>
@@ -623,19 +655,15 @@
   <div class="share-confirmation" id="shareConfirmation">
     <h3>Share Pig on X</h3>
     <p>Ready to show off your unique pig?</p>
-    
     <div class="upload-status" id="uploadStatus">Preparing image...</div>
     <div class="upload-progress">
       <div class="upload-progress-bar" id="uploadProgressBar"></div>
     </div>
-    
     <img id="sharePreview" class="share-preview" alt="Pig preview">
-    
     <div class="confirmation-buttons">
       <button class="btn" onclick="shareOnX()" id="confirmShareBtn">Yes, Share!</button>
       <button class="btn" onclick="closeShareConfirmation()">Cancel</button>
     </div>
-    
     <div class="share-footer">
       Your pig image and stats will be part of the tweet.
     </div>
@@ -643,98 +671,88 @@
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <script>
-    // Store current pig for sharing
     let currentPig = null;
-    let pigImageUrlForSharing = null; // Renamed for clarity
-    
-    // Three.js pig creation variables
+    let pigImageUrlForSharing = null;
     let scene, camera, renderer, pigMesh;
-    let animationFrameId; // To control animation loop
+    let animationFrameId;
 
     const appWindow = document.getElementById("appWindow");
-    const appWindowHeader = document.getElementById("appWindowHeader"); // For dragging
+    const appWindowHeader = document.getElementById("appWindowHeader");
+    const rarityWindow = document.getElementById("rarityWindow");
+    const rarityWindowHeader = document.getElementById("rarityWindowHeader");
+    const helpWindow = document.getElementById("helpWindow");
+    const helpWindowHeader = document.getElementById("helpWindowHeader");
 
     function initThreeJS() {
-      const canvasContainer = document.querySelector('.pig-sprite'); // Get container for sizing
+      const canvasContainer = document.querySelector('.pig-sprite');
       const canvas = document.getElementById('pigCanvas');
-      if (!canvas || !canvasContainer) return;
-      
-      // Clean up previous renderer if any
+      if (!canvas || !canvasContainer) {
+        console.error("Canvas or container not found for Three.js");
+        return;
+      }
+
       if (renderer) {
         renderer.dispose();
-        const oldCanvas = scene.userData.canvas; // Assuming you store it
-        if (oldCanvas && oldCanvas.parentElement) {
-          // oldCanvas.parentElement.removeChild(oldCanvas); // Not needed if using same canvas
-        }
-      }
-      if (animationFrameId) {
         cancelAnimationFrame(animationFrameId);
       }
 
       scene = new THREE.Scene();
-      scene.background = new THREE.Color(0xf0f0f0); // Light grey background for canvas
+      scene.background = new THREE.Color(0xf0f0f0);
       
       camera = new THREE.PerspectiveCamera(50, canvasContainer.clientWidth / canvasContainer.clientHeight, 0.1, 1000);
-      camera.position.set(0, 1.2, 3.2); // Adjusted for better view
-      camera.lookAt(0, 0.3, 0); // Adjusted lookAt
+      camera.position.set(0, 1.2, 3.2);
+      camera.lookAt(0, 0.3, 0);
       
       renderer = new THREE.WebGLRenderer({ 
         canvas: canvas, 
         antialias: true,
-        preserveDrawingBuffer: true // Required for image capture
+        preserveDrawingBuffer: true
       });
       renderer.setSize(canvasContainer.clientWidth, canvasContainer.clientHeight);
       renderer.shadowMap.enabled = true;
-      renderer.shadowMap.type = THREE.PCFSoftShadowMap; // Softer shadows
+      renderer.shadowMap.type = THREE.PCFSoftShadowMap;
       
-      // Lighting
-      const ambientLight = new THREE.AmbientLight(0xffffff, 0.7); // Slightly brighter ambient
+      const ambientLight = new THREE.AmbientLight(0xffffff, 0.7);
       scene.add(ambientLight);
       
-      const directionalLight = new THREE.DirectionalLight(0xffffff, 0.9); // Brighter directional
+      const directionalLight = new THREE.DirectionalLight(0xffffff, 0.9);
       directionalLight.position.set(2.5, 3, 2);
       directionalLight.castShadow = true;
-      // Configure shadow properties for better quality (optional, can impact performance)
-      directionalLight.shadow.mapSize.width = 1024; 
+      directionalLight.shadow.mapSize.width = 1024;
       directionalLight.shadow.mapSize.height = 1024;
-      directionalLight.shadow.camera.near = 0.5;    
-      directionalLight.shadow.camera.far = 50;     
+      directionalLight.shadow.camera.near = 0.5;
+      directionalLight.shadow.camera.far = 50;
       scene.add(directionalLight);
 
-      // Ground plane (optional, for shadows to fall on)
       const groundGeometry = new THREE.PlaneGeometry(10, 10);
-      const groundMaterial = new THREE.ShadowMaterial({ opacity: 0.3 }); // Receives shadows
+      const groundMaterial = new THREE.ShadowMaterial({ opacity: 0.3 });
       const groundPlane = new THREE.Mesh(groundGeometry, groundMaterial);
       groundPlane.rotation.x = -Math.PI / 2;
-      groundPlane.position.y = -0.8; // Position below the pig
+      groundPlane.position.y = -0.8;
       groundPlane.receiveShadow = true;
       scene.add(groundPlane);
     }
     
     function createPig(attributes) {
-      if (!scene) { // Ensure scene is initialized
-        console.error("Three.js scene not initialized before createPig call.");
+      if (!scene || !renderer || !camera) {
+        console.error("Three.js not initialized properly");
         return;
       }
       if (pigMesh) {
         scene.remove(pigMesh);
-        // Dispose of old geometries and materials if necessary to free memory
-        if (pigMesh.traverse) {
-            pigMesh.traverse(child => {
-                if (child.geometry) child.geometry.dispose();
-                if (child.material) {
-                    if (Array.isArray(child.material)) {
-                        child.material.forEach(material => material.dispose());
-                    } else {
-                        child.material.dispose();
-                    }
-                }
-            });
-        }
+        pigMesh.traverse(child => {
+          if (child.geometry) child.geometry.dispose();
+          if (child.material) {
+            if (Array.isArray(child.material)) {
+              child.material.forEach(material => material.dispose());
+            } else {
+              child.material.dispose();
+            }
+          }
+        });
       }
       
       const pigGroup = new THREE.Group();
-      
       const skinColors = {
         'Rosy Pink': 0xffb6c1, 'Charcoal Black': 0x333333, 'Spotted': 0xffb6c1,
         'Russet Red': 0x8b5a2b, 'Ginger': 0xd27d1e, 'Pearl White': 0xf5f5f5,
@@ -742,79 +760,68 @@
       };
       
       const pigColor = skinColors[attributes.skin] || 0xffb6c1;
-      const material = new THREE.MeshPhongMaterial({ 
-          color: pigColor, 
-          shininess: 20 // Add some shininess
-        });
+      const material = new THREE.MeshPhongMaterial({ color: pigColor, shininess: 20 });
       
-      // Body
-      const bodyGeometry = new THREE.SphereGeometry(0.6, 24, 18); // Smoother sphere
-      bodyGeometry.scale(1.25, 0.85, 1.0); 
+      const bodyGeometry = new THREE.SphereGeometry(0.6, 24, 18);
+      bodyGeometry.scale(1.25, 0.85, 1.0);
       const body = new THREE.Mesh(bodyGeometry, material);
       body.position.y = 0.2;
       body.castShadow = true;
-      body.receiveShadow = true; // Pigs can receive shadows too
+      body.receiveShadow = true;
       pigGroup.add(body);
       
-      // Head
       const headGeometry = new THREE.SphereGeometry(0.4, 20, 16);
       const head = new THREE.Mesh(headGeometry, material);
-      head.position.set(0, 0.55, 0.65); // Slightly adjusted
+      head.position.set(0, 0.55, 0.65);
       head.castShadow = true;
       pigGroup.add(head);
       
-      // Snout
-      const snoutMaterialColor = new THREE.Color(pigColor).multiplyScalar(0.9); // Slightly darker
-      const snoutGeometry = new THREE.CylinderGeometry(0.15, 0.12, 0.25, 12); // Cylinder for snout
+      const snoutMaterialColor = new THREE.Color(pigColor).multiplyScalar(0.9);
+      const snoutGeometry = new THREE.CylinderGeometry(0.15, 0.12, 0.25, 12);
       const snout = new THREE.Mesh(snoutGeometry, new THREE.MeshPhongMaterial({ color: snoutMaterialColor, shininess: 10 }));
       snout.position.set(0, 0.45, 0.85);
-      snout.rotation.x = Math.PI / 2.5; // Angle it forward
+      snout.rotation.x = Math.PI / 2.5;
       pigGroup.add(snout);
       
-      // Nostrils
-      const nostrilGeometry = new THREE.CircleGeometry(0.035, 8); // Flat circles
-      const nostrilMaterial = new THREE.MeshBasicMaterial({ color: 0x442211 }); // Dark brown/black
+      const nostrilGeometry = new THREE.CircleGeometry(0.035, 8);
+      const nostrilMaterial = new THREE.MeshBasicMaterial({ color: 0x442211 });
       const nostril1 = new THREE.Mesh(nostrilGeometry, nostrilMaterial);
       const nostril2 = new THREE.Mesh(nostrilGeometry, nostrilMaterial);
-      nostril1.position.set(-0.05, 0.47, 0.94); // Adjusted to cylinder end
+      nostril1.position.set(-0.05, 0.47, 0.94);
       nostril2.position.set(0.05, 0.47, 0.94);
-      nostril1.rotation.x = nostril2.rotation.x = -Math.PI / 3; // Align with snout
+      nostril1.rotation.x = nostril2.rotation.x = -Math.PI / 3;
       pigGroup.add(nostril1, nostril2);
       
-      // Eyes
       const eyeGeometry = new THREE.SphereGeometry(0.06, 10, 8);
-      const eyeMaterial = new THREE.MeshPhongMaterial({ color: 0x111111, shininess: 100 }); // Shiny black
+      const eyeMaterial = new THREE.MeshPhongMaterial({ color: 0x111111, shininess: 100 });
       const eye1 = new THREE.Mesh(eyeGeometry, eyeMaterial);
       const eye2 = new THREE.Mesh(eyeGeometry, eyeMaterial);
-      eye1.position.set(-0.16, 0.6, 0.85); // Adjusted
+      eye1.position.set(-0.16, 0.6, 0.85);
       eye2.position.set(0.16, 0.6, 0.85);
       pigGroup.add(eye1, eye2);
       
-      // Ears (using BufferGeometry for custom shape - slightly more complex)
       function createEarShape() {
-          const earShape = new THREE.Shape();
-          earShape.moveTo(0, 0);
-          earShape.lineTo(0, 0.3);
-          earShape.quadraticCurveTo(0.15, 0.35, 0.2, 0.2);
-          earShape.lineTo(0.1, 0);
-          earShape.closePath();
-          const extrudeSettings = { depth: 0.05, bevelEnabled: false };
-          return new THREE.ExtrudeGeometry(earShape, extrudeSettings);
+        const earShape = new THREE.Shape();
+        earShape.moveTo(0, 0);
+        earShape.lineTo(0, 0.3);
+        earShape.quadraticCurveTo(0.15, 0.35, 0.2, 0.2);
+        earShape.lineTo(0.1, 0);
+        earShape.closePath();
+        return new THREE.ExtrudeGeometry(earShape, { depth: 0.05, bevelEnabled: false });
       }
       const earGeometry = createEarShape();
       const ear1 = new THREE.Mesh(earGeometry, material);
       const ear2 = new THREE.Mesh(earGeometry, material);
-      ear1.position.set(-0.15, 0.7, 0.55); // Adjusted
-      ear2.position.set(0.05, 0.7, 0.55); // x for ear2 needs to be relative to its own origin before rotation
+      ear1.position.set(-0.15, 0.7, 0.55);
+      ear2.position.set(0.05, 0.7, 0.55);
       ear1.rotation.y = -Math.PI / 6;
       ear1.rotation.z = Math.PI / 8;
-      ear2.scale.x = -1; // Flip the second ear
-      ear2.rotation.y = -Math.PI / 6; 
+      ear2.scale.x = -1;
+      ear2.rotation.y = -Math.PI / 6;
       ear2.rotation.z = Math.PI / 8;
       pigGroup.add(ear1, ear2);
       
-      // Legs
-      const legGeometry = new THREE.CylinderGeometry(0.1, 0.08, 0.5, 10); // Tapered
+      const legGeometry = new THREE.CylinderGeometry(0.1, 0.08, 0.5, 10);
       const legMaterial = new THREE.MeshPhongMaterial({ color: pigColor, shininess: 15 });
       const legPositions = [
         { x: 0.4, z: 0.35, rotY: 0.1 }, { x: -0.4, z: 0.35, rotY: -0.1 },
@@ -822,14 +829,13 @@
       ];
       legPositions.forEach(pos => {
         const leg = new THREE.Mesh(legGeometry, legMaterial);
-        leg.position.set(pos.x, -0.1, pos.z); // y slightly lower
+        leg.position.set(pos.x, -0.1, pos.z);
         leg.rotation.y = pos.rotY || 0;
-        leg.rotation.z = (pos.x > 0 ? -1 : 1) * Math.PI / 12; // Splay legs slightly
+        leg.rotation.z = (pos.x > 0 ? -1 : 1) * Math.PI / 12;
         leg.castShadow = true;
         pigGroup.add(leg);
       });
       
-      // Tail (simple curve)
       const curve = new THREE.CatmullRomCurve3([
         new THREE.Vector3(0, 0.2, -0.6),
         new THREE.Vector3(0.05, 0.25, -0.7),
@@ -840,87 +846,78 @@
       const tail = new THREE.Mesh(tailGeometry, material);
       pigGroup.add(tail);
       
-      // Spots for spotted pigs
       if (attributes.skin === 'Spotted') {
         const spotMaterial = new THREE.MeshPhongMaterial({ color: 0x654321, shininess: 5 });
         for (let i = 0; i < 6; i++) {
           const spotSize = Math.random() * 0.1 + 0.05;
           const spot = new THREE.Mesh(new THREE.SphereGeometry(spotSize, 8, 6), spotMaterial);
-          // Place spots more carefully on the body surface
-          const phi = Math.random() * Math.PI; // Azimuthal angle
-          const theta = Math.random() * Math.PI * 2; // Polar angle
-          const R = 0.6; // Approximate body radius for placement
+          const phi = Math.random() * Math.PI;
+          const theta = Math.random() * Math.PI * 2;
+          const R = 0.6;
           spot.position.set(
-            R * Math.sin(phi) * Math.cos(theta) * 1.2, // scale to body dimensions
-            R * Math.cos(phi) * 0.8 + 0.2, // scale and offset y
+            R * Math.sin(phi) * Math.cos(theta) * 1.2,
+            R * Math.cos(phi) * 0.8 + 0.2,
             R * Math.sin(phi) * Math.sin(theta) * 1.0
           );
-          spot.scale.set(1, 0.5, 1); // Flatten spots
-          body.add(spot); // Add to body so they move with it
+          spot.scale.set(1, 0.5, 1);
+          body.add(spot);
         }
       }
       
-      // Accessories
-      if (attributes.accessory && attributes.accessory !== "None") { // Assuming "None" can be an option
-        const accessoryMaterial = new THREE.MeshPhongMaterial({shininess: 50});
+      if (attributes.accessory && attributes.accessory !== "None") {
+        const accessoryMaterial = new THREE.MeshPhongMaterial({ shininess: 50 });
         if (attributes.accessory === 'Top Hat') {
-            accessoryMaterial.color.setHex(0x111111); // Black
-            const hatCrown = new THREE.Mesh(new THREE.CylinderGeometry(0.18, 0.22, 0.35, 16), accessoryMaterial);
-            hatCrown.position.set(0, 0.85, 0.65); // On head
-            const hatBrim = new THREE.Mesh(new THREE.CylinderGeometry(0.33, 0.33, 0.05, 16), accessoryMaterial);
-            hatBrim.position.set(0, 0.68, 0.65);
-            head.add(hatCrown, hatBrim); // Add to head group
+          accessoryMaterial.color.setHex(0x111111);
+          const hatCrown = new THREE.Mesh(new THREE.CylinderGeometry(0.18, 0.22, 0.35, 16), accessoryMaterial);
+          hatCrown.position.set(0, 0.85, 0.65);
+          const hatBrim = new THREE.Mesh(new THREE.CylinderGeometry(0.33, 0.33, 0.05, 16), accessoryMaterial);
+          hatBrim.position.set(0, 0.68, 0.65);
+          head.add(hatCrown, hatBrim);
         } else if (attributes.accessory === 'Crown') {
-            accessoryMaterial.color.setHex(0xffd700); // Gold
-            const crownBase = new THREE.Mesh(new THREE.CylinderGeometry(0.24, 0.26, 0.1, 12), accessoryMaterial);
-            crownBase.position.set(0, 0.72, 0.65);
-            head.add(crownBase);
-            for (let i = 0; i < 6; i++) { // More points
-                const point = new THREE.Mesh(new THREE.ConeGeometry(0.04, 0.12, 4), accessoryMaterial);
-                const angle = (i * Math.PI * 2) / 6;
-                point.position.set(
-                    Math.cos(angle) * 0.24, 0.1, Math.sin(angle) * 0.24
-                );
-                point.position.y += 0.72; // Base height
-                point.position.z += 0.65; // Base z
-                point.rotation.x = Math.PI/12; // Slight tilt
-                head.add(point);
-            }
+          accessoryMaterial.color.setHex(0xffd700);
+          const crownBase = new THREE.Mesh(new THREE.CylinderGeometry(0.24, 0.26, 0.1, 12), accessoryMaterial);
+          crownBase.position.set(0, 0.72, 0.65);
+          head.add(crownBase);
+          for (let i = 0; i < 6; i++) {
+            const point = new THREE.Mesh(new THREE.ConeGeometry(0.04, 0.12, 4), accessoryMaterial);
+            const angle = (i * Math.PI * 2) / 6;
+            point.position.set(Math.cos(angle) * 0.24, 0.1, Math.sin(angle) * 0.24);
+            point.position.y += 0.72;
+            point.position.z += 0.65;
+            point.rotation.x = Math.PI / 12;
+            head.add(point);
+          }
         }
-        // Add more accessories here...
       }
       
-      // Scale based on rarity
       const scaleMultiplier = attributes.rarity.name === 'Legendary' ? 1.15 : 
-                              attributes.rarity.name === 'Epic' ? 1.08 : 1.0;
+                            attributes.rarity.name === 'Epic' ? 1.08 : 1.0;
       pigGroup.scale.multiplyScalar(scaleMultiplier);
-      pigGroup.position.y = -0.3; // Adjust base position of the whole pig
+      pigGroup.position.y = -0.3;
       
       scene.add(pigGroup);
       pigMesh = pigGroup;
       
-      // Start animation if not already running
       if (!animationFrameId) animatePig();
     }
 
     function animatePig() {
       animationFrameId = requestAnimationFrame(animatePig);
       if (pigMesh) {
-        pigMesh.rotation.y += 0.008; // Slower rotation
-        // Subtle bobbing
+        pigMesh.rotation.y += 0.008;
         pigMesh.position.y = -0.3 + Math.sin(Date.now() * 0.002) * 0.05;
       }
-      if(renderer && scene && camera) { // Ensure they exist
+      if (renderer && scene && camera) {
         renderer.render(scene, camera);
       }
     }
     
     const breeds = ["Yorkshire", "Duroc", "Berkshire", "Hampshire", "Landrace", "Tamworth", "Gloucestershire", "Mangalitsa", "Ossabaw", "Kunekune", "Potbelly", "Meishan"];
-    const skins = ["Rosy Pink", "Charcoal Black", "Spotted", "Russet Red", "Ginger", "Pearl White", "Chocolate Brown", "Golden", "Silver", "Muddy Brown"];
-    const traits = ["Curious", "Lazy", "Playful", "Genius", "Bold", "Mellow", "Adventurous", "Shy", "Energetic", "Zen Master", "Mischievous", "Noble", "Grumpy", "Philosophical"];
-    const accessories = ["None", "Top Hat", "Bow Tie", "Sunglasses", "Party Hat", "Monocle", "Scarf", "Crown", "Bandana", "Flower Crown", "Goggles", "Cape", "Necklace", "Tiny Backpack"];
-    const moods = ["😑 Neutral", "🙂 Happy", "😊 Joyful", "😁 Beaming", "🤩 Starstruck", "😎 Cool", "🤔 Thinking", "😴 Sleepy", "🥳 Partying", "🧐 Curious", "🥺 Pleading"];
-    const hobbies = ["Mud Wrestling", "Truffle Hunting", "Competitive Eating", "Gaming", "Stargazing", "Gardening", "Tap Dancing", "Opera Singing", "Pixel Art", "Yoga Poses", "Writing Poetry", "Cloud Watching"];
+    const skins = ["Rosy Pink", "Charcoal Black", "Spotted", "Russet Red", "Ginger", "Pearl White", "Chocolate Brown", "Golden", "Silver"];
+    const traits = ["Curious", "Lazy", "Playful", "Genius", "Bold", "Mellow", "Adventurous", "Shy", "Energetic", "Mischievous", "Noble"];
+    const accessories = ["None", "Top Hat", "Bow Tie", "Sunglasses", "Party Hat", "Monocle", "Crown", "Bandana"];
+    const moods = ["Neutral", "Happy", "Joyful", "Beaming", "Starstruck", "Cool", "Thinking", "Sleepy", "Partying", "Curious"];
+    const hobbies = ["Mud Wrestling", "Truffle Hunting", "Competitive Eating", "Gaming", "Stargazing", "Gardening", "Tap Dancing", "Pixel Art"];
 
     function hashString(str) {
       let h1 = 2166136261, h2 = 2166136261;
@@ -935,15 +932,15 @@
       let x = seed;
       return function () {
         x = Math.imul(1664525, x) + 1013904223;
-        x = x >>> 0; // Ensure positive integer
+        x = x >>> 0;
         return x / 0xffffffff;
       };
     }
 
     function getRarity(rand) {
       const roll = rand();
-      if (roll > 0.995) return { name: "Legendary", class: "legendary" }; // rarer
-      if (roll > 0.96) return { name: "Epic", class: "epic" }; // rarer
+      if (roll > 0.995) return { name: "Legendary", class: "legendary" };
+      if (roll > 0.96) return { name: "Epic", class: "epic" };
       if (roll > 0.88) return { name: "Rare", class: "rare" };
       if (roll > 0.70) return { name: "Uncommon", class: "uncommon" };
       return { name: "Common", class: "common" };
@@ -960,55 +957,76 @@
         mood: moods[Math.floor(rand() * moods.length)],
         hobby: hobbies[Math.floor(rand() * hobbies.length)],
         rarity: rarity,
-        cuteness: Math.floor(rand() * 80) + 21, // Min 21
+        cuteness: Math.floor(rand() * 80) + 21,
         intelligence: Math.floor(rand() * 80) + 21,
         luck: Math.floor(rand() * 80) + 21,
         birthdate: getRandomDate(rand),
-        spriteIdx: seed % 16 // Still can be used for something
+        spriteIdx: seed % 16
       };
     }
 
     function getRandomDate(rand) {
-      const start = new Date(2022, 0, 1); // More recent pigs
+      const start = new Date(2022, 0, 1);
       const end = new Date();
       const randomTime = start.getTime() + rand() * (end.getTime() - start.getTime());
       return new Date(randomTime).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
     }
     
-    // Window Management
     let isWindowOpen = false;
     function openAppWindow() {
-        if(isWindowOpen && appWindow.style.zIndex < 2000) { // Bring to front if already open but behind share popup
-             appWindow.style.zIndex = 2000 + Math.floor(Math.random()*100); // Bring to front
-             return;
-        }
-        appWindow.classList.add("open");
-        appWindow.style.zIndex = 1000 + Math.floor(Math.random()*100); // Basic stacking
-        isWindowOpen = true;
-        // If first open, or no pig yet, or canvas not visible, init
-        if (!renderer || !document.getElementById('pigCanvas')) {
-            // The result display logic will handle initThreeJS and createPig
-        }
+      if (isWindowOpen && appWindow.style.zIndex < 2000) {
+        appWindow.style.zIndex = 2000 + Math.floor(Math.random() * 100);
+        return;
+      }
+      appWindow.classList.add("open");
+      appWindow.style.zIndex = 1000 + Math.floor(Math.random() * 100);
+      isWindowOpen = true;
     }
 
     function closeAppWindow() {
-        appWindow.classList.remove("open");
-        isWindowOpen = false;
-        // Optionally stop animation when window is closed if pig is not visible elsewhere
-        // if (animationFrameId) {
-        //    cancelAnimationFrame(animationFrameId);
-        //    animationFrameId = null;
-        // }
+      appWindow.classList.remove("open");
+      isWindowOpen = false;
     }
     
     function toggleAppWindow() {
-        if (isWindowOpen && appWindow.classList.contains("open")) {
-            closeAppWindow();
-        } else {
-            openAppWindow();
-        }
+      if (isWindowOpen && appWindow.classList.contains("open")) {
+        closeAppWindow();
+      } else {
+        openAppWindow();
+      }
     }
 
+    let isRarityWindowOpen = false;
+    function openRarityWindow() {
+      if (isRarityWindowOpen && rarityWindow.style.zIndex < 2000) {
+        rarityWindow.style.zIndex = 2000 + Math.floor(Math.random() * 100);
+        return;
+      }
+      rarityWindow.classList.add("open");
+      rarityWindow.style.zIndex = 1000 + Math.floor(Math.random() * 100);
+      isRarityWindowOpen = true;
+    }
+
+    function closeRarityWindow() {
+      rarityWindow.classList.remove("open");
+      isRarityWindowOpen = false;
+    }
+
+    let isHelpWindowOpen = false;
+    function openHelpWindow() {
+      if (isHelpWindowOpen && helpWindow.style.zIndex < 2000) {
+        helpWindow.style.zIndex = 2000 + Math.floor(Math.random() * 100);
+        return;
+      }
+      helpWindow.classList.add("open");
+      helpWindow.style.zIndex = 1000 + Math.floor(Math.random() * 100);
+      isHelpWindowOpen = true;
+    }
+
+    function closeHelpWindow() {
+      helpWindow.classList.remove("open");
+      isHelpWindowOpen = false;
+    }
 
     function validateInput(twitter) {
       if (!twitter) return "Please enter a Twitter/X handle (without @).";
@@ -1027,15 +1045,9 @@
         showError(validationError);
         return;
       }
-      const handle = "@" + twitterInput; // Add @ internally
-      const seed = hashString(handle.toLowerCase() + (customId ? `_sid_${customId}` : "_def_")); // More robust seed
+      const handle = "@" + twitterInput;
+      const seed = hashString(handle.toLowerCase() + (customId ? `_sid_${customId}` : "_def_"));
       runGeneration(handle, seed);
-    }
-
-    function randomPig() {
-      const randomHandle = "@RandomPiglet" + Math.floor(Math.random() * 9999);
-      const seed = hashString(randomHandle + Date.now().toString());
-      runGeneration(randomHandle, seed);
     }
 
     function runGeneration(handle, seed) {
@@ -1045,7 +1057,8 @@
       const progress = document.getElementById("progressBar");
       const loadingText = document.getElementById("loadingText");
       const generateBtn = document.getElementById("generateBtn");
-      const randomBtn = document.getElementById("randomBtn");
+      const twitterInput = document.getElementById("twitter");
+      const customIdInput = document.getElementById("customId");
 
       resultDiv.style.display = "none";
       resultDiv.innerHTML = "";
@@ -1053,12 +1066,10 @@
       loadingText.innerText = "";
       errorElem.classList.remove('show');
       generateBtn.disabled = true;
-      randomBtn.disabled = true;
 
       const loadingMessages = [
-        "Consulting the Pig Oracle...", "Calibrating Snout Boop- Tarifiers...",
-        "Counting Curly Tails...", "Mixing Virtual Mud...", "Fluffing Pixel Pillows...",
-        "Generating Oinks & Giggles..."
+        "Consulting the Pig Oracle...", "Calibrating Snout Boop-Tarifiers...",
+        "Counting Curly Tails...", "Mixing Virtual Mud...", "Fluffing Pixel Pillows..."
       ];
       let pct = 0;
       let messageIndex = 0;
@@ -1077,12 +1088,13 @@
           loadingText.innerText = "Piggy Perfection Achieved!";
           setTimeout(() => {
             displayResult(handle, attr);
-            generateBtn.disabled = false;
-            randomBtn.disabled = false;
+            generateBtn.disabled = true;
+            twitterInput.disabled = true;
+            customIdInput.disabled = true;
             loadingText.innerText = "";
           }, 600);
         }
-      }, 300); // Slower, more "retro" loading
+      }, 300);
     }
 
     function displayResult(handle, attr) {
@@ -1091,69 +1103,48 @@
       
       resultDiv.innerHTML = `
         <div class="result-header">
-          <div class="pig-sprite">
-            <canvas id="pigCanvas"></canvas>
-          </div>
+          <div class="pig-sprite"><canvas id="pigCanvas"></canvas></div>
           <strong>${currentPig.name}</strong>
           <div><small>(${handle}'s Companion)</small> <span class="rarity-indicator rarity-${attr.rarity.class}" title="${attr.rarity.name} Pig"></span></div>
         </div>
-        
-        <div class="attribute-row">
-          <span class="attribute-label">Breed:</span> <span>${attr.breed}</span>
-        </div>
-        <div class="attribute-row">
-          <span class="attribute-label">Skin:</span> <span>${attr.skin}</span>
-        </div>
-        <div class="attribute-row">
-          <span class="attribute-label">Personality:</span> <span>${attr.trait}</span>
-        </div>
-        <div class="attribute-row">
-          <span class="attribute-label">Accessory:</span> <span>${attr.accessory}</span>
-        </div>
-        <div class="attribute-row">
-          <span class="attribute-label">Hobby:</span> <span>${attr.hobby}</span>
-        </div>
-        <div class="attribute-row">
-          <span class="attribute-label">Mood:</span> <span>${attr.mood}</span>
-        </div>
-        <div class="attribute-row">
-          <span class="attribute-label">Born:</span> <span>${attr.birthdate}</span>
-        </div>
-        <div class="attribute-row">
-          <span class="attribute-label">Rarity:</span> <span>${attr.rarity.name}</span>
-        </div>
-        
+        <div class="attribute-row"><span class="attribute-label">Breed:</span> <span>${attr.breed}</span></div>
+        <div class="attribute-row"><span class="attribute-label">Skin:</span> <span>${attr.skin}</span></div>
+        <div class="attribute-row"><span class="attribute-label">Personality:</span> <span>${attr.trait}</span></div>
+        <div class="attribute-row"><span class="attribute-label">Accessory:</span> <span>${attr.accessory}</span></div>
+        <div class="attribute-row"><span class="attribute-label">Hobby:</span> <span>${attr.hobby}</span></div>
+        <div class="attribute-row"><span class="attribute-label">Mood:</span> <span>${attr.mood}</span></div>
+        <div class="attribute-row"><span class="attribute-label">Born:</span> <span>${attr.birthdate}</span></div>
+        <div class="attribute-row"><span class="attribute-label">Rarity:</span> <span>${attr.rarity.name}</span></div>
         <div class="pig-stats">
           <strong>Stats:</strong> Cuteness: ${attr.cuteness}/100 | Intelligence: ${attr.intelligence}/100 | Luck: ${attr.luck}/100
         </div>
-        
         <div class="share-section">
           <button class="share-btn" onclick="openShareConfirmation()">
-            <span class="twitter-icon">𝕏</span> Share on X
+            <span class="twitter-icon">X</span> Share on X
           </button>
-          <button class="share-btn" onclick="copyPigDetails()">
-            📋 Copy Details
-          </button>
+          <button class="share-btn" onclick="copyPigDetails()">📋 Copy Details</button>
         </div>
       `;
       resultDiv.style.display = "block";
       
-      // Crucial: Initialize or re-initialize ThreeJS for the new canvas
-      setTimeout(() => { // Timeout to ensure DOM is updated
-        initThreeJS(); 
-        createPig(attr);
-      }, 50); // Short delay
+      setTimeout(() => {
+        try {
+          initThreeJS();
+          createPig(attr);
+        } catch (e) {
+          console.error("Error initializing Three.js:", e);
+          showError("Failed to render pig sprite. Try again!");
+        }
+      }, 50);
     }
 
     function generatePigName(attr) {
-      const firstParts = ["Oinkers", "Hamlet", "Peppa", "Porkchop", "Wilbur", "Snuffles", "Sir Reginald", "Princess", "Duke", "Lady", "Baron Von", "Professor"];
-      const lastParts = ["Snoutly", "Oinkerton", "Truffleton", "Pigglesby", "Mudfield", "Squealington", "Hogsworth", "Baconstein"];
-      const titles = ["the Great", "the Wise", "the Jolly", "of Mudlantis", "the Magnificent", "the Sleepy", "Esq."];
+      const firstParts = ["Oinkers", "Hamlet", "Peppa", "Porkchop", "Wilbur", "Snuffles", "Sir Reginald", "Princess"];
+      const lastParts = ["Snoutly", "Oinkerton", "Truffleton", "Pigglesby", "Mudfield", "Hogsworth"];
+      const titles = ["the Great", "the Wise", "the Jolly", "of Mudlantis"];
       
-      const rand = seededRandom(hashString(attr.breed + attr.trait + attr.rarity.name)); // Use attributes for name seed
-      
-      let name = firstParts[Math.floor(rand() * firstParts.length)];
-      name += " " + lastParts[Math.floor(rand() * lastParts.length)];
+      const rand = seededRandom(hashString(attr.breed + attr.trait + attr.rarity.name));
+      let name = firstParts[Math.floor(rand() * firstParts.length)] + " " + lastParts[Math.floor(rand() * lastParts.length)];
       if (rand() > 0.7 && (attr.rarity.name === "Epic" || attr.rarity.name === "Legendary")) {
         name += " " + titles[Math.floor(rand() * titles.length)];
       }
@@ -1164,12 +1155,9 @@
       const errorElem = document.getElementById("error");
       errorElem.innerText = message;
       errorElem.classList.add('show');
-      setTimeout(() => {
-        errorElem.classList.remove('show');
-      }, 5000);
+      setTimeout(() => errorElem.classList.remove('show'), 5000);
     }
     
-    // SHARE FUNCTIONALITY
     const shareConfirmationPopup = document.getElementById("shareConfirmation");
     const uploadStatusElem = document.getElementById("uploadStatus");
     const uploadProgressBarElem = document.getElementById("uploadProgressBar");
@@ -1177,47 +1165,38 @@
 
     function openShareConfirmation() {
       if (!currentPig || !renderer) {
-        alert("Please generate a pig first!");
+        showError("Please generate a pig first!");
         return;
       }
       
-      uploadStatusElem.innerText = "Capturing perfect pig pose...";
+      uploadStatusElem.innerText = "Capturing pig pose...";
       uploadProgressBarElem.style.width = "0%";
       sharePreviewImg.style.display = "none";
-      sharePreviewImg.src = ""; // Clear previous
+      sharePreviewImg.src = "";
       pigImageUrlForSharing = null;
       
       shareConfirmationPopup.style.display = "block";
-      shareConfirmationPopup.style.zIndex = appWindow.style.zIndex + 100; // Ensure it's on top
+      shareConfirmationPopup.style.zIndex = parseInt(appWindow.style.zIndex || 1000) + 100;
 
-      // Capture canvas
       try {
-        renderer.render(scene, camera); // Ensure latest frame is rendered
+        renderer.render(scene, camera);
         const dataURL = renderer.domElement.toDataURL('image/png');
-        
-        sharePreviewImg.onload = () => { // Ensure image is loaded before showing
-            sharePreviewImg.style.display = "block";
-        }
+        sharePreviewImg.onload = () => { sharePreviewImg.style.display = "block"; };
         sharePreviewImg.src = dataURL;
         
-        uploadStatusElem.innerText = "Polishing piggy portrait...";
+        uploadStatusElem.innerText = "Polishing portrait...";
         uploadProgressBarElem.style.width = "50%";
         
-        // Simulate image "upload" or processing
         setTimeout(() => {
           uploadStatusElem.innerText = "Image ready for X!";
           uploadProgressBarElem.style.width = "100%";
-          // In a real app, you'd upload dataURL to a server and get back a URL.
-          // For this demo, we'll pretend the dataURL is the shareable "URL" (though too long for a real tweet URL field)
-          // Or generate a placeholder URL.
-          pigImageUrlForSharing = `https://your-app.com/pig-image-${Date.now()}.png`; // Placeholder
+          pigImageUrlForSharing = `https://your-app.com/pig-image-${Date.now()}.png`;
           document.getElementById('confirmShareBtn').disabled = false;
         }, 1200);
-
       } catch (e) {
         console.error('Canvas capture failed:', e);
-        uploadStatusElem.innerText = "Oops! Camera shy pig. Sharing stats only.";
-        uploadProgressBarElem.style.width = "100%"; // Still complete the bar
+        uploadStatusElem.innerText = "Camera shy pig. Sharing stats only.";
+        uploadProgressBarElem.style.width = "100%";
         pigImageUrlForSharing = null;
         document.getElementById('confirmShareBtn').disabled = false;
       }
@@ -1229,36 +1208,23 @@
     
     function shareOnX() {
       if (!currentPig) return;
-      
       const { name, handle, attributes } = currentPig;
       const { rarity, breed, trait, accessory } = attributes;
       
       let tweetText = `Behold! My #PigGenerator95 creation for ${handle}: ${name}! ✨
 A magnificent ${rarity.name} ${breed} pig, known for its ${trait} personality and stylish ${accessory}.`;
-
-      if (pigImageUrlForSharing) { // If an image URL was "generated"
-        // For a real app with actual image URLs:
-        // tweetText += `\nImage: ${pigImageUrlForSharing}`; 
-        // Since we don't have a real URL, we'll just mention the image.
-        tweetText += `\n(Includes an amazing image of the pig!)`;
-      }
-      tweetText += `\n\nGenerate your own: [Your App Link Here] #DigitalPig #RetroGaming`; // Replace [Your App Link Here]
+      if (pigImageUrlForSharing) tweetText += `\n(Includes an amazing image of the pig!)`;
+      tweetText += `\n\nGenerate your own: [Your App Link] #DigitalPig #RetroGaming`;
       
       const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(tweetText)}`;
-      window.open(twitterUrl, '_blank', 'width=600,height=450,resizable=yes,scrollbars=yes');
-      
+      window.open(twitterUrl, '_blank', 'width=600,height=450');
       closeShareConfirmation();
-      setTimeout(() => { 
-        // Non-blocking alert, or a custom in-app notification
-        console.log("Pig share intent opened! Check Twitter.");
-        // Could show a small temp message on main UI.
-      }, 200);
     }
 
     function copyPigDetails() {
       if (!currentPig) return;
       const { name, handle, attributes } = currentPig;
-      const details = `🐷 ${name} (${handle}'s Pig) 🐷
+      const details = `${name} (${handle}'s Pig)
 Rarity: ${attributes.rarity.name}
 Breed: ${attributes.breed} | Skin: ${attributes.skin}
 Personality: ${attributes.trait} | Mood: ${attributes.mood}
@@ -1268,14 +1234,13 @@ Stats: Cuteness ${attributes.cuteness}, Intelligence ${attributes.intelligence},
 Generated with Pig Generator 95!`;
       
       navigator.clipboard.writeText(details).then(() => {
-        showError("Pig details copied to clipboard! Oink-tastic!"); // Re-use error for notifications
+        showError("Pig details copied to clipboard!");
       }).catch(err => {
         showError("Failed to copy. Try manually!");
-        console.error('Failed to copy text: ', err);
+        console.error('Clipboard error:', err);
       });
     }
 
-    // Clock
     function updateClock() {
       const now = new Date();
       const timeString = now.toLocaleTimeString('en-US', { hour12: true, hour: '2-digit', minute: '2-digit' });
@@ -1284,46 +1249,40 @@ Generated with Pig Generator 95!`;
     setInterval(updateClock, 1000);
     updateClock();
 
-    // Make window draggable (basic implementation)
-    let offsetX, offsetY, isDragging = false;
-    if (appWindowHeader) {
-        appWindowHeader.addEventListener('mousedown', (e) => {
-            if (e.target.classList.contains('close-btn')) return; // Don't drag if clicking close
-            isDragging = true;
-            offsetX = e.clientX - appWindow.offsetLeft;
-            offsetY = e.clientY - appWindow.offsetTop;
-            appWindow.style.cursor = 'grabbing';
-            appWindow.style.zIndex = 2000 + Math.floor(Math.random()*100); // Bring to front
+    let offsetX, offsetY, isDragging = false, activeWindow = null;
+    [appWindowHeader, rarityWindowHeader, helpWindowHeader].forEach(header => {
+      if (header) {
+        header.addEventListener('mousedown', (e) => {
+          if (e.target.classList.contains('close-btn')) return;
+          activeWindow = header.parentElement;
+          isDragging = true;
+          offsetX = e.clientX - activeWindow.offsetLeft;
+          offsetY = e.clientY - activeWindow.offsetTop;
+          activeWindow.style.cursor = 'grabbing';
+          activeWindow.style.zIndex = 2000 + Math.floor(Math.random() * 100);
         });
-    }
+      }
+    });
 
     document.addEventListener('mousemove', (e) => {
-        if (!isDragging) return;
-        const x = e.clientX - offsetX;
-        const y = e.clientY - offsetY;
-        // Basic boundary checks
-        const maxX = window.innerWidth - appWindow.offsetWidth;
-        const maxY = window.innerHeight - appWindow.offsetHeight - document.querySelector('.taskbar').offsetHeight;
-
-        appWindow.style.left = `${Math.max(0, Math.min(x, maxX))}px`;
-        appWindow.style.top = `${Math.max(0, Math.min(y, maxY))}px`;
+      if (!isDragging || !activeWindow) return;
+      const x = e.clientX - offsetX;
+      const y = e.clientY - offsetY;
+      const maxX = window.innerWidth - activeWindow.offsetWidth;
+      const maxY = window.innerHeight - activeWindow.offsetHeight - document.querySelector('.taskbar').offsetHeight;
+      activeWindow.style.left = `${Math.max(0, Math.min(x, maxX))}px`;
+      activeWindow.style.top = `${Math.max(0, Math.min(y, maxY))}px`;
     });
 
     document.addEventListener('mouseup', () => {
-        if (isDragging) {
-            isDragging = false;
-            appWindow.style.cursor = 'default';
+      if (isDragging) {
+        isDragging = false;
+        if (activeWindow) {
+          activeWindow.style.cursor = 'default';
+          activeWindow = null;
         }
+      }
     });
-
-    // Initial setup
-    document.addEventListener('DOMContentLoaded', () => {
-        // Any initial setup after DOM is loaded.
-        // For example, if you want the window to be open by default:
-        // openAppWindow(); 
-        // generatePig(); // or a default pig display
-    });
-
   </script>
 </body>
 </html>
