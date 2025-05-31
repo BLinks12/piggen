@@ -1,13 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Pig Generator 95 - Enhanced Edition</title>
   <style>
     body {
       margin: 0;
-      font-family: 'MS Sans Serif', Tahoma, sans-serif;
+      font-family: 'MS Sans Serif', Tahoma, Geneva, sans-serif;
       background: linear-gradient(45deg, #008080 0%, #20b2aa 100%);
       color: #000;
       overflow: hidden;
@@ -63,9 +63,7 @@
       background-color: #ff99cc;
       border: 1px solid #cc6699;
       position: relative;
-      box-shadow: 
-        inset 2px 2px #ffcce5,
-        inset -2px -2px #ff66aa;
+      box-shadow: inset 2px 2px #ffcce5, inset -2px -2px #ff66aa;
     }
     .pixel-pig-icon::before, .pixel-pig-icon::after {
       content: '';
@@ -179,6 +177,7 @@
       opacity: 0;
       display: none;
       font-size: 12px;
+      border-radius: 0;
       max-height: 90vh;
       z-index: 1000;
       transition: opacity 0.15s ease-out, transform 0.15s ease-out;
@@ -198,6 +197,7 @@
       align-items: center;
       font-weight: bold;
       font-size: 11px;
+      text-shadow: 1px 1px 1px #00000060;
       height: 20px;
     }
     
@@ -209,30 +209,13 @@
       overflow-y: auto;
     }
     
-    .rarity-content, .help-content {
-      font-size: 11px;
-      line-height: 1.5;
-      color: #000080;
-    }
-    .rarity-content h3, .help-content h3 {
-      margin-top: 0;
-      margin-bottom: 10px;
-      font-size: 13px;
-      color: #000080;
-      text-align: center;
-    }
-    .rarity-content p, .help-content p { margin: 8px 0; }
-    .rarity-content ul { padding-left: 20px; margin: 10px 0; }
-    .rarity-content li { margin-bottom: 6px; display: flex; align-items: center; }
-    .rarity-content li .rarity-indicator { margin-right: 8px; }
-    
     .close-btn {
       width: 16px;
       height: 16px;
       background: #c0c0c0;
       border: 1px outset #dfdfdf;
       font-size: 10px;
-      font-family: "MS Sans Serif", sans-serif;
+      font-family: "MS Sans Serif", "Arial Black", sans-serif;
       font-weight: 900;
       cursor: pointer;
       display: flex;
@@ -257,12 +240,7 @@
       position: relative;
       box-shadow: 1px 1px 2px rgba(0,0,0,0.2) inset;
     }
-    
-    #pigCanvas {
-      width: 100%;
-      height: 100%;
-      display: block;
-    }
+    #pigCanvas { width: 100%; height: 100%; display: block; }
     
     .taskbar {
       position: fixed;
@@ -297,6 +275,7 @@
       height: 16px;
       background: linear-gradient(45deg, #ff5555, #ffdd00, #55ff55, #5555ff);
       border: 1px solid #808080;
+      display: inline-block;
     }
     .start-btn:active {
       border: 1px inset #808080;
@@ -306,15 +285,18 @@
     
     input, .btn {
       margin: 4px 0;
-      padding: 5px 7px;
+      padding: 5x 7px;
       width: 100%;
       font-size: 11px;
       border: 1px inset #808080;
       box-sizing: border-box;
-      font-family: 'MS Sans Serif', sans-serif;
+      font-family: 'MS Sans Serif', Tahoma, Geneva, sans-serif;
       background: #ffffff;
     }
-    input:focus { outline: 1px dotted #000000; }
+    input:focus {
+      outline: 1px dotted #000000;
+      background: #ffffff;
+    }
     
     .btn {
       background: #c0c0c0;
@@ -390,7 +372,11 @@
       border-bottom: 1px dotted #a0a0a0;
     }
     .attribute-row:last-child { border-bottom: none; }
-    .attribute-label { font-weight: bold; color: #800000; }
+    
+    .attribute-label {
+      font-weight: bold;
+      color: #800000;
+    }
     
     .error {
       color: #ff0000;
@@ -413,7 +399,7 @@
     }
     
     .clock {
-      font-family: 'Consolas', monospace;
+      font-family: 'Consolas', 'Courier New', monospace;
       font-weight: bold;
       background: #c0c0c0;
       border: 1px inset #808080;
@@ -422,13 +408,15 @@
       margin-right: 2px;
     }
     
-    .form-group { margin-bottom: 10px; }
+    .form-group {
+      margin-bottom: 10px;
+    }
     label {
       display: block;
       margin-bottom: 3px;
       font-weight: bold;
       color: #000080;
-      font-size: 11px;
+      font-size:11px;
     }
     
     .pig-stats {
@@ -460,6 +448,7 @@
       justify-content: center;
       gap: 10px;
     }
+    
     .share-btn {
       display: flex;
       align-items: center;
@@ -480,7 +469,12 @@
       background: #b0b0b0;
       box-shadow: none;
     }
-    .twitter-icon { color: #1DA1F2; font-weight: bold; font-size: 14px; }
+    
+    .twitter-icon {
+      color: #1DA1F2;
+      font-weight: bold;
+      font-size: 14px;
+    }
     
     .share-confirmation {
       position: fixed;
@@ -504,6 +498,7 @@
       font-size: 13px;
     }
     .share-confirmation p { margin-bottom: 12px; }
+    
     .confirmation-buttons {
       display: flex;
       gap: 10px;
@@ -517,6 +512,7 @@
       color: #000080;
       font-weight: bold;
     }
+    
     .upload-progress {
       height: 12px;
       background: #c0c0c0;
@@ -548,6 +544,7 @@
       display: none;
       background-color: #f0f0f0;
     }
+
     .share-footer {
       margin-top: 12px;
       font-size: 10px;
@@ -557,28 +554,41 @@
 </head>
 <body>
   <div class="desktop">
+    <!-- Pig Generator Icon -->
     <div class="icon" ondblclick="openAppWindow()" tabindex="0"> 
       <div class="icon-image">
-        <div class="pixel-pig-icon"><div class="pixel-pig-snout"></div></div>
+        <div class="pixel-pig-icon">
+          <div class="pixel-pig-snout"></div>
+        </div>
       </div>
       <div class="icon-label">PigGen95.exe</div>
     </div>
     
+    <!-- X.com Icon -->
     <div class="icon" ondblclick="window.open('https://x.com/PigGen95', '_blank')" tabindex="0" style="top: 2rem; left: 8rem;">
-      <div class="icon-image"><div class="pixel-x-icon"></div></div>
+      <div class="icon-image">
+        <div class="pixel-x-icon"></div>
+      </div>
       <div class="icon-label">X.com</div>
     </div>
 
+    <!-- Rarity Icon -->
     <div class="icon" ondblclick="openRarityWindow()" tabindex="0" style="top: 2rem; left: 14rem;">
-      <div class="icon-image"><div class="pixel-rarity-icon"></div></div>
+      <div class="icon-image">
+        <div class="pixel-rarity-icon"></div>
+      </div>
       <div class="icon-label">Rarity Guide</div>
     </div>
 
+    <!-- Help Icon -->
     <div class="icon" ondblclick="openHelpWindow()" tabindex="0" style="top: 2rem; left: 20rem;">
-      <div class="icon-image"><div class="pixel-help-icon"></div></div>
+      <div class="icon-image">
+        <div class="pixel-help-icon"></div>
+      </div>
       <div class="icon-label">Help</div>
     </div>
 
+    <!-- Main App Window -->
     <div class="window" id="appWindow">
       <div class="window-header" id="appWindowHeader"> 
         <span>Pig Generator 95 - Enhanced</span>
@@ -605,6 +615,7 @@
       </div>
     </div>
 
+    <!-- Rarity Window -->
     <div class="window" id="rarityWindow">
       <div class="window-header" id="rarityWindowHeader">
         <span>Rarity Guide</span>
@@ -624,6 +635,7 @@
       </div>
     </div>
 
+    <!-- Help Window -->
     <div class="window" id="helpWindow">
       <div class="window-header" id="helpWindowHeader">
         <span>Pig Generator 95 Help</span>
@@ -654,13 +666,14 @@
 
   <div class="share-confirmation" id="shareConfirmation">
     <h3>Share Pig on X</h3>
-    <p>Ready to show off your unique pig?</p>
+    <p>Ready to show off your unique pig? Download the image and attach it to your tweet for the full experience!</p>
     <div class="upload-status" id="uploadStatus">Preparing image...</div>
     <div class="upload-progress">
       <div class="upload-progress-bar" id="uploadProgressBar"></div>
     </div>
     <img id="sharePreview" class="share-preview" alt="Pig preview">
     <div class="confirmation-buttons">
+      <button class="btn" onclick="downloadPigImage()">Download Image</button>
       <button class="btn" onclick="shareOnX()" id="confirmShareBtn">Yes, Share!</button>
       <button class="btn" onclick="closeShareConfirmation()">Cancel</button>
     </div>
@@ -671,8 +684,11 @@
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <script>
+    // Store current pig for sharing
     let currentPig = null;
     let pigImageUrlForSharing = null;
+    
+    // Three.js pig creation variables
     let scene, camera, renderer, pigMesh;
     let animationFrameId;
 
@@ -686,14 +702,11 @@
     function initThreeJS() {
       const canvasContainer = document.querySelector('.pig-sprite');
       const canvas = document.getElementById('pigCanvas');
-      if (!canvas || !canvasContainer) {
-        console.error("Canvas or container not found for Three.js");
-        return;
-      }
-
+      if (!canvas || !canvasContainer) return;
+      
       if (renderer) {
         renderer.dispose();
-        cancelAnimationFrame(animationFrameId);
+        if (animationFrameId) cancelAnimationFrame(animationFrameId);
       }
 
       scene = new THREE.Scene();
@@ -734,25 +747,20 @@
     }
     
     function createPig(attributes) {
-      if (!scene || !renderer || !camera) {
-        console.error("Three.js not initialized properly");
-        return;
-      }
+      if (!scene) return;
       if (pigMesh) {
         scene.remove(pigMesh);
         pigMesh.traverse(child => {
           if (child.geometry) child.geometry.dispose();
           if (child.material) {
-            if (Array.isArray(child.material)) {
-              child.material.forEach(material => material.dispose());
-            } else {
-              child.material.dispose();
-            }
+            if (Array.isArray(child.material)) child.material.forEach(material => material.dispose());
+            else child.material.dispose();
           }
         });
       }
       
       const pigGroup = new THREE.Group();
+      
       const skinColors = {
         'Rosy Pink': 0xffb6c1, 'Charcoal Black': 0x333333, 'Spotted': 0xffb6c1,
         'Russet Red': 0x8b5a2b, 'Ginger': 0xd27d1e, 'Pearl White': 0xf5f5f5,
@@ -807,7 +815,8 @@
         earShape.quadraticCurveTo(0.15, 0.35, 0.2, 0.2);
         earShape.lineTo(0.1, 0);
         earShape.closePath();
-        return new THREE.ExtrudeGeometry(earShape, { depth: 0.05, bevelEnabled: false });
+        const extrudeSettings = { depth: 0.05, bevelEnabled: false };
+        return new THREE.ExtrudeGeometry(earShape, extrudeSettings);
       }
       const earGeometry = createEarShape();
       const ear1 = new THREE.Mesh(earGeometry, material);
@@ -865,7 +874,7 @@
       }
       
       if (attributes.accessory && attributes.accessory !== "None") {
-        const accessoryMaterial = new THREE.MeshPhongMaterial({ shininess: 50 });
+        const accessoryMaterial = new THREE.MeshPhongMaterial({shininess: 50});
         if (attributes.accessory === 'Top Hat') {
           accessoryMaterial.color.setHex(0x111111);
           const hatCrown = new THREE.Mesh(new THREE.CylinderGeometry(0.18, 0.22, 0.35, 16), accessoryMaterial);
@@ -881,10 +890,12 @@
           for (let i = 0; i < 6; i++) {
             const point = new THREE.Mesh(new THREE.ConeGeometry(0.04, 0.12, 4), accessoryMaterial);
             const angle = (i * Math.PI * 2) / 6;
-            point.position.set(Math.cos(angle) * 0.24, 0.1, Math.sin(angle) * 0.24);
+            point.position.set(
+              Math.cos(angle) * 0.24, 0.1, Math.sin(angle) * 0.24
+            );
             point.position.y += 0.72;
             point.position.z += 0.65;
-            point.rotation.x = Math.PI / 12;
+            point.rotation.x = Math.PI/12;
             head.add(point);
           }
         }
@@ -907,17 +918,15 @@
         pigMesh.rotation.y += 0.008;
         pigMesh.position.y = -0.3 + Math.sin(Date.now() * 0.002) * 0.05;
       }
-      if (renderer && scene && camera) {
-        renderer.render(scene, camera);
-      }
+      if(renderer && scene && camera) renderer.render(scene, camera);
     }
     
     const breeds = ["Yorkshire", "Duroc", "Berkshire", "Hampshire", "Landrace", "Tamworth", "Gloucestershire", "Mangalitsa", "Ossabaw", "Kunekune", "Potbelly", "Meishan"];
-    const skins = ["Rosy Pink", "Charcoal Black", "Spotted", "Russet Red", "Ginger", "Pearl White", "Chocolate Brown", "Golden", "Silver"];
-    const traits = ["Curious", "Lazy", "Playful", "Genius", "Bold", "Mellow", "Adventurous", "Shy", "Energetic", "Mischievous", "Noble"];
-    const accessories = ["None", "Top Hat", "Bow Tie", "Sunglasses", "Party Hat", "Monocle", "Crown", "Bandana"];
-    const moods = ["Neutral", "Happy", "Joyful", "Beaming", "Starstruck", "Cool", "Thinking", "Sleepy", "Partying", "Curious"];
-    const hobbies = ["Mud Wrestling", "Truffle Hunting", "Competitive Eating", "Gaming", "Stargazing", "Gardening", "Tap Dancing", "Pixel Art"];
+    const skins = ["Rosy Pink", "Charcoal Black", "Spotted", "Russet Red", "Ginger", "Pearl White", "Chocolate Brown", "Golden", "Silver", "Muddy Brown"];
+    const traits = ["Curious", "Lazy", "Playful", "Genius", "Bold", "Mellow", "Adventurous", "Shy", "Energetic", "Zen Master", "Mischievous", "Noble", "Grumpy", "Philosophical"];
+    const accessories = ["None", "Top Hat", "Bow Tie", "Sunglasses", "Party Hat", "Monocle", "Scarf", "Crown", "Bandana", "Flower Crown", "Goggles", "Cape", "Necklace", "Tiny Backpack"];
+    const moods = ["😑 Neutral", "🙂 Happy", "😊 Joyful", "😁 Beaming", "🤩 Starstruck", "😎 Cool", "🤔 Thinking", "😴 Sleepy", "🥳 Partying", "🧐 Curious", "🥺 Pleading"];
+    const hobbies = ["Mud Wrestling", "Truffle Hunting", "Competitive Eating", "Gaming", "Stargazing", "Gardening", "Tap Dancing", "Opera Singing", "Pixel Art", "Yoga Poses", "Writing Poetry", "Cloud Watching"];
 
     function hashString(str) {
       let h1 = 2166136261, h2 = 2166136261;
@@ -974,12 +983,12 @@
     
     let isWindowOpen = false;
     function openAppWindow() {
-      if (isWindowOpen && appWindow.style.zIndex < 2000) {
-        appWindow.style.zIndex = 2000 + Math.floor(Math.random() * 100);
+      if(isWindowOpen && appWindow.style.zIndex < 2000) {
+        appWindow.style.zIndex = 2000 + Math.floor(Math.random()*100);
         return;
       }
       appWindow.classList.add("open");
-      appWindow.style.zIndex = 1000 + Math.floor(Math.random() * 100);
+      appWindow.style.zIndex = 1000 + Math.floor(Math.random()*100);
       isWindowOpen = true;
     }
 
@@ -989,11 +998,8 @@
     }
     
     function toggleAppWindow() {
-      if (isWindowOpen && appWindow.classList.contains("open")) {
-        closeAppWindow();
-      } else {
-        openAppWindow();
-      }
+      if (isWindowOpen && appWindow.classList.contains("open")) closeAppWindow();
+      else openAppWindow();
     }
 
     let isRarityWindowOpen = false;
@@ -1057,8 +1063,6 @@
       const progress = document.getElementById("progressBar");
       const loadingText = document.getElementById("loadingText");
       const generateBtn = document.getElementById("generateBtn");
-      const twitterInput = document.getElementById("twitter");
-      const customIdInput = document.getElementById("customId");
 
       resultDiv.style.display = "none";
       resultDiv.innerHTML = "";
@@ -1069,7 +1073,8 @@
 
       const loadingMessages = [
         "Consulting the Pig Oracle...", "Calibrating Snout Boop-Tarifiers...",
-        "Counting Curly Tails...", "Mixing Virtual Mud...", "Fluffing Pixel Pillows..."
+        "Counting Curly Tails...", "Mixing Virtual Mud...", "Fluffing Pixel Pillows...",
+        "Generating Oinks & Giggles..."
       ];
       let pct = 0;
       let messageIndex = 0;
@@ -1089,8 +1094,6 @@
           setTimeout(() => {
             displayResult(handle, attr);
             generateBtn.disabled = true;
-            twitterInput.disabled = true;
-            customIdInput.disabled = true;
             loadingText.innerText = "";
           }, 600);
         }
@@ -1103,48 +1106,68 @@
       
       resultDiv.innerHTML = `
         <div class="result-header">
-          <div class="pig-sprite"><canvas id="pigCanvas"></canvas></div>
+          <div class="pig-sprite">
+            <canvas id="pigCanvas"></canvas>
+          </div>
           <strong>${currentPig.name}</strong>
           <div><small>(${handle}'s Companion)</small> <span class="rarity-indicator rarity-${attr.rarity.class}" title="${attr.rarity.name} Pig"></span></div>
         </div>
-        <div class="attribute-row"><span class="attribute-label">Breed:</span> <span>${attr.breed}</span></div>
-        <div class="attribute-row"><span class="attribute-label">Skin:</span> <span>${attr.skin}</span></div>
-        <div class="attribute-row"><span class="attribute-label">Personality:</span> <span>${attr.trait}</span></div>
-        <div class="attribute-row"><span class="attribute-label">Accessory:</span> <span>${attr.accessory}</span></div>
-        <div class="attribute-row"><span class="attribute-label">Hobby:</span> <span>${attr.hobby}</span></div>
-        <div class="attribute-row"><span class="attribute-label">Mood:</span> <span>${attr.mood}</span></div>
-        <div class="attribute-row"><span class="attribute-label">Born:</span> <span>${attr.birthdate}</span></div>
-        <div class="attribute-row"><span class="attribute-label">Rarity:</span> <span>${attr.rarity.name}</span></div>
+        
+        <div class="attribute-row">
+          <span class="attribute-label">Breed:</span> <span>${attr.breed}</span>
+        </div>
+        <div class="attribute-row">
+          <span class="attribute-label">Skin:</span> <span>${attr.skin}</span>
+        </div>
+        <div class="attribute-row">
+          <span class="attribute-label">Personality:</span> <span>${attr.trait}</span>
+        </div>
+        <div class="attribute-row">
+          <span class="attribute-label">Accessory:</span> <span>${attr.accessory}</span>
+        </div>
+        <div class="attribute-row">
+          <span class="attribute-label">Hobby:</span> <span>${attr.hobby}</span>
+        </div>
+        <div class="attribute-row">
+          <span class="attribute-label">Mood:</span> <span>${attr.mood}</span>
+        </div>
+        <div class="attribute-row">
+          <span class="attribute-label">Born:</span> <span>${attr.birthdate}</span>
+        </div>
+        <div class="attribute-row">
+          <span class="attribute-label">Rarity:</span> <span>${attr.rarity.name}</span>
+        </div>
+        
         <div class="pig-stats">
           <strong>Stats:</strong> Cuteness: ${attr.cuteness}/100 | Intelligence: ${attr.intelligence}/100 | Luck: ${attr.luck}/100
         </div>
+        
         <div class="share-section">
           <button class="share-btn" onclick="openShareConfirmation()">
             <span class="twitter-icon">X</span> Share on X
           </button>
-          <button class="share-btn" onclick="copyPigDetails()">📋 Copy Details</button>
+          <button class="share-btn" onclick="copyPigDetails()">
+            📋 Copy Details
+          </button>
         </div>
       `;
       resultDiv.style.display = "block";
       
       setTimeout(() => {
-        try {
-          initThreeJS();
-          createPig(attr);
-        } catch (e) {
-          console.error("Error initializing Three.js:", e);
-          showError("Failed to render pig sprite. Try again!");
-        }
+        initThreeJS();
+        createPig(attr);
       }, 50);
     }
 
     function generatePigName(attr) {
-      const firstParts = ["Oinkers", "Hamlet", "Peppa", "Porkchop", "Wilbur", "Snuffles", "Sir Reginald", "Princess"];
-      const lastParts = ["Snoutly", "Oinkerton", "Truffleton", "Pigglesby", "Mudfield", "Hogsworth"];
-      const titles = ["the Great", "the Wise", "the Jolly", "of Mudlantis"];
+      const firstParts = ["Oinkers", "Hamlet", "Peppa", "Porkchop", "Wilbur", "Snuffles", "Sir Reginald", "Princess", "Duke", "Lady", "Baron Von", "Professor"];
+      const lastParts = ["Snoutly", "Oinkerton", "Truffleton", "Pigglesby", "Mudfield", "Squealington", "Hogsworth", "Baconstein"];
+      const titles = ["the Great", "the Wise", "the Jolly", "of Mudlantis", "the Magnificent", "the Sleepy", "Esq."];
       
       const rand = seededRandom(hashString(attr.breed + attr.trait + attr.rarity.name));
-      let name = firstParts[Math.floor(rand() * firstParts.length)] + " " + lastParts[Math.floor(rand() * lastParts.length)];
+      
+      let name = firstParts[Math.floor(rand() * firstParts.length)];
+      name += " " + lastParts[Math.floor(rand() * lastParts.length)];
       if (rand() > 0.7 && (attr.rarity.name === "Epic" || attr.rarity.name === "Legendary")) {
         name += " " + titles[Math.floor(rand() * titles.length)];
       }
@@ -1165,26 +1188,27 @@
 
     function openShareConfirmation() {
       if (!currentPig || !renderer) {
-        showError("Please generate a pig first!");
+        alert("Please generate a pig first!");
         return;
       }
       
-      uploadStatusElem.innerText = "Capturing pig pose...";
+      uploadStatusElem.innerText = "Capturing perfect pig pose...";
       uploadProgressBarElem.style.width = "0%";
       sharePreviewImg.style.display = "none";
       sharePreviewImg.src = "";
       pigImageUrlForSharing = null;
       
       shareConfirmationPopup.style.display = "block";
-      shareConfirmationPopup.style.zIndex = parseInt(appWindow.style.zIndex || 1000) + 100;
+      shareConfirmationPopup.style.zIndex = parseInt(appWindow.style.zIndex) + 100;
 
       try {
         renderer.render(scene, camera);
         const dataURL = renderer.domElement.toDataURL('image/png');
-        sharePreviewImg.onload = () => { sharePreviewImg.style.display = "block"; };
+        
+        sharePreviewImg.onload = () => sharePreviewImg.style.display = "block";
         sharePreviewImg.src = dataURL;
         
-        uploadStatusElem.innerText = "Polishing portrait...";
+        uploadStatusElem.innerText = "Polishing piggy portrait...";
         uploadProgressBarElem.style.width = "50%";
         
         setTimeout(() => {
@@ -1195,7 +1219,7 @@
         }, 1200);
       } catch (e) {
         console.error('Canvas capture failed:', e);
-        uploadStatusElem.innerText = "Camera shy pig. Sharing stats only.";
+        uploadStatusElem.innerText = "Oops! Camera shy pig. Sharing stats only.";
         uploadProgressBarElem.style.width = "100%";
         pigImageUrlForSharing = null;
         document.getElementById('confirmShareBtn').disabled = false;
@@ -1208,23 +1232,34 @@
     
     function shareOnX() {
       if (!currentPig) return;
+      
       const { name, handle, attributes } = currentPig;
       const { rarity, breed, trait, accessory } = attributes;
       
       let tweetText = `Behold! My #PigGenerator95 creation for ${handle}: ${name}! ✨
-A magnificent ${rarity.name} ${breed} pig, known for its ${trait} personality and stylish ${accessory}.`;
-      if (pigImageUrlForSharing) tweetText += `\n(Includes an amazing image of the pig!)`;
-      tweetText += `\n\nGenerate your own: [Your App Link] #DigitalPig #RetroGaming`;
+A magnificent ${rarity.name} ${breed} pig, known for its ${trait} personality and stylish ${accessory}.
+Generate your own: [Your App Link Here] #DigitalPig #RetroGaming`;
       
       const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(tweetText)}`;
-      window.open(twitterUrl, '_blank', 'width=600,height=450');
+      window.open(twitterUrl, '_blank', 'width=600,height=450,resizable=yes,scrollbars=yes');
+      
       closeShareConfirmation();
+    }
+
+    function downloadPigImage() {
+      const dataURL = document.getElementById('sharePreview').src;
+      const link = document.createElement('a');
+      link.href = dataURL;
+      link.download = 'my_pig.png';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
     }
 
     function copyPigDetails() {
       if (!currentPig) return;
       const { name, handle, attributes } = currentPig;
-      const details = `${name} (${handle}'s Pig)
+      const details = `🐷 ${name} (${handle}'s Pig) 🐷
 Rarity: ${attributes.rarity.name}
 Breed: ${attributes.breed} | Skin: ${attributes.skin}
 Personality: ${attributes.trait} | Mood: ${attributes.mood}
@@ -1234,10 +1269,10 @@ Stats: Cuteness ${attributes.cuteness}, Intelligence ${attributes.intelligence},
 Generated with Pig Generator 95!`;
       
       navigator.clipboard.writeText(details).then(() => {
-        showError("Pig details copied to clipboard!");
+        showError("Pig details copied to clipboard! Oink-tastic!");
       }).catch(err => {
         showError("Failed to copy. Try manually!");
-        console.error('Clipboard error:', err);
+        console.error('Failed to copy text: ', err);
       });
     }
 
