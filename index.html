@@ -13,6 +13,8 @@
       overflow: hidden;
       height: 100vh;
       user-select: none;
+    function checkAnotherPig() {
+      // This function is no longer needed since it's one use per person
     }
     
     .desktop {
@@ -550,6 +552,233 @@
       font-size: 10px;
       color: #505050;
     }
+
+    /* Pig Assistant Styles */
+    .pig-assistant {
+      position: fixed;
+      bottom: 40px;
+      right: 20px;
+      width: 180px;
+      z-index: 3500;
+      animation: assistantBounce 3s ease-in-out infinite;
+      transition: transform 0.3s ease;
+    }
+    
+    @keyframes assistantBounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+    
+    .pig-assistant.minimized {
+      transform: translateY(120px);
+    }
+    
+    .assistant-body {
+      width: 80px;
+      height: 80px;
+      background: #ffb6c1;
+      border-radius: 50%;
+      position: relative;
+      border: 2px solid #000;
+      box-shadow: 3px 3px 8px rgba(0,0,0,0.3);
+      cursor: pointer;
+      margin: 0 auto;
+    }
+    
+    .assistant-body::before {
+      content: '';
+      position: absolute;
+      width: 50px;
+      height: 40px;
+      background: #ffc0cb;
+      border-radius: 50%;
+      bottom: -15px;
+      left: 50%;
+      transform: translateX(-50%);
+      border: 2px solid #000;
+      z-index: -1;
+    }
+    
+    .assistant-eyes {
+      position: absolute;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 50px;
+      display: flex;
+      justify-content: space-between;
+    }
+    
+    .assistant-eye {
+      width: 12px;
+      height: 16px;
+      background: #000;
+      border-radius: 50%;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .assistant-eye::after {
+      content: '';
+      position: absolute;
+      width: 4px;
+      height: 4px;
+      background: #fff;
+      border-radius: 50%;
+      top: 3px;
+      left: 3px;
+    }
+    
+    .assistant-eye.wink {
+      height: 3px;
+      top: 6px;
+    }
+    
+    .assistant-snout {
+      position: absolute;
+      width: 30px;
+      height: 20px;
+      background: #ff99b3;
+      border: 2px solid #000;
+      border-radius: 50%;
+      bottom: 25px;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+    
+    .assistant-snout::before,
+    .assistant-snout::after {
+      content: '';
+      position: absolute;
+      width: 5px;
+      height: 6px;
+      background: #000;
+      border-radius: 50%;
+      top: 6px;
+    }
+    
+    .assistant-snout::before { left: 6px; }
+    .assistant-snout::after { right: 6px; }
+    
+    .assistant-ears {
+      position: absolute;
+      top: -5px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 90px;
+      display: flex;
+      justify-content: space-between;
+    }
+    
+    .assistant-ear {
+      width: 0;
+      height: 0;
+      border-left: 15px solid transparent;
+      border-right: 15px solid transparent;
+      border-bottom: 25px solid #ffb6c1;
+      position: relative;
+      transform: rotate(-20deg);
+    }
+    
+    .assistant-ear::after {
+      content: '';
+      position: absolute;
+      width: 0;
+      height: 0;
+      border-left: 10px solid transparent;
+      border-right: 10px solid transparent;
+      border-bottom: 15px solid #ff99b3;
+      bottom: -20px;
+      left: -10px;
+    }
+    
+    .assistant-ear.right {
+      transform: rotate(20deg);
+    }
+    
+    .assistant-speech {
+      background: #fffef0;
+      border: 2px solid #000;
+      border-radius: 12px;
+      padding: 12px;
+      margin-bottom: 10px;
+      position: relative;
+      font-size: 11px;
+      line-height: 1.4;
+      box-shadow: 2px 2px 6px rgba(0,0,0,0.2);
+      max-width: 180px;
+    }
+    
+    .assistant-speech::after {
+      content: '';
+      position: absolute;
+      bottom: -10px;
+      right: 30px;
+      width: 0;
+      height: 0;
+      border-left: 10px solid transparent;
+      border-right: 10px solid transparent;
+      border-top: 10px solid #000;
+    }
+    
+    .assistant-speech::before {
+      content: '';
+      position: absolute;
+      bottom: -7px;
+      right: 31px;
+      width: 0;
+      height: 0;
+      border-left: 9px solid transparent;
+      border-right: 9px solid transparent;
+      border-top: 9px solid #fffef0;
+      z-index: 1;
+    }
+    
+    .assistant-actions {
+      display: flex;
+      gap: 5px;
+      margin-top: 8px;
+      justify-content: center;
+    }
+    
+    .assistant-btn {
+      background: #c0c0c0;
+      border: 1px outset #dfdfdf;
+      padding: 3px 8px;
+      font-size: 10px;
+      cursor: pointer;
+      font-family: 'MS Sans Serif', Tahoma, Geneva, sans-serif;
+    }
+    
+    .assistant-btn:hover {
+      background: #d0d0d0;
+    }
+    
+    .assistant-btn:active {
+      border: 1px inset #808080;
+      background: #b0b0b0;
+    }
+    
+    .assistant-minimize {
+      position: absolute;
+      top: -5px;
+      right: -5px;
+      width: 16px;
+      height: 16px;
+      background: #ff0000;
+      color: #fff;
+      border: 1px solid #000;
+      border-radius: 50%;
+      font-size: 10px;
+      line-height: 14px;
+      text-align: center;
+      cursor: pointer;
+      display: none;
+    }
+    
+    .pig-assistant:hover .assistant-minimize {
+      display: block;
+    }
   </style>
 </head>
 <body>
@@ -599,9 +828,8 @@
           <label for="twitter">Twitter/X Handle:</label>
           <input type="text" id="twitter" placeholder="e.g. elonmusk (no @)" maxlength="15">
         </div>
-        <div class="form-group">
-          <label for="customId">Optional Seed (for variations):</label>
-          <input type="text" id="customId" placeholder="e.g. lucky7, birthday2024" maxlength="20">
+        <div class="form-group" style="font-size: 10px; color: #666; margin-top: -5px; margin-bottom: 10px;">
+          ⚠️ You can only generate ONE pig EVER. Choose your handle wisely!
         </div>
         <button class="btn" onclick="generatePig()" id="generateBtn">Generate My Pig</button>
         
@@ -682,11 +910,38 @@
     </div>
   </div>
 
+  <!-- Pig Assistant -->
+  <div class="pig-assistant" id="pigAssistant" style="display: none;">
+    <div class="assistant-speech" id="assistantSpeech">
+      <div id="assistantText">Hi! I'm Oinky, your Pig Assistant! 🐷 Would you like help generating your perfect pig?</div>
+      <div class="assistant-actions" id="assistantActions">
+        <button class="assistant-btn" onclick="assistantResponse('yes')">Yes!</button>
+        <button class="assistant-btn" onclick="assistantResponse('no')">No thanks</button>
+      </div>
+    </div>
+    <div class="assistant-body" onclick="toggleAssistant()">
+      <div class="assistant-minimize" onclick="minimizeAssistant(event)">−</div>
+      <div class="assistant-ears">
+        <div class="assistant-ear left"></div>
+        <div class="assistant-ear right"></div>
+      </div>
+      <div class="assistant-eyes">
+        <div class="assistant-eye" id="leftEye"></div>
+        <div class="assistant-eye" id="rightEye"></div>
+      </div>
+      <div class="assistant-snout"></div>
+    </div>
+  </div>
+
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <script>
     // Store current pig for sharing
     let currentPig = null;
     let pigImageUrlForSharing = null;
+    let hasGeneratedPig = false; // Track if user has generated any pig
+    
+    // Store all generated pigs (handle -> pig data)
+    const pigRegistry = {};
     
     // Three.js pig creation variables
     let scene, camera, renderer, pigMesh;
@@ -1043,16 +1298,47 @@
     }
 
     function generatePig() {
+      console.log("generatePig called");
+      
+      // Check if user has already generated a pig
+      if (hasGeneratedPig) {
+        showError("You've already generated your one unique pig! Each person can only generate one pig.");
+        return;
+      }
+      
       const twitterInput = document.getElementById("twitter").value.trim();
-      const customId = document.getElementById("customId").value.trim();
       
       const validationError = validateInput(twitterInput);
       if (validationError) {
         showError(validationError);
         return;
       }
+      
       const handle = "@" + twitterInput;
-      const seed = hashString(handle.toLowerCase() + (customId ? `_sid_${customId}` : "_def_"));
+      const handleKey = handle.toLowerCase();
+      
+      // Check if this user already has a pig
+      if (pigRegistry[handleKey]) {
+        // Show existing pig
+        const existingPig = pigRegistry[handleKey];
+        showError(`${handle} already has a pig! Displaying your unique companion...`);
+        
+        // Update button text temporarily
+        const generateBtn = document.getElementById("generateBtn");
+        generateBtn.textContent = "Viewing Existing Pig";
+        generateBtn.disabled = true;
+        
+        setTimeout(() => {
+          displayResult(existingPig.handle, existingPig.attributes);
+          generateBtn.textContent = "Generate My Pig";
+          generateBtn.disabled = false;
+        }, 1500);
+        
+        return;
+      }
+      
+      // Generate new pig for first-time user
+      const seed = hashString(handleKey + "_exclusive_pig_2024");
       runGeneration(handle, seed);
     }
 
@@ -1093,7 +1379,7 @@
           loadingText.innerText = "Piggy Perfection Achieved!";
           setTimeout(() => {
             displayResult(handle, attr);
-            generateBtn.disabled = true;
+            generateBtn.disabled = false;
             loadingText.innerText = "";
           }, 600);
         }
@@ -1102,7 +1388,25 @@
 
     function displayResult(handle, attr) {
       const resultDiv = document.getElementById("result");
+      const handleKey = handle.toLowerCase();
+      const generateBtn = document.getElementById("generateBtn");
+      const twitterInput = document.getElementById("twitter");
+      
+      // Check if this is a new pig or existing one
+      const isNewPig = !pigRegistry[handleKey];
+      
       currentPig = { handle: handle, attributes: attr, name: generatePigName(attr) };
+      
+      // Store in registry if new
+      if (isNewPig) {
+        pigRegistry[handleKey] = {
+          handle: handle,
+          attributes: attr,
+          name: currentPig.name,
+          generatedAt: new Date().toISOString()
+        };
+        hasGeneratedPig = true; // Mark that user has generated a pig
+      }
       
       resultDiv.innerHTML = `
         <div class="result-header">
@@ -1110,7 +1414,7 @@
             <canvas id="pigCanvas"></canvas>
           </div>
           <strong>${currentPig.name}</strong>
-          <div><small>(${handle}'s Companion)</small> <span class="rarity-indicator rarity-${attr.rarity.class}" title="${attr.rarity.name} Pig"></span></div>
+          <div><small>(${handle}'s ${isNewPig ? 'New' : 'Exclusive'} Companion)</small> <span class="rarity-indicator rarity-${attr.rarity.class}" title="${attr.rarity.name} Pig"></span></div>
         </div>
         
         <div class="attribute-row">
@@ -1142,6 +1446,10 @@
           <strong>Stats:</strong> Cuteness: ${attr.cuteness}/100 | Intelligence: ${attr.intelligence}/100 | Luck: ${attr.luck}/100
         </div>
         
+        <div style="text-align: center; margin-top: 10px; font-size: 10px; color: #666;">
+          ${isNewPig ? '🎉 This is your ONE pig! You cannot generate another one!' : '🔒 This pig belongs exclusively to ' + handle}
+        </div>
+        
         <div class="share-section">
           <button class="share-btn" onclick="openShareConfirmation()">
             <span class="twitter-icon">X</span> Share on X
@@ -1152,6 +1460,14 @@
         </div>
       `;
       resultDiv.style.display = "block";
+      
+      // Permanently disable the generate button if this is a new pig
+      if (isNewPig) {
+        generateBtn.disabled = true;
+        generateBtn.textContent = "Pig Generated! (One Per Person)";
+        twitterInput.disabled = true;
+        twitterInput.placeholder = "You've used your one pig generation!";
+      }
       
       setTimeout(() => {
         initThreeJS();
@@ -1194,7 +1510,6 @@
       
       uploadStatusElem.innerText = "Capturing perfect pig pose...";
       uploadProgressBarElem.style.width = "0%";
-      sharePreviewImg.style.display = "none";
       sharePreviewImg.src = "";
       pigImageUrlForSharing = null;
       
@@ -1318,6 +1633,242 @@ Generated with Pig Generator 95!`;
         }
       }
     });
+
+    // Pig Assistant functionality
+    let assistantVisible = false;
+    let assistantMinimized = false;
+    let assistantTipIndex = 0;
+    let assistantTimer;
+    let winkTimer;
+    let currentAssistantState = 'greeting';
+    
+    const assistantTips = [
+      "Did you know? You only get to generate ONE pig EVER! Make it count! 🌟",
+      "Pro tip: Once you generate a pig, that's it! No take-backs, no do-overs!",
+      "Fun fact: Legendary pigs appear only 0.5% of the time. Hope you get lucky on your ONE chance! ✨",
+      "Psst! The rarer your pig, the bigger it appears in 3D. Legendary pigs are 15% larger!",
+      "Oink oink! Your pig's personality is unique to your Twitter handle. Choose wisely!",
+      "Did you know you can drag windows around? Just like the good old days of Windows 95! 🖱️",
+      "Tip: Click 'Copy Details' to save your pig's stats. It's your ONLY pig, so keep it safe!",
+      "Your pig's mood affects its entire vibe. Happy pigs bring good luck! 🍀",
+      "Secret: Once generated, your pig is yours forever. Even I can't change it! 🔒",
+      "Remember: One person, one pig. That's the sacred rule of Pig Generator 95! 🐷"
+    ];
+    
+    const assistantResponses = {
+      yes: [
+        "Wonderful! Just enter your Twitter handle above and I'll help you create the perfect pig! 🐷",
+        "Excellent choice! Your pig destiny awaits. Remember, you only get ONE pig per handle!",
+        "Oink-tastic! Let's create your one-of-a-kind pig! Choose your handle wisely! ✨"
+      ],
+      no: [
+        "No problem! I'll be here if you need me. Just click on me anytime! 😊",
+        "That's okay! I'll be quietly oinking in the corner if you change your mind.",
+        "Alright! Feel free to explore on your own. I'll be here practicing my snout boops!"
+      ],
+      error: [
+        "Oops! Looks like you need to enter a Twitter handle. No @ symbol needed!",
+        "Uh oh! Make sure your handle only has letters, numbers, and underscores!",
+        "Hmm, something's not quite right. Check your Twitter handle and try again!"
+      ],
+      success: [
+        "Wowza! What a magnificent pig! Look at those stats! 🌟",
+        "Oink my gosh! Your pig is absolutely adorable! Time to show it off!",
+        "Congratulations! You've created a true pig masterpiece! 🎉"
+      ],
+      returning: [
+        "Welcome back! I remember you! Here's your exclusive pig companion! 🐷",
+        "Oh! You already have a pig! Let me fetch your special friend!",
+        "I never forget a pig parent! Here's your one and only pig! 💖"
+      ],
+      idle: [
+        "I'm getting sleepy... Click on me if you need help! 😴",
+        "Just practicing my oinks over here! Need any help?",
+        "*doing tiny pig dances* Feel free to ask me anything!"
+      ]
+    };
+    
+    function showAssistant() {
+      const assistant = document.getElementById('pigAssistant');
+      assistant.style.display = 'block';
+      assistantVisible = true;
+      
+      // Start random winking
+      startWinking();
+      
+      // Show tips periodically
+      assistantTimer = setInterval(() => {
+        if (!assistantMinimized && currentAssistantState === 'idle') {
+          showAssistantTip();
+        }
+      }, 15000);
+    }
+    
+    function hideAssistant() {
+      const assistant = document.getElementById('pigAssistant');
+      assistant.style.display = 'none';
+      assistantVisible = false;
+      clearInterval(assistantTimer);
+      clearInterval(winkTimer);
+    }
+    
+    function toggleAssistant() {
+      if (assistantMinimized) {
+        document.getElementById('pigAssistant').classList.remove('minimized');
+        assistantMinimized = false;
+      }
+    }
+    
+    function minimizeAssistant(event) {
+      event.stopPropagation();
+      document.getElementById('pigAssistant').classList.add('minimized');
+      assistantMinimized = true;
+    }
+    
+    function showAssistantMessage(message, actions = null) {
+      const textElement = document.getElementById('assistantText');
+      const actionsElement = document.getElementById('assistantActions');
+      
+      textElement.textContent = message;
+      
+      if (actions) {
+        actionsElement.innerHTML = actions;
+        actionsElement.style.display = 'flex';
+      } else {
+        actionsElement.style.display = 'none';
+      }
+      
+      // Ensure assistant is visible
+      if (assistantMinimized) {
+        toggleAssistant();
+      }
+    }
+    
+    function showAssistantTip() {
+      const tip = assistantTips[assistantTipIndex % assistantTips.length];
+      showAssistantMessage(tip);
+      assistantTipIndex++;
+    }
+    
+    function assistantResponse(response) {
+      const responses = assistantResponses[response];
+      const randomResponse = responses[Math.floor(Math.random() * responses.length)];
+      
+      if (response === 'yes') {
+        showAssistantMessage(randomResponse);
+        currentAssistantState = 'helping';
+        // Focus on the twitter input
+        document.getElementById('twitter').focus();
+      } else if (response === 'no') {
+        showAssistantMessage(randomResponse);
+        currentAssistantState = 'idle';
+        setTimeout(() => {
+          minimizeAssistant({ stopPropagation: () => {} });
+        }, 3000);
+      }
+    }
+    
+    function startWinking() {
+      winkTimer = setInterval(() => {
+        if (Math.random() > 0.7) {
+          const leftEye = document.getElementById('leftEye');
+          const rightEye = document.getElementById('rightEye');
+          
+          if (Math.random() > 0.5) {
+            leftEye.classList.add('wink');
+            setTimeout(() => leftEye.classList.remove('wink'), 200);
+          } else {
+            rightEye.classList.add('wink');
+            setTimeout(() => rightEye.classList.remove('wink'), 200);
+          }
+        }
+      }, 3000);
+    }
+    
+    // Store original functions before modifications
+    let originalShowError;
+    let originalDisplayResult;
+    
+    // Show assistant after a delay when page loads
+    setTimeout(() => {
+      // Store original functions
+      originalShowError = showError;
+      originalDisplayResult = displayResult;
+      
+      // Hook into showError to add assistant feedback
+      showError = function(message) {
+        originalShowError(message);
+        
+        if (assistantVisible && !assistantMinimized) {
+          // Check if it's a returning user message
+          if (message.includes("already has a pig")) {
+            const returningResponse = assistantResponses.returning[Math.floor(Math.random() * assistantResponses.returning.length)];
+            showAssistantMessage(returningResponse);
+            currentAssistantState = 'returning';
+          } else {
+            const errorResponse = assistantResponses.error[Math.floor(Math.random() * assistantResponses.error.length)];
+            showAssistantMessage(errorResponse);
+            currentAssistantState = 'error';
+          }
+        }
+      }
+      
+      // Hook into displayResult to add assistant celebration
+      displayResult = function(handle, attr) {
+        originalDisplayResult(handle, attr);
+        
+        if (assistantVisible && !assistantMinimized) {
+          const isNewPig = !pigRegistry[handle.toLowerCase()] || currentAssistantState !== 'returning';
+          
+          if (isNewPig) {
+            const successResponse = assistantResponses.success[Math.floor(Math.random() * assistantResponses.success.length)];
+            let extraMessage = '';
+            
+            if (attr.rarity.name === 'Legendary') {
+              extraMessage = " 🌟 OH MY OINK! A LEGENDARY PIG! This is incredibly rare! And it's yours FOREVER!";
+            } else if (attr.rarity.name === 'Epic') {
+              extraMessage = " 💜 An Epic pig! You're quite lucky! This pig is now permanently yours!";
+            } else {
+              extraMessage = " Remember, this is your one and only pig for this handle!";
+            }
+            
+            showAssistantMessage(successResponse + extraMessage);
+          }
+          currentAssistantState = 'success';
+        }
+      }
+      
+      showAssistant();
+    }, 2000);
+    
+    // Hide/show assistant based on window activity
+    let inactivityTimer;
+    function resetInactivityTimer() {
+      clearTimeout(inactivityTimer);
+      inactivityTimer = setTimeout(() => {
+        if (assistantVisible && !assistantMinimized && currentAssistantState === 'idle') {
+          const idleResponse = assistantResponses.idle[Math.floor(Math.random() * assistantResponses.idle.length)];
+          showAssistantMessage(idleResponse);
+        }
+      }, 30000);
+    }
+    
+    document.addEventListener('mousemove', resetInactivityTimer);
+    document.addEventListener('keypress', resetInactivityTimer);
+    document.addEventListener('click', resetInactivityTimer);
+    
+    // Add keyboard shortcut to toggle assistant
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'F1') {
+        e.preventDefault();
+        if (assistantVisible) {
+          hideAssistant();
+        } else {
+          showAssistant();
+        }
+      }
+    });
   </script>
 </body>
-</html>
+</html>Img.style.display = "none";
+      sharePreview
