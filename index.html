@@ -1184,136 +1184,182 @@
       };
       
       const pigColor = skinColors[attributes.skin] || 0xffb6c1;
-      const material = new THREE.MeshPhongMaterial({ color: pigColor, shininess: 20 });
+      const material = new THREE.MeshPhongMaterial({ color: pigColor, shininess: 30 });
       
-      const bodyGeometry = new THREE.SphereGeometry(0.6, 24, 18);
-      bodyGeometry.scale(1.25, 0.85, 1.0);
+      // More realistic pig body - rounder and more barrel-shaped
+      const bodyGeometry = new THREE.SphereGeometry(0.7, 32, 24);
+      bodyGeometry.scale(1.4, 1.0, 1.1); // Wider and more barrel-like
       const body = new THREE.Mesh(bodyGeometry, material);
-      body.position.y = 0.2;
+      body.position.y = 0.3;
       body.castShadow = true;
       body.receiveShadow = true;
       pigGroup.add(body);
       
-      const headGeometry = new THREE.SphereGeometry(0.4, 20, 16);
+      // Add a belly bulge for more pig-like appearance
+      const bellyGeometry = new THREE.SphereGeometry(0.5, 24, 16);
+      bellyGeometry.scale(1.2, 0.8, 1.0);
+      const belly = new THREE.Mesh(bellyGeometry, material);
+      belly.position.set(0, -0.1, 0.2);
+      body.add(belly);
+      
+      // Larger, more proportionate head
+      const headGeometry = new THREE.SphereGeometry(0.45, 24, 20);
+      headGeometry.scale(1.0, 0.9, 1.1); // Slightly wider
       const head = new THREE.Mesh(headGeometry, material);
-      head.position.set(0, 0.55, 0.65);
+      head.position.set(0, 0.5, 0.75);
       head.castShadow = true;
       pigGroup.add(head);
       
-      const snoutMaterialColor = new THREE.Color(pigColor).multiplyScalar(0.9);
-      const snoutGeometry = new THREE.CylinderGeometry(0.15, 0.12, 0.25, 12);
-      const snout = new THREE.Mesh(snoutGeometry, new THREE.MeshPhongMaterial({ color: snoutMaterialColor, shininess: 10 }));
-      snout.position.set(0, 0.45, 0.85);
-      snout.rotation.x = Math.PI / 2.5;
+      // More prominent snout
+      const snoutMaterialColor = new THREE.Color(pigColor).multiplyScalar(0.85);
+      const snoutGeometry = new THREE.CylinderGeometry(0.18, 0.14, 0.3, 16);
+      const snout = new THREE.Mesh(snoutGeometry, new THREE.MeshPhongMaterial({ color: snoutMaterialColor, shininess: 40 }));
+      snout.position.set(0, 0.35, 1.0);
+      snout.rotation.x = Math.PI / 2.2;
+      snout.scale.set(1.1, 1, 0.8); // Wider snout
       pigGroup.add(snout);
       
-      const nostrilGeometry = new THREE.CircleGeometry(0.035, 8);
-      const nostrilMaterial = new THREE.MeshBasicMaterial({ color: 0x442211 });
-      const nostril1 = new THREE.Mesh(nostrilGeometry, nostrilMaterial);
-      const nostril2 = new THREE.Mesh(nostrilGeometry, nostrilMaterial);
-      nostril1.position.set(-0.05, 0.47, 0.94);
-      nostril2.position.set(0.05, 0.47, 0.94);
-      nostril1.rotation.x = nostril2.rotation.x = -Math.PI / 3;
+      // Larger, more visible nostrils
+      const nostrilGeometry = new THREE.EllipseCurve(0, 0, 0.045, 0.06, 0, 2 * Math.PI, false, 0);
+      const nostrilShape = new THREE.ShapeGeometry(new THREE.Shape(nostrilGeometry.getPoints(12)));
+      const nostrilMaterial = new THREE.MeshBasicMaterial({ color: 0x2a1515 });
+      const nostril1 = new THREE.Mesh(nostrilShape, nostrilMaterial);
+      const nostril2 = new THREE.Mesh(nostrilShape, nostrilMaterial);
+      nostril1.position.set(-0.06, 0.38, 1.12);
+      nostril2.position.set(0.06, 0.38, 1.12);
+      nostril1.rotation.x = nostril2.rotation.x = -Math.PI / 2.8;
       pigGroup.add(nostril1, nostril2);
       
-      const eyeGeometry = new THREE.SphereGeometry(0.06, 10, 8);
-      const eyeMaterial = new THREE.MeshPhongMaterial({ color: 0x111111, shininess: 100 });
-      const eye1 = new THREE.Mesh(eyeGeometry, eyeMaterial);
-      const eye2 = new THREE.Mesh(eyeGeometry, eyeMaterial);
-      eye1.position.set(-0.16, 0.6, 0.85);
-      eye2.position.set(0.16, 0.6, 0.85);
-      pigGroup.add(eye1, eye2);
+      // Smaller, more pig-like eyes
+      const eyeWhiteGeometry = new THREE.SphereGeometry(0.08, 12, 10);
+      const eyeWhiteMaterial = new THREE.MeshPhongMaterial({ color: 0xffffff, shininess: 60 });
+      const eyePupilGeometry = new THREE.SphereGeometry(0.04, 10, 8);
+      const eyePupilMaterial = new THREE.MeshPhongMaterial({ color: 0x111111, shininess: 100 });
       
-      function createEarShape() {
+      // Eye whites
+      const eyeWhite1 = new THREE.Mesh(eyeWhiteGeometry, eyeWhiteMaterial);
+      const eyeWhite2 = new THREE.Mesh(eyeWhiteGeometry, eyeWhiteMaterial);
+      eyeWhite1.position.set(-0.2, 0.55, 0.9);
+      eyeWhite2.position.set(0.2, 0.55, 0.9);
+      pigGroup.add(eyeWhite1, eyeWhite2);
+      
+      // Eye pupils
+      const eyePupil1 = new THREE.Mesh(eyePupilGeometry, eyePupilMaterial);
+      const eyePupil2 = new THREE.Mesh(eyePupilGeometry, eyePupilMaterial);
+      eyePupil1.position.set(-0.2, 0.55, 0.94);
+      eyePupil2.position.set(0.2, 0.55, 0.94);
+      pigGroup.add(eyePupil1, eyePupil2);
+      
+      // More realistic pig ears - larger and floppier
+      function createPigEarShape() {
         const earShape = new THREE.Shape();
         earShape.moveTo(0, 0);
-        earShape.lineTo(0, 0.3);
-        earShape.quadraticCurveTo(0.15, 0.35, 0.2, 0.2);
-        earShape.lineTo(0.1, 0);
+        earShape.lineTo(-0.05, 0.35);
+        earShape.quadraticCurveTo(0.1, 0.4, 0.25, 0.25);
+        earShape.quadraticCurveTo(0.3, 0.15, 0.2, 0);
         earShape.closePath();
-        const extrudeSettings = { depth: 0.05, bevelEnabled: false };
+        const extrudeSettings = { depth: 0.06, bevelEnabled: true, bevelThickness: 0.02, bevelSize: 0.02 };
         return new THREE.ExtrudeGeometry(earShape, extrudeSettings);
       }
-      const earGeometry = createEarShape();
+      const earGeometry = createPigEarShape();
       const ear1 = new THREE.Mesh(earGeometry, material);
       const ear2 = new THREE.Mesh(earGeometry, material);
-      ear1.position.set(-0.15, 0.7, 0.55);
-      ear2.position.set(0.05, 0.7, 0.55);
-      ear1.rotation.y = -Math.PI / 6;
-      ear1.rotation.z = Math.PI / 8;
+      ear1.position.set(-0.2, 0.65, 0.65);
+      ear2.position.set(0.2, 0.65, 0.65);
+      ear1.rotation.set(0, -Math.PI / 5, Math.PI / 6);
+      ear2.rotation.set(0, Math.PI / 5, -Math.PI / 6);
       ear2.scale.x = -1;
-      ear2.rotation.y = -Math.PI / 6;
-      ear2.rotation.z = Math.PI / 8;
       pigGroup.add(ear1, ear2);
       
-      const legGeometry = new THREE.CylinderGeometry(0.1, 0.08, 0.5, 10);
+      // Sturdier, more realistic legs
+      const legGeometry = new THREE.CylinderGeometry(0.12, 0.1, 0.5, 12);
+      const hoofGeometry = new THREE.CylinderGeometry(0.11, 0.11, 0.1, 12);
       const legMaterial = new THREE.MeshPhongMaterial({ color: pigColor, shininess: 15 });
+      const hoofMaterial = new THREE.MeshPhongMaterial({ color: 0x1a1a1a, shininess: 50 });
+      
       const legPositions = [
-        { x: 0.4, z: 0.35, rotY: 0.1 }, { x: -0.4, z: 0.35, rotY: -0.1 },
-        { x: 0.35, z: -0.4, rotY: -0.1 }, { x: -0.35, z: -0.4, rotY: 0.1 }
+        { x: 0.45, z: 0.4, rotZ: 0.05 }, { x: -0.45, z: 0.4, rotZ: -0.05 },
+        { x: 0.4, z: -0.45, rotZ: 0.05 }, { x: -0.4, z: -0.45, rotZ: -0.05 }
       ];
+      
       legPositions.forEach(pos => {
         const leg = new THREE.Mesh(legGeometry, legMaterial);
-        leg.position.set(pos.x, -0.1, pos.z);
-        leg.rotation.y = pos.rotY || 0;
-        leg.rotation.z = (pos.x > 0 ? -1 : 1) * Math.PI / 12;
+        leg.position.set(pos.x, -0.05, pos.z);
+        leg.rotation.z = pos.rotZ;
         leg.castShadow = true;
+        
+        // Add hooves
+        const hoof = new THREE.Mesh(hoofGeometry, hoofMaterial);
+        hoof.position.y = -0.25;
+        leg.add(hoof);
+        
         pigGroup.add(leg);
       });
       
-      const curve = new THREE.CatmullRomCurve3([
-        new THREE.Vector3(0, 0.2, -0.6),
-        new THREE.Vector3(0.05, 0.25, -0.7),
-        new THREE.Vector3(0, 0.2, -0.75),
-        new THREE.Vector3(-0.05, 0.15, -0.7)
+      // Curlier tail
+      const tailCurve = new THREE.CatmullRomCurve3([
+        new THREE.Vector3(0, 0.3, -0.7),
+        new THREE.Vector3(0.1, 0.4, -0.8),
+        new THREE.Vector3(0.15, 0.5, -0.85),
+        new THREE.Vector3(0.1, 0.6, -0.8),
+        new THREE.Vector3(0, 0.55, -0.75),
+        new THREE.Vector3(-0.05, 0.45, -0.8)
       ]);
-      const tailGeometry = new THREE.TubeGeometry(curve, 8, 0.03, 6, false);
+      const tailGeometry = new THREE.TubeGeometry(tailCurve, 16, 0.04, 8, false);
       const tail = new THREE.Mesh(tailGeometry, material);
       pigGroup.add(tail);
       
+      // Improved spots pattern
       if (attributes.skin === 'Spotted') {
-        const spotMaterial = new THREE.MeshPhongMaterial({ color: 0x654321, shininess: 5 });
-        for (let i = 0; i < 6; i++) {
-          const spotSize = Math.random() * 0.1 + 0.05;
-          const spot = new THREE.Mesh(new THREE.SphereGeometry(spotSize, 8, 6), spotMaterial);
-          const phi = Math.random() * Math.PI;
+        const spotMaterial = new THREE.MeshPhongMaterial({ color: 0x4d2d1a, shininess: 20 });
+        for (let i = 0; i < 8; i++) {
+          const spotSize = Math.random() * 0.12 + 0.06;
+          const spot = new THREE.Mesh(new THREE.SphereGeometry(spotSize, 10, 8), spotMaterial);
+          const phi = Math.random() * Math.PI * 0.6 + Math.PI * 0.2;
           const theta = Math.random() * Math.PI * 2;
-          const R = 0.6;
+          const R = 0.65;
           spot.position.set(
-            R * Math.sin(phi) * Math.cos(theta) * 1.2,
-            R * Math.cos(phi) * 0.8 + 0.2,
-            R * Math.sin(phi) * Math.sin(theta) * 1.0
+            R * Math.sin(phi) * Math.cos(theta) * 1.3,
+            R * Math.cos(phi) * 0.9,
+            R * Math.sin(phi) * Math.sin(theta) * 1.1
           );
-          spot.scale.set(1, 0.5, 1);
+          spot.scale.set(1.5, 0.7, 1.2);
           body.add(spot);
         }
       }
       
+      // Improved accessories
       if (attributes.accessory && attributes.accessory !== "None") {
-        const accessoryMaterial = new THREE.MeshPhongMaterial({shininess: 50});
+        const accessoryMaterial = new THREE.MeshPhongMaterial({shininess: 70});
         if (attributes.accessory === 'Top Hat') {
           accessoryMaterial.color.setHex(0x111111);
-          const hatCrown = new THREE.Mesh(new THREE.CylinderGeometry(0.18, 0.22, 0.35, 16), accessoryMaterial);
-          hatCrown.position.set(0, 0.85, 0.65);
-          const hatBrim = new THREE.Mesh(new THREE.CylinderGeometry(0.33, 0.33, 0.05, 16), accessoryMaterial);
-          hatBrim.position.set(0, 0.68, 0.65);
+          const hatCrown = new THREE.Mesh(new THREE.CylinderGeometry(0.2, 0.24, 0.4, 20), accessoryMaterial);
+          hatCrown.position.set(0, 0.95, 0.75);
+          const hatBrim = new THREE.Mesh(new THREE.CylinderGeometry(0.36, 0.36, 0.06, 20), accessoryMaterial);
+          hatBrim.position.set(0, 0.75, 0.75);
           head.add(hatCrown, hatBrim);
         } else if (attributes.accessory === 'Crown') {
           accessoryMaterial.color.setHex(0xffd700);
-          const crownBase = new THREE.Mesh(new THREE.CylinderGeometry(0.24, 0.26, 0.1, 12), accessoryMaterial);
-          crownBase.position.set(0, 0.72, 0.65);
+          const crownBase = new THREE.Mesh(new THREE.CylinderGeometry(0.26, 0.28, 0.12, 16), accessoryMaterial);
+          crownBase.position.set(0, 0.82, 0.75);
           head.add(crownBase);
-          for (let i = 0; i < 6; i++) {
-            const point = new THREE.Mesh(new THREE.ConeGeometry(0.04, 0.12, 4), accessoryMaterial);
-            const angle = (i * Math.PI * 2) / 6;
+          
+          // Crown points
+          for (let i = 0; i < 7; i++) {
+            const point = new THREE.Mesh(new THREE.ConeGeometry(0.05, 0.15, 6), accessoryMaterial);
+            const angle = (i * Math.PI * 2) / 7;
             point.position.set(
-              Math.cos(angle) * 0.24, 0.1, Math.sin(angle) * 0.24
+              Math.cos(angle) * 0.26, 0.88, Math.sin(angle) * 0.26 + 0.75
             );
-            point.position.y += 0.72;
-            point.position.z += 0.65;
-            point.rotation.x = Math.PI/12;
+            point.rotation.x = Math.PI/10;
             head.add(point);
           }
+          
+          // Add jewels
+          const jewelMaterial = new THREE.MeshPhongMaterial({ color: 0xff0040, shininess: 100 });
+          const jewel = new THREE.Mesh(new THREE.OctahedronGeometry(0.04), jewelMaterial);
+          jewel.position.set(0, 0.82, 0.88);
+          head.add(jewel);
         }
       }
       
@@ -1715,9 +1761,9 @@
       const { name, handle, attributes } = currentPig;
       const { rarity, breed, trait, accessory } = attributes;
       
-      let tweetText = `Behold! My #PigGenerator95 creation for ${handle}: ${name}! ✨
+      let tweetText = `Behold! My @PigGen95 creation for ${handle}: ${name}! ✨
 A magnificent ${rarity.name} ${breed} pig, known for its ${trait} personality and stylish ${accessory}.
-Generate your own: [Your App Link Here] #DigitalPig #RetroGaming`;
+Generate your own: https://www.piggen95.fun/ `;
       
       const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(tweetText)}`;
       window.open(twitterUrl, '_blank', 'width=600,height=450,resizable=yes,scrollbars=yes');
@@ -2128,7 +2174,7 @@ Generated with Pig Generator 95!`;
         });
       }
       
-      // Create the EXACT SAME pig as in the main window
+      // Use the full detailed pig model
       const pigGroup = new THREE.Group();
       
       const skinColors = {
@@ -2140,7 +2186,7 @@ Generated with Pig Generator 95!`;
       const pigColor = skinColors[attributes.skin] || 0xffb6c1;
       const material = new THREE.MeshPhongMaterial({ color: pigColor, shininess: 20 });
       
-      // Body
+      // Full detailed body
       const bodyGeometry = new THREE.SphereGeometry(0.6, 24, 18);
       bodyGeometry.scale(1.25, 0.85, 1.0);
       const body = new THREE.Mesh(bodyGeometry, material);
@@ -2149,7 +2195,7 @@ Generated with Pig Generator 95!`;
       body.receiveShadow = true;
       pigGroup.add(body);
       
-      // Head
+      // Full detailed head
       const headGeometry = new THREE.SphereGeometry(0.4, 20, 16);
       const head = new THREE.Mesh(headGeometry, material);
       head.position.set(0, 0.55, 0.65);
@@ -2206,7 +2252,7 @@ Generated with Pig Generator 95!`;
       ear2.rotation.z = Math.PI / 8;
       pigGroup.add(ear1, ear2);
       
-      // Legs
+      // Legs  
       const legGeometry = new THREE.CylinderGeometry(0.1, 0.08, 0.5, 10);
       const legMaterial = new THREE.MeshPhongMaterial({ color: pigColor, shininess: 15 });
       const legPositions = [
@@ -2233,7 +2279,7 @@ Generated with Pig Generator 95!`;
       const tail = new THREE.Mesh(tailGeometry, material);
       pigGroup.add(tail);
       
-      // Spots if spotted
+      // Spots if needed
       if (attributes.skin === 'Spotted') {
         const spotMaterial = new THREE.MeshPhongMaterial({ color: 0x654321, shininess: 5 });
         for (let i = 0; i < 6; i++) {
@@ -2281,12 +2327,12 @@ Generated with Pig Generator 95!`;
         }
       }
       
-      // Scale for floating window (smaller than main window but with rarity scaling)
-      const baseScale = 0.6; // Base scale for floating window
+      // Scale for floating window (smaller than main window but with proper rarity scaling)
       const rarityMultiplier = attributes.rarity.name === 'Legendary' ? 1.15 : 
-                              attributes.rarity.name === 'Epic' ? 1.08 : 1.0;
-      pigGroup.scale.multiplyScalar(baseScale * rarityMultiplier);
-      pigGroup.position.y = -0.3;
+                             attributes.rarity.name === 'Epic' ? 1.08 : 1.0;
+      const floatingScale = 0.6 * rarityMultiplier; // 60% of original size
+      pigGroup.scale.multiplyScalar(floatingScale);
+      pigGroup.position.y = -0.2;
       
       floatingScene.add(pigGroup);
       floatingPigMesh = pigGroup;
