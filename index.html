@@ -1,1 +1,2600 @@
+function createFloatingPig(attributes) {
+      if (!floatingScene) return;
+      
+      if (floatingPigMesh) {
+        floatingScene.remove(floatingPigMesh);
+        floatingPigMesh.traverse(child => {
+          if (child.geometry) child.geometry.dispose();
+          if (child.material) {
+            if (Array.isArray(child.material)) child.material.forEach(mat => mat.dispose());
+            else child.material.dispose();
+          }
+        });
+      }
+      
+      // Use the same improved pig model
+      const pigGroup = new THREE.Group();
+      
+      const skinColors = {
+        'Rosy Pink': 0xffb6c1, 'Charcoal Black': 0x333333, 'Spotted': 0xffb6c1,
+        'Russet Red': 0x8b5a2b, 'Ginger': 0xd27d1e, 'Pearl White': 0xf5f5f5,
+        'Chocolate Brown': 0x7b3f00, 'Golden': 0xffd700, 'Silver': 0xb0b0b0
+      };
+      
+      const pigColor = skinColors[attributes.skin] || 0xffb6c1;
+      const material = new THREE.MeshPhongMaterial({ color: pigColor, shininess: 30 });
+      
+      // More realistic pig body
+      const bodyGeometry = new THREE.SphereGeometry(0.7, 32, 24);
+      bodyGeometry.scale(1.4, 1.0, 1.1);
+      const body = new THREE.Mesh(bodyGeometry, material);
+      body.position.y = 0.3;
+      body.castShadow = true;
+      body.receiveShadow = true;
+      pigGroup.add(body);
+      
+      // Belly bulge
+      const bellyGeometry = new THREE.SphereGeometry(0.5, 24, 16);
+      bellyGeometry.scale(1.2, 0.8, 1.0);
+      const belly = new THREE.Mesh(bellyGeometry, material);
+      belly.position.set(0, -0.1, 0.2);
+      body.add(belly);
+      
+      // Head
+      const headGeometry = new THREE.SphereGeometry(0.45, 24, 20);
+      headGeometry.scale(1.0, 0.9, 1.1);
+      const head = new THREE.Mesh(headGeometry, material);
+      head.position.set(0, 0.5, 0.75);
+      head.castShadow = true;
+      pigGroup.add(head);
+      
+      // Snout
+      const snoutMaterialColor = new THREE.Color(pigColor).multiplyScalar(0.85);
+      const snoutGeometry = new THREE.CylinderGeometry(0.18, 0.14, 0.3, 16);
+      const snout = new THREE.Mesh(snoutGeometry, new THREE.MeshPhongMaterial({ color: snoutMaterialColor, shininess: 40 }));
+      snout.position.set(0, 0.35, 1.0);
+      snout.rotation.x = Math.PI / 2.2;
+      snout.scale.set(1.1, 1, 0.8);
+      pigGroup.add(snout);
+      
+      // Nostrils
+      const nostrilGeometry = new THREE.EllipseCurve(0, 0, 0.045, 0.06, 0, 2 * Math.PI, false, 0);
+      const nostrilShape = new THREE.ShapeGeometry(new THREE.Shape(nostrilGeometry.getPoints(12)));
+      const nostrilMaterial = new THREE.MeshBasicMaterial({ color: 0x2a1515 });
+      const nostril1 = new THREE.Mesh(nostrilShape, nostrilMaterial);
+      const nostril2 = new THREE.Mesh(nostrilShape, nostrilMaterial);
+      nostril1.position.set(-0.06, 0.38, 1.12);
+      nostril2.position.set(0.06, 0.38, 1.12);
+      nostril1.rotation.x = nostril2.rotation.x = -Math.PI / 2.8;
+      pigGroup.add(nostril1, nostril2);
+      
+      // Eyes with whites and pupils
+      const eyeWhiteGeometry = new THREE.SphereGeometry(0.08, 12, 10);
+      const eyeWhiteMaterial = new THREE.MeshPhongMaterial({ color: 0xffffff, shininess: 60 });
+      const eyePupilGeometry = new THREE.SphereGeometry(0.04, 10, 8);
+      const eyePupilMaterial = new THREE.MeshPhongMaterial({ color: 0x111111, shininess: 100 });
+      
+      const eyeWhite1 = new THREE.Mesh(eyeWhiteGeometry, eyeWhiteMaterial);
+      const eyeWhite2 = new THREE.Mesh(eyeWhiteGeometry, eyeWhiteMaterial);
+      eyeWhite1.position.set(-0.2, 0.55, 0.9);
+      eyeWhite2.position.set(0.2, 0.55, 0.9);
+      pigGroup.add(eyeWhite1, eyeWhite2);
+      
+      const eyePupil1 = new THREE.Mesh(eyePupilGeometry, eyePupilMaterial);
+      const eyePupil2 = new THREE.Mesh(eyePupilGeometry, eyePupilMaterial);
+      eyePupil1.position.set(-0.2, 0.55, 0.94);
+      eyePupil2.position.set(0.2, 0.55, 0.94);
+      pigGroup.add(eyePupil1, eyePupil2);
+      
+      // Ears
+      function createPigEarShape() {
+        const earShape = new THREE.Shape();
+        earShape.moveTo(0, 0);
+        earShape.lineTo(-0.05, 0.35);
+        earShape.quadraticCurveTo(0.1, 0.4, 0.25, 0.25);
+        earShape.quadraticCurveTo(0.3, 0.15, 0.2, 0);
+        earShape.closePath();
+        const extrudeSettings = { depth: 0.06, bevelEnabled: true, bevelThickness: 0.02, bevelSize: 0.02 };
+        return new THREE.ExtrudeGeometry(earShape, extrudeSettings);
+      }
+      const earGeometry = createPigEarShape();
+      const ear1 = new THREE.Mesh(earGeometry, material);
+      const ear2 = new THREE.Mesh(earGeometry, material);
+      ear1.position.set(-0.2, 0.65, 0.65);
+      ear2.position.set(0.2, 0.65, 0.65);
+      ear1.rotation.set(0, -Math.PI / 5, Math.PI / 6);
+      ear2.rotation.set(0, Math.PI / 5, -Math.PI / 6);
+      ear2.scale.x = -1;
+      pigGroup.add(ear1, ear2);
+      
+      // Legs with hooves
+      const legGeometry = new THREE.CylinderGeometry(0.12, 0.1, 0.5, 12);
+      const hoofGeometry = new THREE.CylinderGeometry(0.11, 0.11, 0.1, 12);
+      const legMaterial = new THREE.MeshPhongMaterial({ color: pigColor, shininess: 15 });
+      const hoofMaterial = new THREE.MeshPhongMaterial({ color: 0x1a1a1a, shininess: 50 });
+      
+      const legPositions = [
+        { x: 0.45, z: 0.4, rotZ: 0.05 }, { x: -0.45, z: 0.4, rotZ: -0.05 },
+        { x: 0.4, z: -0.45, rotZ: 0.05 }, { x: -0.4, z: -0.45, rotZ: -0.05 }
+      ];
+      
+      legPositions.forEach(pos => {
+        const leg = new THREE.Mesh(legGeometry, legMaterial);
+        leg.position.set(pos.x, -0.05, pos.z);
+        leg.rotation.z = pos.rotZ;
+        leg.castShadow = true;
+        
+        const hoof = new THREE.Mesh(hoofGeometry, hoofMaterial);
+        hoof.position.y = -0.25;
+        leg.add(hoof);
+        
+        pigGroup.add(leg);
+      });
+      
+      // Curly tail
+      const tailCurve = new THREE.CatmullRomCurve3([
+        new THREE.Vector3(0, 0.3, -0.7),
+        new THREE.Vector3(0.1, 0.4, -0.8),
+        new THREE.Vector3(0.15, 0.5, -0.85),
+        new THREE.Vector3(0.1, 0.6, -0.8),
+        new THREE.Vector3(0, 0.55, -0.75),
+        new THREE.Vector3(-0.05, 0.45, -0.8)
+      ]);
+      const tailGeometry = new THREE.TubeGeometry(tailCurve, 16, 0.04, 8, false);
+      const tail = new THREE.Mesh(tailGeometry, material);
+      pigGroup.add(tail);
+      
+      // Spots
+      if (attributes.skin === 'Spotted') {
+        const spotMaterial = new THREE.MeshPhongMaterial({ color: 0x4d2d1a, shininess: 20 });
+        for (let i = 0; i < 8; i++) {
+          const spotSize = Math.random() * 0.12 + 0.06;
+          const spot = new THREE.Mesh(new THREE.SphereGeometry(spotSize, 10, 8), spotMaterial);
+          const phi = Math.random() * Math.PI * 0.6 + Math.PI * 0.2;
+          const theta = Math.random() * Math.PI * 2;
+          const R = 0.65;
+          spot.position.set(
+            R * Math.sin(phi) * Math.cos(theta) * 1.3,
+            R * Math.cos(phi) * 0.9,
+            R * Math.sin(phi) * Math.sin(theta) * 1.1
+          );
+          spot.scale.set(1.5, 0.7, 1.2);
+          body.add(spot);
+        }
+      }
+      
+      // Accessories
+      if (attributes.accessory && attributes.accessory !== "None") {
+        const accessoryMaterial = new THREE.MeshPhongMaterial({shininess: 70});
+        if (attributes.accessory === 'Top Hat') {
+          accessoryMaterial.color.setHex(0x111111);
+          const hatCrown = new THREE.Mesh(new THREE.CylinderGeometry(0.2, 0.24, 0.4, 20), accessoryMaterial);
+          hatCrown.position.set(0, 0.95, 0.75);
+          const hatBrim = new THREE.Mesh(new THREE.CylinderGeometry(0.36, 0.36, 0.06, 20), accessoryMaterial);
+          hatBrim.position.set(0, 0.75, 0.75);
+          head.add(hatCrown, hatBrim);
+        } else if (attributes.accessory === 'Crown') {
+          accessoryMaterial.color.setHex(0xffd700);
+          const crownBase = new THREE.Mesh(new THREE.CylinderGeometry(0.26, 0.28, 0.12, 16), accessoryMaterial);
+          crownBase.position.set(0, 0.82, 0.75);
+          head.add(crownBase);
+          
+          for (let i = 0; i < 7; i++) {
+            const point = new THREE.Mesh(new THREE.ConeGeometry(0.05, 0.15, 6), accessoryMaterial);
+            const angle = (i * Math.PI * 2) / 7;
+            point.position.set(
+              Math.cos(angle) * 0.26, 0.88, Math.sin(angle) * 0.26 + 0.75
+            );
+            point.rotation.x = Math.PI/10;
+            head.add(point);
+          }
+          
+          const jewelMaterial = new THREE.MeshPhongMaterial({ color: 0xff0040, shininess: 100 });
+          const jewel = new THREE.Mesh(new THREE.OctahedronGeometry(0.04), jewelMaterial);
+          jewel.position.set(0, 0.82, 0.88);
+          head.add(jewel);
+        }
+      }
+      
+      // Scale for floating window with rarity
+      const rarityMultiplier = attributes.rarity.name === 'Legendary' ? 1.15 : 
+                             attributes.rarity.name === 'Epic' ? 1.08 : 1.0;
+      const floatingScale = 0.6 * rarityMultiplier;
+      pigGroup.scale.multiplyScalar(floatingScale);
+      pigGroup.position.y = -0.2;
+      
+      floatingScene.add(pigGroup);
+      floatingPigMesh = pigGroup;
+      
+      if (!floatingAnimationFrameId) animateFloatingPig();
+    }<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Pig Generator 95 - Enhanced Edition</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'MS Sans Serif', Tahoma, Geneva, sans-serif;
+      background: linear-gradient(45deg, #008080 0%, #20b2aa 100%);
+      color: #000;
+      overflow: hidden;
+      height: 100vh;
+      user-select: none;
+    function checkAnotherPig() {
+      // This function is no longer needed since it's one use per person
+    }
+    
+    .desktop {
+      position: relative;
+      height: 100%;
+      background-image: 
+        radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.25) 0%, transparent 40%),
+        radial-gradient(circle at 80% 20%, rgba(255, 119, 198, 0.12) 0%, transparent 40%),
+        repeating-linear-gradient(
+          rgba(0, 0, 0, 0.05) 0px,
+          rgba(0, 0, 0, 0.05) 1px,
+          transparent 1px,
+          transparent 3px
+        );
+    }
+    
+    .icon {
+      position: absolute;
+      top: 2rem;
+      left: 2rem;
+      text-align: center;
+      width: 72px;
+      cursor: pointer;
+      color: white;
+      text-shadow: 1px 1px 1px rgba(0,0,0,0.8);
+      transition: transform 0.1s ease;
+    }
+    
+    .icon:hover { transform: scale(1.05); }
+    .icon:active { transform: scale(0.95); }
+    
+    .icon-image {
+      width: 64px;
+      height: 64px;
+      background: #c0c0c0;
+      border: 2px outset #dedede;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 4px;
+      box-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+      image-rendering: pixelated;
+    }
 
+    .pixel-pig-icon {
+      width: 40px;
+      height: 40px;
+      background-color: #ff99cc;
+      border: 1px solid #cc6699;
+      position: relative;
+      box-shadow: inset 2px 2px #ffcce5, inset -2px -2px #ff66aa;
+    }
+    .pixel-pig-icon::before, .pixel-pig-icon::after {
+      content: '';
+      position: absolute;
+      width: 6px;
+      height: 6px;
+      background-color: #333;
+      top: 10px;
+    }
+    .pixel-pig-icon::before { left: 8px; }
+    .pixel-pig-icon::after { right: 8px; }
+    .pixel-pig-snout {
+      position: absolute;
+      width: 16px;
+      height: 10px;
+      background-color: #ffb2d8;
+      border: 1px solid #cc6699;
+      bottom: 8px;
+      left: 50%;
+      transform: translateX(-50%);
+      box-shadow: inset 1px 1px #ffcce5, inset -1px -1px #ff66aa;
+    }
+    .pixel-pig-snout::before, .pixel-pig-snout::after {
+      content: '';
+      position: absolute;
+      width: 3px;
+      height: 3px;
+      background-color: #7c3c60;
+      top: 3px;
+    }
+    .pixel-pig-snout::before { left: 3px; }
+    .pixel-pig-snout::after { right: 3px; }
+
+    .pixel-x-icon {
+      width: 40px;
+      height: 40px;
+      position: relative;
+      background-color: #000000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .pixel-x-icon::before, .pixel-x-icon::after {
+      content: '';
+      position: absolute;
+      width: 30px;
+      height: 6px;
+      background-color: #ffffff;
+      border-radius: 2px;
+    }
+    .pixel-x-icon::before { transform: rotate(45deg); }
+    .pixel-x-icon::after { transform: rotate(-45deg); }
+
+    .pixel-help-icon {
+      width: 40px;
+      height: 40px;
+      background-color: #000080;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid #ffffff;
+    }
+    .pixel-help-icon::before {
+      content: '?';
+      color: #ffffff;
+      font-size: 28px;
+      font-weight: bold;
+      font-family: 'MS Sans Serif', Arial, sans-serif;
+    }
+
+    .pixel-rarity-icon {
+      width: 40px;
+      height: 40px;
+      background: linear-gradient(45deg, #ffd700, #ff4500);
+      position: relative;
+      border: 1px solid #000000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .pixel-rarity-icon::before {
+      content: '★';
+      color: #ffffff;
+      font-size: 24px;
+      text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+    }
+
+    .icon-label {
+      font-size: 11px;
+      margin-top: 0.25rem;
+      font-weight: bold;
+      background-color: #008080;
+      padding: 1px 3px;
+      border: 1px solid transparent;
+    }
+    .icon:focus .icon-label, .icon:active .icon-label {
+      background-color: #000080;
+      border: 1px dotted #FFFFFF;
+    }
+    
+    .window {
+      width: 420px;
+      background: #c0c0c0;
+      border: 2px outset #dfdfdf;
+      box-shadow: 3px 3px 6px rgba(0,0,0,0.4);
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) scale(0.95);
+      opacity: 0;
+      display: none;
+      font-size: 12px;
+      border-radius: 0;
+      max-height: 90vh;
+      z-index: 1000;
+      transition: opacity 0.15s ease-out, transform 0.15s ease-out;
+    }
+    .window.open {
+      display: block;
+      opacity: 1;
+      transform: translate(-50%, -50%) scale(1);
+    }
+    
+    .window-header {
+      background: linear-gradient(90deg, #000080 0%, #1084d0 100%);
+      color: white;
+      padding: 3px 5px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-weight: bold;
+      font-size: 11px;
+      text-shadow: 1px 1px 1px #00000060;
+      height: 20px;
+    }
+    
+    .window-content {
+      padding: 10px;
+      background: #c0c0c0;
+      box-shadow: inset 2px 2px 2px #808080, inset -2px -2px 2px #dfdfdf;
+      max-height: calc(90vh - 50px);
+      overflow-y: auto;
+    }
+    
+    .close-btn {
+      width: 16px;
+      height: 16px;
+      background: #c0c0c0;
+      border: 1px outset #dfdfdf;
+      font-size: 10px;
+      font-family: "MS Sans Serif", "Arial Black", sans-serif;
+      font-weight: 900;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      line-height: 16px;
+      padding: 0;
+      box-shadow: 1px 1px 1px rgba(0,0,0,0.2);
+    }
+    .close-btn:active {
+      border: 1px inset #808080;
+      background: #b0b0b0;
+      box-shadow: none;
+    }
+    
+    .pig-sprite {
+      width: 120px;
+      height: 120px;
+      margin: 0 auto 12px;
+      border: 2px inset #808080;
+      background: #f0f0f0;
+      position: relative;
+      box-shadow: 1px 1px 2px rgba(0,0,0,0.2) inset;
+    }
+    #pigCanvas { width: 100%; height: 100%; display: block; }
+    
+    .taskbar {
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+      background: #c0c0c0;
+      border-top: 2px outset #dfdfdf;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 2px 4px;
+      font-size: 11px;
+      height: 28px;
+      box-sizing: border-box;
+      z-index: 2000;
+    }
+    
+    .start-btn {
+      background: #c0c0c0;
+      border: 1px outset #dfdfdf;
+      padding: 2px 8px;
+      font-size: 11px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-weight: bold;
+      box-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+    }
+    .start-btn-icon {
+      width: 16px;
+      height: 16px;
+      background: linear-gradient(45deg, #ff5555, #ffdd00, #55ff55, #5555ff);
+      border: 1px solid #808080;
+      display: inline-block;
+    }
+    .start-btn:active {
+      border: 1px inset #808080;
+      background: #b0b0b0;
+      box-shadow: none;
+    }
+    
+    input, .btn {
+      margin: 4px 0;
+      padding: 5x 7px;
+      width: 100%;
+      font-size: 11px;
+      border: 1px inset #808080;
+      box-sizing: border-box;
+      font-family: 'MS Sans Serif', Tahoma, Geneva, sans-serif;
+      background: #ffffff;
+    }
+    input:focus {
+      outline: 1px dotted #000000;
+      background: #ffffff;
+    }
+    
+    .btn {
+      background: #c0c0c0;
+      border: 1px outset #dfdfdf;
+      cursor: pointer;
+      text-align: center;
+      font-weight: bold;
+      box-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+      padding: 6px 8px;
+    }
+    .btn:hover { border-color: #efefef; }
+    .btn:active {
+      border: 1px inset #808080;
+      background: #b0b0b0;
+      box-shadow: none;
+    }
+    .btn:disabled {
+      background: #c0c0c0;
+      color: #808080;
+      cursor: not-allowed;
+      border: 1px outset #b0b0b0;
+      box-shadow: none;
+    }
+    
+    .progress-container {
+      background: #c0c0c0;
+      border: 1px inset #808080;
+      height: 20px;
+      margin: 8px 0;
+      width: 100%;
+      box-sizing: border-box;
+      padding: 2px;
+    }
+    .progress-bar {
+      height: 100%;
+      background: #000080;
+      width: 0%;
+      transition: width 0.3s ease-in-out;
+      background-image: repeating-linear-gradient(
+        -45deg,
+        #000080,
+        #000080 5px,
+        #0000A0 5px,
+        #0000A0 10px
+      );
+    }
+    
+    .result {
+      margin-top: 12px;
+      text-align: left;
+      font-size: 11px;
+      background: #ffffff;
+      border: 1px inset #808080;
+      padding: 10px;
+      min-height: 200px;
+    }
+    .result-header {
+      text-align: center;
+      font-weight: bold;
+      margin-bottom: 12px;
+      color: #000080;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .result-header strong { margin-top: 8px; }
+    
+    .attribute-row {
+      display: flex;
+      justify-content: space-between;
+      margin: 5px 0;
+      padding: 3px 0;
+      border-bottom: 1px dotted #a0a0a0;
+    }
+    .attribute-row:last-child { border-bottom: none; }
+    
+    .attribute-label {
+      font-weight: bold;
+      color: #800000;
+    }
+    
+    .error {
+      color: #ff0000;
+      font-size: 10px;
+      margin: 6px 0;
+      padding: 4px;
+      border: 1px solid #ff0000;
+      background-color: #ffeeee;
+      font-weight: bold;
+      display: none;
+    }
+    .error.show { display: block; }
+    
+    .loading-text {
+      text-align: center;
+      font-size: 10px;
+      margin: 6px 0;
+      color: #000080;
+      font-style: italic;
+    }
+    
+    .clock {
+      font-family: 'Consolas', 'Courier New', monospace;
+      font-weight: bold;
+      background: #c0c0c0;
+      border: 1px inset #808080;
+      padding: 3px 7px;
+      font-size: 11px;
+      margin-right: 2px;
+    }
+    
+    .form-group {
+      margin-bottom: 10px;
+    }
+    label {
+      display: block;
+      margin-bottom: 3px;
+      font-weight: bold;
+      color: #000080;
+      font-size:11px;
+    }
+    
+    .pig-stats {
+      background: #e0e0e0;
+      border: 1px inset #a0a0a0;
+      padding: 8px;
+      margin-top: 10px;
+      font-size: 10px;
+    }
+    
+    .rarity-indicator {
+      display: inline-block;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      margin-left: 6px;
+      border: 1px solid #00000050;
+      vertical-align: middle;
+    }
+    .rarity-common { background: #909090; }
+    .rarity-uncommon { background: #66bb66; }
+    .rarity-rare { background: #42a5f5; }
+    .rarity-epic { background: #ab47bc; }
+    .rarity-legendary { background: #ffa726; }
+    
+    .share-section {
+      margin-top: 15px;
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+    }
+    
+    .share-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+      background: #c0c0c0;
+      border: 1px outset #dfdfdf;
+      padding: 5px 10px;
+      cursor: pointer;
+      font-weight: bold;
+      font-size: 11px;
+      width: auto;
+      box-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+    }
+    .share-btn:hover { border-color: #efefef; }
+    .share-btn:active {
+      border: 1px inset #808080;
+      background: #b0b0b0;
+      box-shadow: none;
+    }
+    
+    .twitter-icon {
+      color: #1DA1F2;
+      font-weight: bold;
+      font-size: 14px;
+    }
+    
+    .share-confirmation {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: #c0c0c0;
+      border: 2px outset #dfdfdf;
+      padding: 16px;
+      z-index: 3000;
+      text-align: center;
+      box-shadow: 4px 4px 10px rgba(0,0,0,0.5);
+      display: none;
+      width: 320px;
+      font-size: 11px;
+    }
+    .share-confirmation h3 {
+      margin-top: 0;
+      margin-bottom: 10px;
+      color: #000080;
+      font-size: 13px;
+    }
+    .share-confirmation p { margin-bottom: 12px; }
+    
+    .confirmation-buttons {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      margin-top: 15px;
+    }
+    
+    .upload-status {
+      margin: 10px 0;
+      font-size: 11px;
+      color: #000080;
+      font-weight: bold;
+    }
+    
+    .upload-progress {
+      height: 12px;
+      background: #c0c0c0;
+      border: 1px inset #808080;
+      margin: 8px 0;
+      width: 100%;
+      box-sizing: border-box;
+      padding: 1px;
+    }
+    .upload-progress-bar {
+      height: 100%;
+      background: #000080;
+      width: 0%;
+      transition: width 0.3s ease;
+      background-image: repeating-linear-gradient(
+        -45deg,
+        #000080,
+        #000080 3px,
+        #0000A0 3px,
+        #0000A0 6px
+      );
+    }
+    
+    .share-preview {
+      max-width: 100%;
+      height: auto;
+      border: 2px inset #808080;
+      margin: 10px auto;
+      display: none;
+      background-color: #f0f0f0;
+    }
+
+    .share-footer {
+      margin-top: 12px;
+      font-size: 10px;
+      color: #505050;
+    }
+
+    /* Floating Pig Window Styles */
+    .floating-pig-window {
+      position: fixed;
+      top: 100px;
+      right: 20px;
+      width: 200px;
+      background: #c0c0c0;
+      border: 2px outset #dfdfdf;
+      box-shadow: 3px 3px 6px rgba(0,0,0,0.4);
+      font-size: 11px;
+      z-index: 4000;
+      display: none;
+      transition: opacity 0.2s ease;
+    }
+    
+    .floating-pig-window.show {
+      display: block;
+    }
+    
+    .floating-pig-window.minimized {
+      height: 26px !important;
+      overflow: hidden;
+    }
+    
+    .floating-pig-header {
+      background: linear-gradient(90deg, #000080 0%, #1084d0 100%);
+      color: white;
+      padding: 2px 4px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-weight: bold;
+      font-size: 10px;
+      height: 22px;
+      cursor: move;
+    }
+    
+    .floating-pig-header span {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    
+    .floating-pig-controls {
+      display: flex;
+      gap: 2px;
+    }
+    
+    .floating-control-btn {
+      width: 14px;
+      height: 14px;
+      background: #c0c0c0;
+      border: 1px outset #dfdfdf;
+      font-size: 9px;
+      font-family: "MS Sans Serif", sans-serif;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      line-height: 1;
+      padding: 0;
+    }
+    
+    .floating-control-btn:active {
+      border: 1px inset #808080;
+      background: #b0b0b0;
+    }
+    
+    .floating-pig-content {
+      padding: 8px;
+      text-align: center;
+      background: #c0c0c0;
+    }
+    
+    .floating-pig-canvas {
+      width: 120px;
+      height: 120px;
+      margin: 0 auto 8px;
+      border: 2px inset #808080;
+      background: #f0f0f0;
+      position: relative;
+    }
+    
+    .floating-pig-info {
+      font-size: 10px;
+      line-height: 1.3;
+    }
+    
+    .floating-pig-name {
+      font-weight: bold;
+      color: #000080;
+      margin-bottom: 3px;
+    }
+    
+    .floating-pig-stats {
+      font-size: 9px;
+      color: #505050;
+      margin-top: 5px;
+      padding-top: 5px;
+      border-top: 1px solid #808080;
+    }
+    
+    .floating-pig-mood {
+      margin-top: 5px;
+      font-size: 14px;
+    }
+    
+    .pig-icon {
+      width: 14px;
+      height: 14px;
+      display: inline-block;
+      background: #ffb6c1;
+      border-radius: 50%;
+      border: 1px solid #000;
+      position: relative;
+      vertical-align: middle;
+    }
+    
+    .pig-icon::before,
+    .pig-icon::after {
+      content: '';
+      position: absolute;
+      width: 3px;
+      height: 3px;
+      background: #000;
+      border-radius: 50%;
+      top: 4px;
+    }
+    
+    .pig-icon::before { left: 3px; }
+    .pig-icon::after { right: 3px; }
+
+    /* Pig Assistant Styles */
+    .pig-assistant {
+      position: fixed;
+      bottom: 40px;
+      right: 20px;
+      width: 180px;
+      z-index: 3500;
+      animation: assistantBounce 3s ease-in-out infinite;
+      transition: transform 0.3s ease;
+    }
+    
+    @keyframes assistantBounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+    
+    .pig-assistant.minimized {
+      transform: translateY(120px);
+    }
+    
+    .assistant-body {
+      width: 80px;
+      height: 80px;
+      background: #ffb6c1;
+      border-radius: 50%;
+      position: relative;
+      border: 2px solid #000;
+      box-shadow: 3px 3px 8px rgba(0,0,0,0.3);
+      cursor: pointer;
+      margin: 0 auto;
+    }
+    
+    .assistant-body::before {
+      content: '';
+      position: absolute;
+      width: 50px;
+      height: 40px;
+      background: #ffc0cb;
+      border-radius: 50%;
+      bottom: -15px;
+      left: 50%;
+      transform: translateX(-50%);
+      border: 2px solid #000;
+      z-index: -1;
+    }
+    
+    .assistant-eyes {
+      position: absolute;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 50px;
+      display: flex;
+      justify-content: space-between;
+    }
+    
+    .assistant-eye {
+      width: 12px;
+      height: 16px;
+      background: #000;
+      border-radius: 50%;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .assistant-eye::after {
+      content: '';
+      position: absolute;
+      width: 4px;
+      height: 4px;
+      background: #fff;
+      border-radius: 50%;
+      top: 3px;
+      left: 3px;
+    }
+    
+    .assistant-eye.wink {
+      height: 3px;
+      top: 6px;
+    }
+    
+    .assistant-snout {
+      position: absolute;
+      width: 30px;
+      height: 20px;
+      background: #ff99b3;
+      border: 2px solid #000;
+      border-radius: 50%;
+      bottom: 25px;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+    
+    .assistant-snout::before,
+    .assistant-snout::after {
+      content: '';
+      position: absolute;
+      width: 5px;
+      height: 6px;
+      background: #000;
+      border-radius: 50%;
+      top: 6px;
+    }
+    
+    .assistant-snout::before { left: 6px; }
+    .assistant-snout::after { right: 6px; }
+    
+    .assistant-ears {
+      position: absolute;
+      top: -5px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 90px;
+      display: flex;
+      justify-content: space-between;
+    }
+    
+    .assistant-ear {
+      width: 0;
+      height: 0;
+      border-left: 15px solid transparent;
+      border-right: 15px solid transparent;
+      border-bottom: 25px solid #ffb6c1;
+      position: relative;
+      transform: rotate(-20deg);
+    }
+    
+    .assistant-ear::after {
+      content: '';
+      position: absolute;
+      width: 0;
+      height: 0;
+      border-left: 10px solid transparent;
+      border-right: 10px solid transparent;
+      border-bottom: 15px solid #ff99b3;
+      bottom: -20px;
+      left: -10px;
+    }
+    
+    .assistant-ear.right {
+      transform: rotate(20deg);
+    }
+    
+    .assistant-speech {
+      background: #fffef0;
+      border: 2px solid #000;
+      border-radius: 12px;
+      padding: 12px;
+      margin-bottom: 10px;
+      position: relative;
+      font-size: 11px;
+      line-height: 1.4;
+      box-shadow: 2px 2px 6px rgba(0,0,0,0.2);
+      max-width: 180px;
+    }
+    
+    .assistant-speech::after {
+      content: '';
+      position: absolute;
+      bottom: -10px;
+      right: 30px;
+      width: 0;
+      height: 0;
+      border-left: 10px solid transparent;
+      border-right: 10px solid transparent;
+      border-top: 10px solid #000;
+    }
+    
+    .assistant-speech::before {
+      content: '';
+      position: absolute;
+      bottom: -7px;
+      right: 31px;
+      width: 0;
+      height: 0;
+      border-left: 9px solid transparent;
+      border-right: 9px solid transparent;
+      border-top: 9px solid #fffef0;
+      z-index: 1;
+    }
+    
+    .assistant-actions {
+      display: flex;
+      gap: 5px;
+      margin-top: 8px;
+      justify-content: center;
+    }
+    
+    .assistant-btn {
+      background: #c0c0c0;
+      border: 1px outset #dfdfdf;
+      padding: 3px 8px;
+      font-size: 10px;
+      cursor: pointer;
+      font-family: 'MS Sans Serif', Tahoma, Geneva, sans-serif;
+    }
+    
+    .assistant-btn:hover {
+      background: #d0d0d0;
+    }
+    
+    .assistant-btn:active {
+      border: 1px inset #808080;
+      background: #b0b0b0;
+    }
+    
+    .assistant-minimize {
+      position: absolute;
+      top: -5px;
+      right: -5px;
+      width: 16px;
+      height: 16px;
+      background: #ff0000;
+      color: #fff;
+      border: 1px solid #000;
+      border-radius: 50%;
+      font-size: 10px;
+      line-height: 14px;
+      text-align: center;
+      cursor: pointer;
+      display: none;
+    }
+    
+    .pig-assistant:hover .assistant-minimize {
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <div class="desktop">
+    <!-- Pig Generator Icon -->
+    <div class="icon" ondblclick="openAppWindow()" tabindex="0"> 
+      <div class="icon-image">
+        <div class="pixel-pig-icon">
+          <div class="pixel-pig-snout"></div>
+        </div>
+      </div>
+      <div class="icon-label">PigGen95.exe</div>
+    </div>
+    
+    <!-- X.com Icon -->
+    <div class="icon" ondblclick="window.open('https://x.com/PigGen95', '_blank')" tabindex="0" style="top: 2rem; left: 8rem;">
+      <div class="icon-image">
+        <div class="pixel-x-icon"></div>
+      </div>
+      <div class="icon-label">X.com</div>
+    </div>
+
+    <!-- Rarity Icon -->
+    <div class="icon" ondblclick="openRarityWindow()" tabindex="0" style="top: 2rem; left: 14rem;">
+      <div class="icon-image">
+        <div class="pixel-rarity-icon"></div>
+      </div>
+      <div class="icon-label">Rarity Guide</div>
+    </div>
+
+    <!-- Help Icon -->
+    <div class="icon" ondblclick="openHelpWindow()" tabindex="0" style="top: 2rem; left: 20rem;">
+      <div class="icon-image">
+        <div class="pixel-help-icon"></div>
+      </div>
+      <div class="icon-label">Help</div>
+    </div>
+
+    <!-- Main App Window -->
+    <div class="window" id="appWindow">
+      <div class="window-header" id="appWindowHeader"> 
+        <span>Pig Generator 95 - Enhanced</span>
+        <div class="close-btn" onclick="closeAppWindow()">×</div>
+      </div>
+      <div class="window-content">
+        <div class="form-group">
+          <label for="twitter">Twitter/X Handle:</label>
+          <input type="text" id="twitter" placeholder="e.g. elonmusk (no @)" maxlength="15">
+        </div>
+        <div class="form-group" style="font-size: 10px; color: #666; margin-top: -5px; margin-bottom: 10px;">
+          ⚠️ You can only generate ONE pig EVER. Choose your handle wisely!
+        </div>
+        <button class="btn" onclick="generatePig()" id="generateBtn">Generate My Pig</button>
+        
+        <div id="error" class="error"></div> 
+        <div class="progress-container">
+          <div class="progress-bar" id="progressBar"></div>
+        </div>
+        <div id="loadingText" class="loading-text"></div>
+        
+        <div class="result" id="result" style="display: none;"></div>
+      </div>
+    </div>
+
+    <!-- Rarity Window -->
+    <div class="window" id="rarityWindow">
+      <div class="window-header" id="rarityWindowHeader">
+        <span>Rarity Guide</span>
+        <div class="close-btn" onclick="closeRarityWindow()">×</div>
+      </div>
+      <div class="window-content rarity-content">
+        <h3>Unlock the Secrets of Pig Rarity!</h3>
+        <p>Your luck determines the rarity of your pig! Will you get a <strong>Legendary</strong> pig that stands out in the digital barnyard? Here's what each rarity means:</p>
+        <ul>
+          <li><span class="rarity-indicator rarity-common"></span><strong>Common</strong>: The friendly, everyday pigs. Solid companions!</li>
+          <li><span class="rarity-indicator rarity-uncommon"></span><strong>Uncommon</strong>: A bit more special, with unique flair.</li>
+          <li><span class="rarity-indicator rarity-rare"></span><strong>Rare</strong>: These pigs turn heads with their style!</li>
+          <li><span class="rarity-indicator rarity-epic"></span><strong>Epic</strong>: Truly extraordinary pigs, rare and powerful!</li>
+          <li><span class="rarity-indicator rarity-legendary"></span><strong>Legendary</strong>: The ultimate prize! Only the luckiest get these majestic pigs!</li>
+        </ul>
+        <p>Keep generating to test your luck! Will your next pig be a <strong>Legendary</strong> superstar? Oink it to win it!</p>
+      </div>
+    </div>
+
+    <!-- Help Window -->
+    <div class="window" id="helpWindow">
+      <div class="window-header" id="helpWindowHeader">
+        <span>Pig Generator 95 Help</span>
+        <div class="close-btn" onclick="closeHelpWindow()">×</div>
+      </div>
+      <div class="window-content help-content">
+        <h3>Welcome to Pig Generator 95!</h3>
+        <p>This retro app creates your ONE AND ONLY unique pig companion! Here's how it works:</p>
+        <ul>
+          <li><strong>Open the App</strong>: Double-click the "PigGen95.exe" icon on the desktop.</li>
+          <li><strong>Enter Your Handle</strong>: Type any Twitter/X handle (without @) to generate a pig.</li>
+          <li><strong>Generate</strong>: Click "Generate My Pig" to create your pig. <strong>WARNING: You only get ONE pig EVER!</strong></li>
+          <li><strong>View Your Pig</strong>: See your pig's 3D sprite, stats, and rarity.</li>
+          <li><strong>Share</strong>: Click "Share on X" to post your pig or "Copy Details" to save its stats.</li>
+        </ul>
+        <p><strong style="color: #ff0000;">⚠️ IMPORTANT:</strong> You can only generate ONE pig per person. Once you generate a pig for any handle, you cannot generate another one. Choose wisely!</p>
+        <p>Have fun creating your digital piggy! Check the Rarity Guide to learn about your pig's exclusivity.</p>
+      </div>
+    </div>
+
+    <div class="taskbar">
+      <div class="start-btn" onclick="toggleAppWindow()"> 
+        <span class="start-btn-icon"></span> Start
+      </div>
+      <div class="clock" id="clock"></div>
+    </div>
+  </div>
+
+  <div class="share-confirmation" id="shareConfirmation">
+    <h3>Share Pig on X</h3>
+    <p>Ready to show off your unique pig? Download the image and attach it to your tweet for the full experience!</p>
+    <div class="upload-status" id="uploadStatus">Preparing image...</div>
+    <div class="upload-progress">
+      <div class="upload-progress-bar" id="uploadProgressBar"></div>
+    </div>
+    <img id="sharePreview" class="share-preview" alt="Pig preview">
+    <div class="confirmation-buttons">
+      <button class="btn" onclick="downloadPigImage()">Download Image</button>
+      <button class="btn" onclick="shareOnX()" id="confirmShareBtn">Yes, Share!</button>
+      <button class="btn" onclick="closeShareConfirmation()">Cancel</button>
+    </div>
+    <div class="share-footer">
+      Your pig image and stats will be part of the tweet.
+    </div>
+  </div>
+
+  <!-- Pig Assistant -->
+  <div class="pig-assistant" id="pigAssistant" style="display: none;">
+    <div class="assistant-speech" id="assistantSpeech">
+      <div id="assistantText">Hi! I'm Oinky, your Pig Assistant! 🐷 Would you like help generating your perfect pig?</div>
+      <div class="assistant-actions" id="assistantActions">
+        <button class="assistant-btn" onclick="assistantResponse('yes')">Yes!</button>
+        <button class="assistant-btn" onclick="assistantResponse('no')">No thanks</button>
+      </div>
+    </div>
+    <div class="assistant-body" onclick="toggleAssistant()">
+      <div class="assistant-minimize" onclick="minimizeAssistant(event)">−</div>
+      <div class="assistant-ears">
+        <div class="assistant-ear left"></div>
+        <div class="assistant-ear right"></div>
+      </div>
+      <div class="assistant-eyes">
+        <div class="assistant-eye" id="leftEye"></div>
+        <div class="assistant-eye" id="rightEye"></div>
+      </div>
+      <div class="assistant-snout"></div>
+    </div>
+  </div>
+
+  <!-- Floating Pig Window -->
+  <div class="floating-pig-window" id="floatingPigWindow">
+    <div class="floating-pig-header" id="floatingPigHeader">
+      <span><div class="pig-icon"></div> My Pig</span>
+      <div class="floating-pig-controls">
+        <div class="floating-control-btn" onclick="toggleFloatingPig()">_</div>
+        <div class="floating-control-btn" onclick="closeFloatingPig()">×</div>
+      </div>
+    </div>
+    <div class="floating-pig-content" id="floatingPigContent">
+      <div class="floating-pig-canvas">
+        <canvas id="floatingPigCanvas"></canvas>
+      </div>
+      <div class="floating-pig-info">
+        <div class="floating-pig-name" id="floatingPigName">Loading...</div>
+        <div id="floatingPigRarity"></div>
+        <div class="floating-pig-mood" id="floatingPigMood">😊</div>
+        <div class="floating-pig-stats" id="floatingPigStats">
+          Loading stats...
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script>
+    // Store current pig for sharing
+    let currentPig = null;
+    let pigImageUrlForSharing = null;
+    let hasGeneratedPig = false; // Track if user has generated any pig
+    
+    // Store all generated pigs (handle -> pig data)
+    const pigRegistry = {};
+    
+    // Three.js pig creation variables
+    let scene, camera, renderer, pigMesh;
+    let animationFrameId;
+    
+    // Floating pig window variables
+    let floatingScene, floatingCamera, floatingRenderer, floatingPigMesh;
+    let floatingAnimationFrameId;
+    let isFloatingMinimized = false;
+
+    const appWindow = document.getElementById("appWindow");
+    const appWindowHeader = document.getElementById("appWindowHeader");
+    const rarityWindow = document.getElementById("rarityWindow");
+    const rarityWindowHeader = document.getElementById("rarityWindowHeader");
+    const helpWindow = document.getElementById("helpWindow");
+    const helpWindowHeader = document.getElementById("helpWindowHeader");
+
+    function initThreeJS() {
+      const canvasContainer = document.querySelector('.pig-sprite');
+      const canvas = document.getElementById('pigCanvas');
+      if (!canvas || !canvasContainer) return;
+      
+      if (renderer) {
+        renderer.dispose();
+        if (animationFrameId) cancelAnimationFrame(animationFrameId);
+      }
+
+      scene = new THREE.Scene();
+      scene.background = new THREE.Color(0xf0f0f0);
+      
+      camera = new THREE.PerspectiveCamera(50, canvasContainer.clientWidth / canvasContainer.clientHeight, 0.1, 1000);
+      camera.position.set(0, 1.2, 3.2);
+      camera.lookAt(0, 0.3, 0);
+      
+      renderer = new THREE.WebGLRenderer({ 
+        canvas: canvas, 
+        antialias: true,
+        preserveDrawingBuffer: true
+      });
+      renderer.setSize(canvasContainer.clientWidth, canvasContainer.clientHeight);
+      renderer.shadowMap.enabled = true;
+      renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+      
+      const ambientLight = new THREE.AmbientLight(0xffffff, 0.7);
+      scene.add(ambientLight);
+      
+      const directionalLight = new THREE.DirectionalLight(0xffffff, 0.9);
+      directionalLight.position.set(2.5, 3, 2);
+      directionalLight.castShadow = true;
+      directionalLight.shadow.mapSize.width = 1024;
+      directionalLight.shadow.mapSize.height = 1024;
+      directionalLight.shadow.camera.near = 0.5;
+      directionalLight.shadow.camera.far = 50;
+      scene.add(directionalLight);
+
+      const groundGeometry = new THREE.PlaneGeometry(10, 10);
+      const groundMaterial = new THREE.ShadowMaterial({ opacity: 0.3 });
+      const groundPlane = new THREE.Mesh(groundGeometry, groundMaterial);
+      groundPlane.rotation.x = -Math.PI / 2;
+      groundPlane.position.y = -0.8;
+      groundPlane.receiveShadow = true;
+      scene.add(groundPlane);
+    }
+    
+    function createPig(attributes) {
+      if (!scene) return;
+      if (pigMesh) {
+        scene.remove(pigMesh);
+        pigMesh.traverse(child => {
+          if (child.geometry) child.geometry.dispose();
+          if (child.material) {
+            if (Array.isArray(child.material)) child.material.forEach(material => material.dispose());
+            else child.material.dispose();
+          }
+        });
+      }
+      
+      const pigGroup = new THREE.Group();
+      
+      const skinColors = {
+        'Rosy Pink': 0xffb6c1, 'Charcoal Black': 0x333333, 'Spotted': 0xffb6c1,
+        'Russet Red': 0x8b5a2b, 'Ginger': 0xd27d1e, 'Pearl White': 0xf5f5f5,
+        'Chocolate Brown': 0x7b3f00, 'Golden': 0xffd700, 'Silver': 0xb0b0b0
+      };
+      
+      const pigColor = skinColors[attributes.skin] || 0xffb6c1;
+      const material = new THREE.MeshPhongMaterial({ color: pigColor, shininess: 30 });
+      
+      // More realistic pig body - rounder and more barrel-shaped
+      const bodyGeometry = new THREE.SphereGeometry(0.7, 32, 24);
+      bodyGeometry.scale(1.4, 1.0, 1.1); // Wider and more barrel-like
+      const body = new THREE.Mesh(bodyGeometry, material);
+      body.position.y = 0.3;
+      body.castShadow = true;
+      body.receiveShadow = true;
+      pigGroup.add(body);
+      
+      // Add a belly bulge for more pig-like appearance
+      const bellyGeometry = new THREE.SphereGeometry(0.5, 24, 16);
+      bellyGeometry.scale(1.2, 0.8, 1.0);
+      const belly = new THREE.Mesh(bellyGeometry, material);
+      belly.position.set(0, -0.1, 0.2);
+      body.add(belly);
+      
+      // Larger, more proportionate head
+      const headGeometry = new THREE.SphereGeometry(0.45, 24, 20);
+      headGeometry.scale(1.0, 0.9, 1.1); // Slightly wider
+      const head = new THREE.Mesh(headGeometry, material);
+      head.position.set(0, 0.5, 0.75);
+      head.castShadow = true;
+      pigGroup.add(head);
+      
+      // More prominent snout
+      const snoutMaterialColor = new THREE.Color(pigColor).multiplyScalar(0.85);
+      const snoutGeometry = new THREE.CylinderGeometry(0.18, 0.14, 0.3, 16);
+      const snout = new THREE.Mesh(snoutGeometry, new THREE.MeshPhongMaterial({ color: snoutMaterialColor, shininess: 40 }));
+      snout.position.set(0, 0.35, 1.0);
+      snout.rotation.x = Math.PI / 2.2;
+      snout.scale.set(1.1, 1, 0.8); // Wider snout
+      pigGroup.add(snout);
+      
+      // Larger, more visible nostrils
+      const nostrilGeometry = new THREE.EllipseCurve(0, 0, 0.045, 0.06, 0, 2 * Math.PI, false, 0);
+      const nostrilShape = new THREE.ShapeGeometry(new THREE.Shape(nostrilGeometry.getPoints(12)));
+      const nostrilMaterial = new THREE.MeshBasicMaterial({ color: 0x2a1515 });
+      const nostril1 = new THREE.Mesh(nostrilShape, nostrilMaterial);
+      const nostril2 = new THREE.Mesh(nostrilShape, nostrilMaterial);
+      nostril1.position.set(-0.06, 0.38, 1.12);
+      nostril2.position.set(0.06, 0.38, 1.12);
+      nostril1.rotation.x = nostril2.rotation.x = -Math.PI / 2.8;
+      pigGroup.add(nostril1, nostril2);
+      
+      // Smaller, more pig-like eyes
+      const eyeWhiteGeometry = new THREE.SphereGeometry(0.08, 12, 10);
+      const eyeWhiteMaterial = new THREE.MeshPhongMaterial({ color: 0xffffff, shininess: 60 });
+      const eyePupilGeometry = new THREE.SphereGeometry(0.04, 10, 8);
+      const eyePupilMaterial = new THREE.MeshPhongMaterial({ color: 0x111111, shininess: 100 });
+      
+      // Eye whites
+      const eyeWhite1 = new THREE.Mesh(eyeWhiteGeometry, eyeWhiteMaterial);
+      const eyeWhite2 = new THREE.Mesh(eyeWhiteGeometry, eyeWhiteMaterial);
+      eyeWhite1.position.set(-0.2, 0.55, 0.9);
+      eyeWhite2.position.set(0.2, 0.55, 0.9);
+      pigGroup.add(eyeWhite1, eyeWhite2);
+      
+      // Eye pupils
+      const eyePupil1 = new THREE.Mesh(eyePupilGeometry, eyePupilMaterial);
+      const eyePupil2 = new THREE.Mesh(eyePupilGeometry, eyePupilMaterial);
+      eyePupil1.position.set(-0.2, 0.55, 0.94);
+      eyePupil2.position.set(0.2, 0.55, 0.94);
+      pigGroup.add(eyePupil1, eyePupil2);
+      
+      // More realistic pig ears - larger and floppier
+      function createPigEarShape() {
+        const earShape = new THREE.Shape();
+        earShape.moveTo(0, 0);
+        earShape.lineTo(-0.05, 0.35);
+        earShape.quadraticCurveTo(0.1, 0.4, 0.25, 0.25);
+        earShape.quadraticCurveTo(0.3, 0.15, 0.2, 0);
+        earShape.closePath();
+        const extrudeSettings = { depth: 0.06, bevelEnabled: true, bevelThickness: 0.02, bevelSize: 0.02 };
+        return new THREE.ExtrudeGeometry(earShape, extrudeSettings);
+      }
+      const earGeometry = createPigEarShape();
+      const ear1 = new THREE.Mesh(earGeometry, material);
+      const ear2 = new THREE.Mesh(earGeometry, material);
+      ear1.position.set(-0.2, 0.65, 0.65);
+      ear2.position.set(0.2, 0.65, 0.65);
+      ear1.rotation.set(0, -Math.PI / 5, Math.PI / 6);
+      ear2.rotation.set(0, Math.PI / 5, -Math.PI / 6);
+      ear2.scale.x = -1;
+      pigGroup.add(ear1, ear2);
+      
+      // Sturdier, more realistic legs
+      const legGeometry = new THREE.CylinderGeometry(0.12, 0.1, 0.5, 12);
+      const hoofGeometry = new THREE.CylinderGeometry(0.11, 0.11, 0.1, 12);
+      const legMaterial = new THREE.MeshPhongMaterial({ color: pigColor, shininess: 15 });
+      const hoofMaterial = new THREE.MeshPhongMaterial({ color: 0x1a1a1a, shininess: 50 });
+      
+      const legPositions = [
+        { x: 0.45, z: 0.4, rotZ: 0.05 }, { x: -0.45, z: 0.4, rotZ: -0.05 },
+        { x: 0.4, z: -0.45, rotZ: 0.05 }, { x: -0.4, z: -0.45, rotZ: -0.05 }
+      ];
+      
+      legPositions.forEach(pos => {
+        const leg = new THREE.Mesh(legGeometry, legMaterial);
+        leg.position.set(pos.x, -0.05, pos.z);
+        leg.rotation.z = pos.rotZ;
+        leg.castShadow = true;
+        
+        // Add hooves
+        const hoof = new THREE.Mesh(hoofGeometry, hoofMaterial);
+        hoof.position.y = -0.25;
+        leg.add(hoof);
+        
+        pigGroup.add(leg);
+      });
+      
+      // Curlier tail
+      const tailCurve = new THREE.CatmullRomCurve3([
+        new THREE.Vector3(0, 0.3, -0.7),
+        new THREE.Vector3(0.1, 0.4, -0.8),
+        new THREE.Vector3(0.15, 0.5, -0.85),
+        new THREE.Vector3(0.1, 0.6, -0.8),
+        new THREE.Vector3(0, 0.55, -0.75),
+        new THREE.Vector3(-0.05, 0.45, -0.8)
+      ]);
+      const tailGeometry = new THREE.TubeGeometry(tailCurve, 16, 0.04, 8, false);
+      const tail = new THREE.Mesh(tailGeometry, material);
+      pigGroup.add(tail);
+      
+      // Improved spots pattern
+      if (attributes.skin === 'Spotted') {
+        const spotMaterial = new THREE.MeshPhongMaterial({ color: 0x4d2d1a, shininess: 20 });
+        for (let i = 0; i < 8; i++) {
+          const spotSize = Math.random() * 0.12 + 0.06;
+          const spot = new THREE.Mesh(new THREE.SphereGeometry(spotSize, 10, 8), spotMaterial);
+          const phi = Math.random() * Math.PI * 0.6 + Math.PI * 0.2;
+          const theta = Math.random() * Math.PI * 2;
+          const R = 0.65;
+          spot.position.set(
+            R * Math.sin(phi) * Math.cos(theta) * 1.3,
+            R * Math.cos(phi) * 0.9,
+            R * Math.sin(phi) * Math.sin(theta) * 1.1
+          );
+          spot.scale.set(1.5, 0.7, 1.2);
+          body.add(spot);
+        }
+      }
+      
+      // Improved accessories
+      if (attributes.accessory && attributes.accessory !== "None") {
+        const accessoryMaterial = new THREE.MeshPhongMaterial({shininess: 70});
+        if (attributes.accessory === 'Top Hat') {
+          accessoryMaterial.color.setHex(0x111111);
+          const hatCrown = new THREE.Mesh(new THREE.CylinderGeometry(0.2, 0.24, 0.4, 20), accessoryMaterial);
+          hatCrown.position.set(0, 0.95, 0.75);
+          const hatBrim = new THREE.Mesh(new THREE.CylinderGeometry(0.36, 0.36, 0.06, 20), accessoryMaterial);
+          hatBrim.position.set(0, 0.75, 0.75);
+          head.add(hatCrown, hatBrim);
+        } else if (attributes.accessory === 'Crown') {
+          accessoryMaterial.color.setHex(0xffd700);
+          const crownBase = new THREE.Mesh(new THREE.CylinderGeometry(0.26, 0.28, 0.12, 16), accessoryMaterial);
+          crownBase.position.set(0, 0.82, 0.75);
+          head.add(crownBase);
+          
+          // Crown points
+          for (let i = 0; i < 7; i++) {
+            const point = new THREE.Mesh(new THREE.ConeGeometry(0.05, 0.15, 6), accessoryMaterial);
+            const angle = (i * Math.PI * 2) / 7;
+            point.position.set(
+              Math.cos(angle) * 0.26, 0.88, Math.sin(angle) * 0.26 + 0.75
+            );
+            point.rotation.x = Math.PI/10;
+            head.add(point);
+          }
+          
+          // Add jewels
+          const jewelMaterial = new THREE.MeshPhongMaterial({ color: 0xff0040, shininess: 100 });
+          const jewel = new THREE.Mesh(new THREE.OctahedronGeometry(0.04), jewelMaterial);
+          jewel.position.set(0, 0.82, 0.88);
+          head.add(jewel);
+        }
+      }
+      
+      const scaleMultiplier = attributes.rarity.name === 'Legendary' ? 1.15 : 
+                            attributes.rarity.name === 'Epic' ? 1.08 : 1.0;
+      pigGroup.scale.multiplyScalar(scaleMultiplier);
+      pigGroup.position.y = -0.3;
+      
+      scene.add(pigGroup);
+      pigMesh = pigGroup;
+      
+      if (!animationFrameId) animatePig();
+    }
+
+    function animatePig() {
+      animationFrameId = requestAnimationFrame(animatePig);
+      if (pigMesh) {
+        pigMesh.rotation.y += 0.008;
+        pigMesh.position.y = -0.3 + Math.sin(Date.now() * 0.002) * 0.05;
+      }
+      if(renderer && scene && camera) renderer.render(scene, camera);
+    }
+    
+    const breeds = ["Yorkshire", "Duroc", "Berkshire", "Hampshire", "Landrace", "Tamworth", "Gloucestershire", "Mangalitsa", "Ossabaw", "Kunekune", "Potbelly", "Meishan"];
+    const skins = ["Rosy Pink", "Charcoal Black", "Spotted", "Russet Red", "Ginger", "Pearl White", "Chocolate Brown", "Golden", "Silver", "Muddy Brown"];
+    const traits = ["Curious", "Lazy", "Playful", "Genius", "Bold", "Mellow", "Adventurous", "Shy", "Energetic", "Zen Master", "Mischievous", "Noble", "Grumpy", "Philosophical"];
+    const accessories = ["None", "Top Hat", "Bow Tie", "Sunglasses", "Party Hat", "Monocle", "Scarf", "Crown", "Bandana", "Flower Crown", "Goggles", "Cape", "Necklace", "Tiny Backpack"];
+    const moods = ["😑 Neutral", "🙂 Happy", "😊 Joyful", "😁 Beaming", "🤩 Starstruck", "😎 Cool", "🤔 Thinking", "😴 Sleepy", "🥳 Partying", "🧐 Curious", "🥺 Pleading"];
+    const hobbies = ["Mud Wrestling", "Truffle Hunting", "Competitive Eating", "Gaming", "Stargazing", "Gardening", "Tap Dancing", "Opera Singing", "Pixel Art", "Yoga Poses", "Writing Poetry", "Cloud Watching"];
+
+    function hashString(str) {
+      let h1 = 2166136261, h2 = 2166136261;
+      for (let i = 0; i < str.length; i++) {
+        h1 = Math.imul(h1 ^ str.charCodeAt(i), 16777619);
+        h2 = Math.imul(h2 ^ str.charCodeAt(str.length - 1 - i), 16777619);
+      }
+      return (h1 ^ h2) >>> 0;
+    }
+
+    function seededRandom(seed) {
+      let x = seed;
+      return function () {
+        x = Math.imul(1664525, x) + 1013904223;
+        x = x >>> 0;
+        return x / 0xffffffff;
+      };
+    }
+
+    function getRarity(rand) {
+      const roll = rand();
+      if (roll > 0.995) return { name: "Legendary", class: "legendary" };
+      if (roll > 0.96) return { name: "Epic", class: "epic" };
+      if (roll > 0.88) return { name: "Rare", class: "rare" };
+      if (roll > 0.70) return { name: "Uncommon", class: "uncommon" };
+      return { name: "Common", class: "common" };
+    }
+
+    function getAttributes(seed) {
+      const rand = seededRandom(seed);
+      const rarity = getRarity(rand);
+      return {
+        breed: breeds[Math.floor(rand() * breeds.length)],
+        skin: skins[Math.floor(rand() * skins.length)],
+        trait: traits[Math.floor(rand() * traits.length)],
+        accessory: accessories[Math.floor(rand() * accessories.length)],
+        mood: moods[Math.floor(rand() * moods.length)],
+        hobby: hobbies[Math.floor(rand() * hobbies.length)],
+        rarity: rarity,
+        cuteness: Math.floor(rand() * 80) + 21,
+        intelligence: Math.floor(rand() * 80) + 21,
+        luck: Math.floor(rand() * 80) + 21,
+        birthdate: getRandomDate(rand),
+        spriteIdx: seed % 16
+      };
+    }
+
+    function getRandomDate(rand) {
+      const start = new Date(2022, 0, 1);
+      const end = new Date();
+      const randomTime = start.getTime() + rand() * (end.getTime() - start.getTime());
+      return new Date(randomTime).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+    }
+    
+    let isWindowOpen = false;
+    function openAppWindow() {
+      if(isWindowOpen && appWindow.style.zIndex < 2000) {
+        appWindow.style.zIndex = 2000 + Math.floor(Math.random()*100);
+        return;
+      }
+      appWindow.classList.add("open");
+      appWindow.style.zIndex = 1000 + Math.floor(Math.random()*100);
+      isWindowOpen = true;
+    }
+
+    function closeAppWindow() {
+      appWindow.classList.remove("open");
+      isWindowOpen = false;
+    }
+    
+    function toggleAppWindow() {
+      if (isWindowOpen && appWindow.classList.contains("open")) closeAppWindow();
+      else openAppWindow();
+    }
+
+    let isRarityWindowOpen = false;
+    function openRarityWindow() {
+      if (isRarityWindowOpen && rarityWindow.style.zIndex < 2000) {
+        rarityWindow.style.zIndex = 2000 + Math.floor(Math.random() * 100);
+        return;
+      }
+      rarityWindow.classList.add("open");
+      rarityWindow.style.zIndex = 1000 + Math.floor(Math.random() * 100);
+      isRarityWindowOpen = true;
+    }
+
+    function closeRarityWindow() {
+      rarityWindow.classList.remove("open");
+      isRarityWindowOpen = false;
+    }
+
+    let isHelpWindowOpen = false;
+    function openHelpWindow() {
+      if (isHelpWindowOpen && helpWindow.style.zIndex < 2000) {
+        helpWindow.style.zIndex = 2000 + Math.floor(Math.random() * 100);
+        return;
+      }
+      helpWindow.classList.add("open");
+      helpWindow.style.zIndex = 1000 + Math.floor(Math.random() * 100);
+      isHelpWindowOpen = true;
+    }
+
+    function closeHelpWindow() {
+      helpWindow.classList.remove("open");
+      isHelpWindowOpen = false;
+    }
+
+    function validateInput(twitter) {
+      if (!twitter) return "Please enter a Twitter/X handle (without @).";
+      if (twitter.startsWith("@")) return "Please enter handle without the '@' symbol.";
+      if (twitter.length > 15) return "Handle too long (max 15 characters).";
+      if (!/^[a-zA-Z0-9_]+$/.test(twitter)) return "Handle can only contain letters, numbers, and underscores.";
+      return null;
+    }
+
+    function generatePig() {
+      console.log("generatePig called");
+      
+      // Check if user has already generated a pig
+      if (hasGeneratedPig) {
+        showError("You've already generated your one unique pig! Each person can only generate one pig.");
+        return;
+      }
+      
+      const twitterInput = document.getElementById("twitter").value.trim();
+      
+      const validationError = validateInput(twitterInput);
+      if (validationError) {
+        showError(validationError);
+        return;
+      }
+      
+      const handle = "@" + twitterInput;
+      const handleKey = handle.toLowerCase();
+      
+      // Check if this user already has a pig
+      if (pigRegistry[handleKey]) {
+        // Show existing pig
+        const existingPig = pigRegistry[handleKey];
+        showError(`${handle} already has a pig! Displaying your unique companion...`);
+        
+        // Update button text temporarily
+        const generateBtn = document.getElementById("generateBtn");
+        generateBtn.textContent = "Viewing Existing Pig";
+        generateBtn.disabled = true;
+        
+        setTimeout(() => {
+          displayResult(existingPig.handle, existingPig.attributes);
+          generateBtn.textContent = "Generate My Pig";
+          generateBtn.disabled = false;
+        }, 1500);
+        
+        return;
+      }
+      
+      // Generate new pig for first-time user
+      const seed = hashString(handleKey + "_exclusive_pig_2024");
+      runGeneration(handle, seed);
+    }
+
+    function runGeneration(handle, seed) {
+      const attr = getAttributes(seed);
+      const errorElem = document.getElementById("error");
+      const resultDiv = document.getElementById("result");
+      const progress = document.getElementById("progressBar");
+      const loadingText = document.getElementById("loadingText");
+      const generateBtn = document.getElementById("generateBtn");
+
+      resultDiv.style.display = "none";
+      resultDiv.innerHTML = "";
+      progress.style.width = "0%";
+      loadingText.innerText = "";
+      errorElem.classList.remove('show');
+      generateBtn.disabled = true;
+
+      const loadingMessages = [
+        "Consulting the Pig Oracle...", "Calibrating Snout Boop-Tarifiers...",
+        "Counting Curly Tails...", "Mixing Virtual Mud...", "Fluffing Pixel Pillows...",
+        "Generating Oinks & Giggles..."
+      ];
+      let pct = 0;
+      let messageIndex = 0;
+      
+      loadingText.innerText = loadingMessages[messageIndex++];
+      const interval = setInterval(() => {
+        pct += Math.floor(Math.random() * 15 + 10);
+        progress.style.width = Math.min(pct, 100) + "%";
+        
+        if (pct < 100 && messageIndex < loadingMessages.length && pct > (messageIndex * (100 / loadingMessages.length))) {
+          loadingText.innerText = loadingMessages[messageIndex++];
+        }
+        
+        if (pct >= 100) {
+          clearInterval(interval);
+          loadingText.innerText = "Piggy Perfection Achieved!";
+          setTimeout(() => {
+            displayResult(handle, attr);
+            generateBtn.disabled = false;
+            loadingText.innerText = "";
+          }, 600);
+        }
+      }, 300);
+    }
+
+    function displayResult(handle, attr) {
+      const resultDiv = document.getElementById("result");
+      const handleKey = handle.toLowerCase();
+      const generateBtn = document.getElementById("generateBtn");
+      const twitterInput = document.getElementById("twitter");
+      
+      // Check if this is a new pig or existing one
+      const isNewPig = !pigRegistry[handleKey];
+      
+      currentPig = { handle: handle, attributes: attr, name: generatePigName(attr) };
+      
+      // Store in registry if new
+      if (isNewPig) {
+        pigRegistry[handleKey] = {
+          handle: handle,
+          attributes: attr,
+          name: currentPig.name,
+          generatedAt: new Date().toISOString()
+        };
+        hasGeneratedPig = true; // Mark that user has generated a pig
+      }
+      
+      resultDiv.innerHTML = `
+        <div class="result-header">
+          <div class="pig-sprite">
+            <canvas id="pigCanvas"></canvas>
+          </div>
+          <strong>${currentPig.name}</strong>
+          <div><small>(${handle}'s ${isNewPig ? 'New' : 'Exclusive'} Companion)</small> <span class="rarity-indicator rarity-${attr.rarity.class}" title="${attr.rarity.name} Pig"></span></div>
+        </div>
+        
+        <div class="attribute-row">
+          <span class="attribute-label">Breed:</span> <span>${attr.breed}</span>
+        </div>
+        <div class="attribute-row">
+          <span class="attribute-label">Skin:</span> <span>${attr.skin}</span>
+        </div>
+        <div class="attribute-row">
+          <span class="attribute-label">Personality:</span> <span>${attr.trait}</span>
+        </div>
+        <div class="attribute-row">
+          <span class="attribute-label">Accessory:</span> <span>${attr.accessory}</span>
+        </div>
+        <div class="attribute-row">
+          <span class="attribute-label">Hobby:</span> <span>${attr.hobby}</span>
+        </div>
+        <div class="attribute-row">
+          <span class="attribute-label">Mood:</span> <span>${attr.mood}</span>
+        </div>
+        <div class="attribute-row">
+          <span class="attribute-label">Born:</span> <span>${attr.birthdate}</span>
+        </div>
+        <div class="attribute-row">
+          <span class="attribute-label">Rarity:</span> <span>${attr.rarity.name}</span>
+        </div>
+        
+        <div class="pig-stats">
+          <strong>Stats:</strong> Cuteness: ${attr.cuteness}/100 | Intelligence: ${attr.intelligence}/100 | Luck: ${attr.luck}/100
+        </div>
+        
+        <div style="text-align: center; margin-top: 10px; font-size: 10px; color: #666;">
+          ${isNewPig ? '🎉 This is your ONE pig! You cannot generate another one!' : '🔒 This pig belongs exclusively to ' + handle}
+        </div>
+        
+        <div class="share-section">
+          <button class="share-btn" onclick="openShareConfirmation()">
+            <span class="twitter-icon">X</span> Share on X
+          </button>
+          <button class="share-btn" onclick="copyPigDetails()">
+            📋 Copy Details
+          </button>
+          <button class="share-btn" onclick="showFloatingPig()">
+            🪟 Keep Pig Visible
+          </button>
+        </div>
+      `;
+      resultDiv.style.display = "block";
+      
+      // Permanently disable the generate button if this is a new pig
+      if (isNewPig) {
+        generateBtn.disabled = true;
+        generateBtn.textContent = "Pig Generated! (One Per Person)";
+        twitterInput.disabled = true;
+        twitterInput.placeholder = "You've used your one pig generation!";
+      }
+      
+      setTimeout(() => {
+        initThreeJS();
+        createPig(attr);
+      }, 50);
+    }
+
+    function generatePigName(attr) {
+      const firstParts = ["Oinkers", "Hamlet", "Peppa", "Porkchop", "Wilbur", "Snuffles", "Sir Reginald", "Princess", "Duke", "Lady", "Baron Von", "Professor"];
+      const lastParts = ["Snoutly", "Oinkerton", "Truffleton", "Pigglesby", "Mudfield", "Squealington", "Hogsworth", "Baconstein"];
+      const titles = ["the Great", "the Wise", "the Jolly", "of Mudlantis", "the Magnificent", "the Sleepy", "Esq."];
+      
+      const rand = seededRandom(hashString(attr.breed + attr.trait + attr.rarity.name));
+      
+      let name = firstParts[Math.floor(rand() * firstParts.length)];
+      name += " " + lastParts[Math.floor(rand() * lastParts.length)];
+      if (rand() > 0.7 && (attr.rarity.name === "Epic" || attr.rarity.name === "Legendary")) {
+        name += " " + titles[Math.floor(rand() * titles.length)];
+      }
+      return name;
+    }
+
+    function showError(message) {
+      const errorElem = document.getElementById("error");
+      errorElem.innerText = message;
+      errorElem.classList.add('show');
+      setTimeout(() => errorElem.classList.remove('show'), 5000);
+    }
+    
+    const shareConfirmationPopup = document.getElementById("shareConfirmation");
+    const uploadStatusElem = document.getElementById("uploadStatus");
+    const uploadProgressBarElem = document.getElementById("uploadProgressBar");
+    const sharePreviewImg = document.getElementById("sharePreview");
+
+    function openShareConfirmation() {
+      if (!currentPig || !renderer) {
+        alert("Please generate a pig first!");
+        return;
+      }
+      
+      uploadStatusElem.innerText = "Capturing perfect pig pose...";
+      uploadProgressBarElem.style.width = "0%";
+      sharePreviewImg.src = "";
+      pigImageUrlForSharing = null;
+      
+      shareConfirmationPopup.style.display = "block";
+      shareConfirmationPopup.style.zIndex = parseInt(appWindow.style.zIndex) + 100;
+
+      try {
+        renderer.render(scene, camera);
+        const dataURL = renderer.domElement.toDataURL('image/png');
+        
+        sharePreviewImg.onload = () => sharePreviewImg.style.display = "block";
+        sharePreviewImg.src = dataURL;
+        
+        uploadStatusElem.innerText = "Polishing piggy portrait...";
+        uploadProgressBarElem.style.width = "50%";
+        
+        setTimeout(() => {
+          uploadStatusElem.innerText = "Image ready for X!";
+          uploadProgressBarElem.style.width = "100%";
+          pigImageUrlForSharing = `https://your-app.com/pig-image-${Date.now()}.png`;
+          document.getElementById('confirmShareBtn').disabled = false;
+        }, 1200);
+      } catch (e) {
+        console.error('Canvas capture failed:', e);
+        uploadStatusElem.innerText = "Oops! Camera shy pig. Sharing stats only.";
+        uploadProgressBarElem.style.width = "100%";
+        pigImageUrlForSharing = null;
+        document.getElementById('confirmShareBtn').disabled = false;
+      }
+    }
+    
+    function closeShareConfirmation() {
+      shareConfirmationPopup.style.display = "none";
+    }
+    
+    function shareOnX() {
+      if (!currentPig) return;
+      
+      const { name, handle, attributes } = currentPig;
+      const { rarity, breed, trait, accessory } = attributes;
+      
+      let tweetText = `Behold! My #PigGenerator95 creation for ${handle}: ${name}! ✨
+A magnificent ${rarity.name} ${breed} pig, known for its ${trait} personality and stylish ${accessory}.
+Generate your own: [Your App Link Here] #DigitalPig #RetroGaming`;
+      
+      const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(tweetText)}`;
+      window.open(twitterUrl, '_blank', 'width=600,height=450,resizable=yes,scrollbars=yes');
+      
+      closeShareConfirmation();
+    }
+
+    function downloadPigImage() {
+      const dataURL = document.getElementById('sharePreview').src;
+      const link = document.createElement('a');
+      link.href = dataURL;
+      link.download = 'my_pig.png';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+
+    function copyPigDetails() {
+      if (!currentPig) return;
+      const { name, handle, attributes } = currentPig;
+      const details = `🐷 ${name} (${handle}'s Pig) 🐷
+Rarity: ${attributes.rarity.name}
+Breed: ${attributes.breed} | Skin: ${attributes.skin}
+Personality: ${attributes.trait} | Mood: ${attributes.mood}
+Accessory: ${attributes.accessory} | Hobby: ${attributes.hobby}
+Born: ${attributes.birthdate}
+Stats: Cuteness ${attributes.cuteness}, Intelligence ${attributes.intelligence}, Luck ${attributes.luck}
+Generated with Pig Generator 95!`;
+      
+      navigator.clipboard.writeText(details).then(() => {
+        showError("Pig details copied to clipboard! Oink-tastic!");
+      }).catch(err => {
+        showError("Failed to copy. Try manually!");
+        console.error('Failed to copy text: ', err);
+      });
+    }
+
+    function updateClock() {
+      const now = new Date();
+      const timeString = now.toLocaleTimeString('en-US', { hour12: true, hour: '2-digit', minute: '2-digit' });
+      document.getElementById("clock").innerText = timeString;
+    }
+    setInterval(updateClock, 1000);
+    updateClock();
+
+    let offsetX, offsetY, isDragging = false, activeWindow = null;
+    [appWindowHeader, rarityWindowHeader, helpWindowHeader].forEach(header => {
+      if (header) {
+        header.addEventListener('mousedown', (e) => {
+          if (e.target.classList.contains('close-btn')) return;
+          activeWindow = header.parentElement;
+          isDragging = true;
+          offsetX = e.clientX - activeWindow.offsetLeft;
+          offsetY = e.clientY - activeWindow.offsetTop;
+          activeWindow.style.cursor = 'grabbing';
+          activeWindow.style.zIndex = 2000 + Math.floor(Math.random() * 100);
+        });
+      }
+    });
+
+    document.addEventListener('mousemove', (e) => {
+      if (!isDragging || !activeWindow) return;
+      const x = e.clientX - offsetX;
+      const y = e.clientY - offsetY;
+      const maxX = window.innerWidth - activeWindow.offsetWidth;
+      const maxY = window.innerHeight - activeWindow.offsetHeight - document.querySelector('.taskbar').offsetHeight;
+      activeWindow.style.left = `${Math.max(0, Math.min(x, maxX))}px`;
+      activeWindow.style.top = `${Math.max(0, Math.min(y, maxY))}px`;
+    });
+
+    document.addEventListener('mouseup', () => {
+      if (isDragging) {
+        isDragging = false;
+        if (activeWindow) {
+          activeWindow.style.cursor = 'default';
+          activeWindow = null;
+        }
+      }
+    });
+
+    // Pig Assistant functionality
+    let assistantVisible = false;
+    let assistantMinimized = false;
+    let assistantTipIndex = 0;
+    let assistantTimer;
+    let winkTimer;
+    let currentAssistantState = 'greeting';
+    
+    const assistantTips = [
+      "Did you know? You only get to generate ONE pig EVER! Make it count! 🌟",
+      "Pro tip: Once you generate a pig, that's it! No take-backs, no do-overs!",
+      "Fun fact: Legendary pigs appear only 0.5% of the time. Hope you get lucky on your ONE chance! ✨",
+      "Psst! The rarer your pig, the bigger it appears in 3D. Legendary pigs are 15% larger!",
+      "Oink oink! Your pig's personality is unique to your Twitter handle. Choose wisely!",
+      "Did you know you can drag windows around? Just like the good old days of Windows 95! 🖱️",
+      "Tip: Click 'Copy Details' to save your pig's stats. It's your ONLY pig, so keep it safe!",
+      "Your pig's mood affects its entire vibe. Happy pigs bring good luck! 🍀",
+      "Secret: Once generated, your pig is yours forever. Even I can't change it! 🔒",
+      "Remember: One person, one pig. That's the sacred rule of Pig Generator 95! 🐷"
+    ];
+    
+    const assistantResponses = {
+      yes: [
+        "Wonderful! Just enter your Twitter handle above and I'll help you create the perfect pig! 🐷",
+        "Excellent choice! Your pig destiny awaits. Remember, you only get ONE pig per handle!",
+        "Oink-tastic! Let's create your one-of-a-kind pig! Choose your handle wisely! ✨"
+      ],
+      no: [
+        "No problem! I'll be here if you need me. Just click on me anytime! 😊",
+        "That's okay! I'll be quietly oinking in the corner if you change your mind.",
+        "Alright! Feel free to explore on your own. I'll be here practicing my snout boops!"
+      ],
+      error: [
+        "Oops! Looks like you need to enter a Twitter handle. No @ symbol needed!",
+        "Uh oh! Make sure your handle only has letters, numbers, and underscores!",
+        "Hmm, something's not quite right. Check your Twitter handle and try again!"
+      ],
+      success: [
+        "Wowza! What a magnificent pig! Look at those stats! 🌟",
+        "Oink my gosh! Your pig is absolutely adorable! Time to show it off!",
+        "Congratulations! You've created a true pig masterpiece! 🎉"
+      ],
+      returning: [
+        "Welcome back! I remember you! Here's your exclusive pig companion! 🐷",
+        "Oh! You already have a pig! Let me fetch your special friend!",
+        "I never forget a pig parent! Here's your one and only pig! 💖"
+      ],
+      idle: [
+        "I'm getting sleepy... Click on me if you need help! 😴",
+        "Just practicing my oinks over here! Need any help?",
+        "*doing tiny pig dances* Feel free to ask me anything!"
+      ]
+    };
+    
+    function showAssistant() {
+      const assistant = document.getElementById('pigAssistant');
+      assistant.style.display = 'block';
+      assistantVisible = true;
+      
+      // Start random winking
+      startWinking();
+      
+      // Show tips periodically
+      assistantTimer = setInterval(() => {
+        if (!assistantMinimized && currentAssistantState === 'idle') {
+          showAssistantTip();
+        }
+      }, 15000);
+    }
+    
+    function hideAssistant() {
+      const assistant = document.getElementById('pigAssistant');
+      assistant.style.display = 'none';
+      assistantVisible = false;
+      clearInterval(assistantTimer);
+      clearInterval(winkTimer);
+    }
+    
+    function toggleAssistant() {
+      if (assistantMinimized) {
+        document.getElementById('pigAssistant').classList.remove('minimized');
+        assistantMinimized = false;
+      }
+    }
+    
+    function minimizeAssistant(event) {
+      event.stopPropagation();
+      document.getElementById('pigAssistant').classList.add('minimized');
+      assistantMinimized = true;
+    }
+    
+    function showAssistantMessage(message, actions = null) {
+      const textElement = document.getElementById('assistantText');
+      const actionsElement = document.getElementById('assistantActions');
+      
+      textElement.textContent = message;
+      
+      if (actions) {
+        actionsElement.innerHTML = actions;
+        actionsElement.style.display = 'flex';
+      } else {
+        actionsElement.style.display = 'none';
+      }
+      
+      // Ensure assistant is visible
+      if (assistantMinimized) {
+        toggleAssistant();
+      }
+    }
+    
+    function showAssistantTip() {
+      const tip = assistantTips[assistantTipIndex % assistantTips.length];
+      showAssistantMessage(tip);
+      assistantTipIndex++;
+    }
+    
+    function assistantResponse(response) {
+      const responses = assistantResponses[response];
+      const randomResponse = responses[Math.floor(Math.random() * responses.length)];
+      
+      if (response === 'yes') {
+        showAssistantMessage(randomResponse);
+        currentAssistantState = 'helping';
+        // Focus on the twitter input
+        document.getElementById('twitter').focus();
+      } else if (response === 'no') {
+        showAssistantMessage(randomResponse);
+        currentAssistantState = 'idle';
+        setTimeout(() => {
+          minimizeAssistant({ stopPropagation: () => {} });
+        }, 3000);
+      }
+    }
+    
+    function startWinking() {
+      winkTimer = setInterval(() => {
+        if (Math.random() > 0.7) {
+          const leftEye = document.getElementById('leftEye');
+          const rightEye = document.getElementById('rightEye');
+          
+          if (Math.random() > 0.5) {
+            leftEye.classList.add('wink');
+            setTimeout(() => leftEye.classList.remove('wink'), 200);
+          } else {
+            rightEye.classList.add('wink');
+            setTimeout(() => rightEye.classList.remove('wink'), 200);
+          }
+        }
+      }, 3000);
+    }
+    
+    // Store original functions before modifications
+    let originalShowError;
+    let originalDisplayResult;
+    
+    // Show assistant after a delay when page loads
+    setTimeout(() => {
+      // Store original functions
+      originalShowError = showError;
+      originalDisplayResult = displayResult;
+      
+      // Hook into showError to add assistant feedback
+      showError = function(message) {
+        originalShowError(message);
+        
+        if (assistantVisible && !assistantMinimized) {
+          // Check if it's a returning user message
+          if (message.includes("already has a pig")) {
+            const returningResponse = assistantResponses.returning[Math.floor(Math.random() * assistantResponses.returning.length)];
+            showAssistantMessage(returningResponse);
+            currentAssistantState = 'returning';
+          } else {
+            const errorResponse = assistantResponses.error[Math.floor(Math.random() * assistantResponses.error.length)];
+            showAssistantMessage(errorResponse);
+            currentAssistantState = 'error';
+          }
+        }
+      }
+      
+      // Hook into displayResult to add assistant celebration
+      displayResult = function(handle, attr) {
+        originalDisplayResult(handle, attr);
+        
+        if (assistantVisible && !assistantMinimized) {
+          const isNewPig = !pigRegistry[handle.toLowerCase()] || currentAssistantState !== 'returning';
+          
+          if (isNewPig) {
+            const successResponse = assistantResponses.success[Math.floor(Math.random() * assistantResponses.success.length)];
+            let extraMessage = '';
+            
+            if (attr.rarity.name === 'Legendary') {
+              extraMessage = " 🌟 OH MY OINK! A LEGENDARY PIG! This is incredibly rare! And it's yours FOREVER!";
+            } else if (attr.rarity.name === 'Epic') {
+              extraMessage = " 💜 An Epic pig! You're quite lucky! This pig is now permanently yours!";
+            } else {
+              extraMessage = " Remember, this is your one and only pig for this handle!";
+            }
+            
+            showAssistantMessage(successResponse + extraMessage);
+          }
+          currentAssistantState = 'success';
+        }
+      }
+      
+      showAssistant();
+    }, 2000);
+    
+    // Hide/show assistant based on window activity
+    let inactivityTimer;
+    function resetInactivityTimer() {
+      clearTimeout(inactivityTimer);
+      inactivityTimer = setTimeout(() => {
+        if (assistantVisible && !assistantMinimized && currentAssistantState === 'idle') {
+          const idleResponse = assistantResponses.idle[Math.floor(Math.random() * assistantResponses.idle.length)];
+          showAssistantMessage(idleResponse);
+        }
+      }, 30000);
+    }
+    
+    document.addEventListener('mousemove', resetInactivityTimer);
+    document.addEventListener('keypress', resetInactivityTimer);
+    document.addEventListener('click', resetInactivityTimer);
+    
+    // Add keyboard shortcut to toggle assistant
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'F1') {
+        e.preventDefault();
+        if (assistantVisible) {
+          hideAssistant();
+        } else {
+          showAssistant();
+        }
+      }
+    });
+
+    // Floating Pig Window Functions
+    function showFloatingPig() {
+      if (!currentPig) return;
+      
+      const floatingWindow = document.getElementById('floatingPigWindow');
+      floatingWindow.classList.add('show');
+      
+      // Update floating pig info
+      document.getElementById('floatingPigName').textContent = currentPig.name;
+      document.getElementById('floatingPigRarity').innerHTML = `<span class="rarity-indicator rarity-${currentPig.attributes.rarity.class}"></span> ${currentPig.attributes.rarity.name}`;
+      document.getElementById('floatingPigMood').textContent = currentPig.attributes.mood.split(' ')[0]; // Just the emoji
+      document.getElementById('floatingPigStats').innerHTML = `
+        C: ${currentPig.attributes.cuteness} | I: ${currentPig.attributes.intelligence} | L: ${currentPig.attributes.luck}
+      `;
+      
+      // Initialize floating pig 3D
+      setTimeout(() => {
+        initFloatingPig3D();
+        createFloatingPig(currentPig.attributes);
+      }, 100);
+      
+      // Show success message
+      showError("Your pig is now floating on your desktop! Drag it anywhere!");
+    }
+    
+    function closeFloatingPig() {
+      document.getElementById('floatingPigWindow').classList.remove('show');
+      
+      // Clean up 3D resources
+      if (floatingRenderer) {
+        floatingRenderer.dispose();
+        if (floatingAnimationFrameId) {
+          cancelAnimationFrame(floatingAnimationFrameId);
+          floatingAnimationFrameId = null;
+        }
+      }
+    }
+    
+    function toggleFloatingPig() {
+      const floatingWindow = document.getElementById('floatingPigWindow');
+      const floatingContent = document.getElementById('floatingPigContent');
+      
+      isFloatingMinimized = !isFloatingMinimized;
+      
+      if (isFloatingMinimized) {
+        floatingWindow.classList.add('minimized');
+      } else {
+        floatingWindow.classList.remove('minimized');
+      }
+    }
+    
+    function initFloatingPig3D() {
+      const canvas = document.getElementById('floatingPigCanvas');
+      const container = canvas.parentElement;
+      
+      if (floatingRenderer) {
+        floatingRenderer.dispose();
+        if (floatingAnimationFrameId) cancelAnimationFrame(floatingAnimationFrameId);
+      }
+      
+      floatingScene = new THREE.Scene();
+      floatingScene.background = new THREE.Color(0xf0f0f0);
+      
+      floatingCamera = new THREE.PerspectiveCamera(50, 1, 0.1, 1000);
+      floatingCamera.position.set(0, 1, 2.5);
+      floatingCamera.lookAt(0, 0.2, 0);
+      
+      floatingRenderer = new THREE.WebGLRenderer({ 
+        canvas: canvas,
+        antialias: true
+      });
+      floatingRenderer.setSize(120, 120);
+      
+      const ambientLight = new THREE.AmbientLight(0xffffff, 0.8);
+      floatingScene.add(ambientLight);
+      
+      const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
+      directionalLight.position.set(2, 3, 2);
+      floatingScene.add(directionalLight);
+    }
+    
+    function createFloatingPig(attributes) {
+      if (!floatingScene) return;
+      
+      if (floatingPigMesh) {
+        floatingScene.remove(floatingPigMesh);
+        floatingPigMesh.traverse(child => {
+          if (child.geometry) child.geometry.dispose();
+          if (child.material) {
+            if (Array.isArray(child.material)) child.material.forEach(mat => mat.dispose());
+            else child.material.dispose();
+          }
+        });
+      }
+      
+      // Use the full detailed pig model
+      const pigGroup = new THREE.Group();
+      
+      const skinColors = {
+        'Rosy Pink': 0xffb6c1, 'Charcoal Black': 0x333333, 'Spotted': 0xffb6c1,
+        'Russet Red': 0x8b5a2b, 'Ginger': 0xd27d1e, 'Pearl White': 0xf5f5f5,
+        'Chocolate Brown': 0x7b3f00, 'Golden': 0xffd700, 'Silver': 0xb0b0b0
+      };
+      
+      const pigColor = skinColors[attributes.skin] || 0xffb6c1;
+      const material = new THREE.MeshPhongMaterial({ color: pigColor, shininess: 20 });
+      
+      // Full detailed body
+      const bodyGeometry = new THREE.SphereGeometry(0.6, 24, 18);
+      bodyGeometry.scale(1.25, 0.85, 1.0);
+      const body = new THREE.Mesh(bodyGeometry, material);
+      body.position.y = 0.2;
+      body.castShadow = true;
+      body.receiveShadow = true;
+      pigGroup.add(body);
+      
+      // Full detailed head
+      const headGeometry = new THREE.SphereGeometry(0.4, 20, 16);
+      const head = new THREE.Mesh(headGeometry, material);
+      head.position.set(0, 0.55, 0.65);
+      head.castShadow = true;
+      pigGroup.add(head);
+      
+      // Snout
+      const snoutMaterialColor = new THREE.Color(pigColor).multiplyScalar(0.9);
+      const snoutGeometry = new THREE.CylinderGeometry(0.15, 0.12, 0.25, 12);
+      const snout = new THREE.Mesh(snoutGeometry, new THREE.MeshPhongMaterial({ color: snoutMaterialColor, shininess: 10 }));
+      snout.position.set(0, 0.45, 0.85);
+      snout.rotation.x = Math.PI / 2.5;
+      pigGroup.add(snout);
+      
+      // Nostrils
+      const nostrilGeometry = new THREE.CircleGeometry(0.035, 8);
+      const nostrilMaterial = new THREE.MeshBasicMaterial({ color: 0x442211 });
+      const nostril1 = new THREE.Mesh(nostrilGeometry, nostrilMaterial);
+      const nostril2 = new THREE.Mesh(nostrilGeometry, nostrilMaterial);
+      nostril1.position.set(-0.05, 0.47, 0.94);
+      nostril2.position.set(0.05, 0.47, 0.94);
+      nostril1.rotation.x = nostril2.rotation.x = -Math.PI / 3;
+      pigGroup.add(nostril1, nostril2);
+      
+      // Eyes
+      const eyeGeometry = new THREE.SphereGeometry(0.06, 10, 8);
+      const eyeMaterial = new THREE.MeshPhongMaterial({ color: 0x111111, shininess: 100 });
+      const eye1 = new THREE.Mesh(eyeGeometry, eyeMaterial);
+      const eye2 = new THREE.Mesh(eyeGeometry, eyeMaterial);
+      eye1.position.set(-0.16, 0.6, 0.85);
+      eye2.position.set(0.16, 0.6, 0.85);
+      pigGroup.add(eye1, eye2);
+      
+      // Ears
+      function createEarShape() {
+        const earShape = new THREE.Shape();
+        earShape.moveTo(0, 0);
+        earShape.lineTo(0, 0.3);
+        earShape.quadraticCurveTo(0.15, 0.35, 0.2, 0.2);
+        earShape.lineTo(0.1, 0);
+        earShape.closePath();
+        const extrudeSettings = { depth: 0.05, bevelEnabled: false };
+        return new THREE.ExtrudeGeometry(earShape, extrudeSettings);
+      }
+      const earGeometry = createEarShape();
+      const ear1 = new THREE.Mesh(earGeometry, material);
+      const ear2 = new THREE.Mesh(earGeometry, material);
+      ear1.position.set(-0.15, 0.7, 0.55);
+      ear2.position.set(0.05, 0.7, 0.55);
+      ear1.rotation.y = -Math.PI / 6;
+      ear1.rotation.z = Math.PI / 8;
+      ear2.scale.x = -1;
+      ear2.rotation.y = -Math.PI / 6;
+      ear2.rotation.z = Math.PI / 8;
+      pigGroup.add(ear1, ear2);
+      
+      // Legs  
+      const legGeometry = new THREE.CylinderGeometry(0.1, 0.08, 0.5, 10);
+      const legMaterial = new THREE.MeshPhongMaterial({ color: pigColor, shininess: 15 });
+      const legPositions = [
+        { x: 0.4, z: 0.35, rotY: 0.1 }, { x: -0.4, z: 0.35, rotY: -0.1 },
+        { x: 0.35, z: -0.4, rotY: -0.1 }, { x: -0.35, z: -0.4, rotY: 0.1 }
+      ];
+      legPositions.forEach(pos => {
+        const leg = new THREE.Mesh(legGeometry, legMaterial);
+        leg.position.set(pos.x, -0.1, pos.z);
+        leg.rotation.y = pos.rotY || 0;
+        leg.rotation.z = (pos.x > 0 ? -1 : 1) * Math.PI / 12;
+        leg.castShadow = true;
+        pigGroup.add(leg);
+      });
+      
+      // Tail
+      const curve = new THREE.CatmullRomCurve3([
+        new THREE.Vector3(0, 0.2, -0.6),
+        new THREE.Vector3(0.05, 0.25, -0.7),
+        new THREE.Vector3(0, 0.2, -0.75),
+        new THREE.Vector3(-0.05, 0.15, -0.7)
+      ]);
+      const tailGeometry = new THREE.TubeGeometry(curve, 8, 0.03, 6, false);
+      const tail = new THREE.Mesh(tailGeometry, material);
+      pigGroup.add(tail);
+      
+      // Spots if needed
+      if (attributes.skin === 'Spotted') {
+        const spotMaterial = new THREE.MeshPhongMaterial({ color: 0x654321, shininess: 5 });
+        for (let i = 0; i < 6; i++) {
+          const spotSize = Math.random() * 0.1 + 0.05;
+          const spot = new THREE.Mesh(new THREE.SphereGeometry(spotSize, 8, 6), spotMaterial);
+          const phi = Math.random() * Math.PI;
+          const theta = Math.random() * Math.PI * 2;
+          const R = 0.6;
+          spot.position.set(
+            R * Math.sin(phi) * Math.cos(theta) * 1.2,
+            R * Math.cos(phi) * 0.8 + 0.2,
+            R * Math.sin(phi) * Math.sin(theta) * 1.0
+          );
+          spot.scale.set(1, 0.5, 1);
+          body.add(spot);
+        }
+      }
+      
+      // Accessories
+      if (attributes.accessory && attributes.accessory !== "None") {
+        const accessoryMaterial = new THREE.MeshPhongMaterial({shininess: 50});
+        if (attributes.accessory === 'Top Hat') {
+          accessoryMaterial.color.setHex(0x111111);
+          const hatCrown = new THREE.Mesh(new THREE.CylinderGeometry(0.18, 0.22, 0.35, 16), accessoryMaterial);
+          hatCrown.position.set(0, 0.85, 0.65);
+          const hatBrim = new THREE.Mesh(new THREE.CylinderGeometry(0.33, 0.33, 0.05, 16), accessoryMaterial);
+          hatBrim.position.set(0, 0.68, 0.65);
+          head.add(hatCrown, hatBrim);
+        } else if (attributes.accessory === 'Crown') {
+          accessoryMaterial.color.setHex(0xffd700);
+          const crownBase = new THREE.Mesh(new THREE.CylinderGeometry(0.24, 0.26, 0.1, 12), accessoryMaterial);
+          crownBase.position.set(0, 0.72, 0.65);
+          head.add(crownBase);
+          for (let i = 0; i < 6; i++) {
+            const point = new THREE.Mesh(new THREE.ConeGeometry(0.04, 0.12, 4), accessoryMaterial);
+            const angle = (i * Math.PI * 2) / 6;
+            point.position.set(
+              Math.cos(angle) * 0.24, 0.1, Math.sin(angle) * 0.24
+            );
+            point.position.y += 0.72;
+            point.position.z += 0.65;
+            point.rotation.x = Math.PI/12;
+            head.add(point);
+          }
+        }
+      }
+      
+      // Scale for floating window (smaller than main window but with proper rarity scaling)
+      const rarityMultiplier = attributes.rarity.name === 'Legendary' ? 1.15 : 
+                             attributes.rarity.name === 'Epic' ? 1.08 : 1.0;
+      const floatingScale = 0.6 * rarityMultiplier; // 60% of original size
+      pigGroup.scale.multiplyScalar(floatingScale);
+      pigGroup.position.y = -0.2;
+      
+      floatingScene.add(pigGroup);
+      floatingPigMesh = pigGroup;
+      
+      if (!floatingAnimationFrameId) animateFloatingPig();
+    }
+    
+    function animateFloatingPig() {
+      floatingAnimationFrameId = requestAnimationFrame(animateFloatingPig);
+      if (floatingPigMesh) {
+        floatingPigMesh.rotation.y += 0.01;
+        floatingPigMesh.position.y = Math.sin(Date.now() * 0.002) * 0.05;
+      }
+      if (floatingRenderer && floatingScene && floatingCamera) {
+        floatingRenderer.render(floatingScene, floatingCamera);
+      }
+    }
+    
+    // Make floating pig window draggable
+    let isDraggingFloating = false;
+    let floatingOffsetX, floatingOffsetY;
+    
+    const floatingHeader = document.getElementById('floatingPigHeader');
+    floatingHeader.addEventListener('mousedown', (e) => {
+      if (e.target.classList.contains('floating-control-btn')) return;
+      isDraggingFloating = true;
+      const floatingWindow = document.getElementById('floatingPigWindow');
+      floatingOffsetX = e.clientX - floatingWindow.offsetLeft;
+      floatingOffsetY = e.clientY - floatingWindow.offsetTop;
+      floatingWindow.style.cursor = 'grabbing';
+    });
+    
+    document.addEventListener('mousemove', (e) => {
+      if (isDraggingFloating) {
+        const floatingWindow = document.getElementById('floatingPigWindow');
+        const x = e.clientX - floatingOffsetX;
+        const y = e.clientY - floatingOffsetY;
+        const maxX = window.innerWidth - floatingWindow.offsetWidth;
+        const maxY = window.innerHeight - floatingWindow.offsetHeight;
+        
+        floatingWindow.style.left = 'auto';
+        floatingWindow.style.right = Math.max(0, Math.min(window.innerWidth - x - floatingWindow.offsetWidth, window.innerWidth - floatingWindow.offsetWidth)) + 'px';
+        floatingWindow.style.top = Math.max(0, Math.min(y, maxY)) + 'px';
+      }
+    });
+    
+    document.addEventListener('mouseup', () => {
+      if (isDraggingFloating) {
+        isDraggingFloating = false;
+        document.getElementById('floatingPigWindow').style.cursor = 'default';
+      }
+    });
+  </script>
+</body>
+</html>Img.style.display = "none";
+      sharePreview
