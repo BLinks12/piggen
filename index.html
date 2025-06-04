@@ -553,6 +553,138 @@
       color: #505050;
     }
 
+    /* Floating Pig Window Styles */
+    .floating-pig-window {
+      position: fixed;
+      top: 100px;
+      right: 20px;
+      width: 200px;
+      background: #c0c0c0;
+      border: 2px outset #dfdfdf;
+      box-shadow: 3px 3px 6px rgba(0,0,0,0.4);
+      font-size: 11px;
+      z-index: 4000;
+      display: none;
+      transition: opacity 0.2s ease;
+    }
+    
+    .floating-pig-window.show {
+      display: block;
+    }
+    
+    .floating-pig-window.minimized {
+      height: 26px !important;
+      overflow: hidden;
+    }
+    
+    .floating-pig-header {
+      background: linear-gradient(90deg, #000080 0%, #1084d0 100%);
+      color: white;
+      padding: 2px 4px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-weight: bold;
+      font-size: 10px;
+      height: 22px;
+      cursor: move;
+    }
+    
+    .floating-pig-header span {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    
+    .floating-pig-controls {
+      display: flex;
+      gap: 2px;
+    }
+    
+    .floating-control-btn {
+      width: 14px;
+      height: 14px;
+      background: #c0c0c0;
+      border: 1px outset #dfdfdf;
+      font-size: 9px;
+      font-family: "MS Sans Serif", sans-serif;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      line-height: 1;
+      padding: 0;
+    }
+    
+    .floating-control-btn:active {
+      border: 1px inset #808080;
+      background: #b0b0b0;
+    }
+    
+    .floating-pig-content {
+      padding: 8px;
+      text-align: center;
+      background: #c0c0c0;
+    }
+    
+    .floating-pig-canvas {
+      width: 120px;
+      height: 120px;
+      margin: 0 auto 8px;
+      border: 2px inset #808080;
+      background: #f0f0f0;
+      position: relative;
+    }
+    
+    .floating-pig-info {
+      font-size: 10px;
+      line-height: 1.3;
+    }
+    
+    .floating-pig-name {
+      font-weight: bold;
+      color: #000080;
+      margin-bottom: 3px;
+    }
+    
+    .floating-pig-stats {
+      font-size: 9px;
+      color: #505050;
+      margin-top: 5px;
+      padding-top: 5px;
+      border-top: 1px solid #808080;
+    }
+    
+    .floating-pig-mood {
+      margin-top: 5px;
+      font-size: 14px;
+    }
+    
+    .pig-icon {
+      width: 14px;
+      height: 14px;
+      display: inline-block;
+      background: #ffb6c1;
+      border-radius: 50%;
+      border: 1px solid #000;
+      position: relative;
+      vertical-align: middle;
+    }
+    
+    .pig-icon::before,
+    .pig-icon::after {
+      content: '';
+      position: absolute;
+      width: 3px;
+      height: 3px;
+      background: #000;
+      border-radius: 50%;
+      top: 4px;
+    }
+    
+    .pig-icon::before { left: 3px; }
+    .pig-icon::after { right: 3px; }
+
     /* Pig Assistant Styles */
     .pig-assistant {
       position: fixed;
@@ -933,6 +1065,30 @@
     </div>
   </div>
 
+  <!-- Floating Pig Window -->
+  <div class="floating-pig-window" id="floatingPigWindow">
+    <div class="floating-pig-header" id="floatingPigHeader">
+      <span><div class="pig-icon"></div> My Pig</span>
+      <div class="floating-pig-controls">
+        <div class="floating-control-btn" onclick="toggleFloatingPig()">_</div>
+        <div class="floating-control-btn" onclick="closeFloatingPig()">×</div>
+      </div>
+    </div>
+    <div class="floating-pig-content" id="floatingPigContent">
+      <div class="floating-pig-canvas">
+        <canvas id="floatingPigCanvas"></canvas>
+      </div>
+      <div class="floating-pig-info">
+        <div class="floating-pig-name" id="floatingPigName">Loading...</div>
+        <div id="floatingPigRarity"></div>
+        <div class="floating-pig-mood" id="floatingPigMood">😊</div>
+        <div class="floating-pig-stats" id="floatingPigStats">
+          Loading stats...
+        </div>
+      </div>
+    </div>
+  </div>
+
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <script>
     // Store current pig for sharing
@@ -946,6 +1102,11 @@
     // Three.js pig creation variables
     let scene, camera, renderer, pigMesh;
     let animationFrameId;
+    
+    // Floating pig window variables
+    let floatingScene, floatingCamera, floatingRenderer, floatingPigMesh;
+    let floatingAnimationFrameId;
+    let isFloatingMinimized = false;
 
     const appWindow = document.getElementById("appWindow");
     const appWindowHeader = document.getElementById("appWindowHeader");
@@ -1457,6 +1618,9 @@
           <button class="share-btn" onclick="copyPigDetails()">
             📋 Copy Details
           </button>
+          <button class="share-btn" onclick="showFloatingPig()">
+            🪟 Keep Pig Visible
+          </button>
         </div>
       `;
       resultDiv.style.display = "block";
@@ -1866,6 +2030,313 @@ Generated with Pig Generator 95!`;
         } else {
           showAssistant();
         }
+      }
+    });
+
+    // Floating Pig Window Functions
+    function showFloatingPig() {
+      if (!currentPig) return;
+      
+      const floatingWindow = document.getElementById('floatingPigWindow');
+      floatingWindow.classList.add('show');
+      
+      // Update floating pig info
+      document.getElementById('floatingPigName').textContent = currentPig.name;
+      document.getElementById('floatingPigRarity').innerHTML = `<span class="rarity-indicator rarity-${currentPig.attributes.rarity.class}"></span> ${currentPig.attributes.rarity.name}`;
+      document.getElementById('floatingPigMood').textContent = currentPig.attributes.mood.split(' ')[0]; // Just the emoji
+      document.getElementById('floatingPigStats').innerHTML = `
+        C: ${currentPig.attributes.cuteness} | I: ${currentPig.attributes.intelligence} | L: ${currentPig.attributes.luck}
+      `;
+      
+      // Initialize floating pig 3D
+      setTimeout(() => {
+        initFloatingPig3D();
+        createFloatingPig(currentPig.attributes);
+      }, 100);
+      
+      // Show success message
+      showError("Your pig is now floating on your desktop! Drag it anywhere!");
+    }
+    
+    function closeFloatingPig() {
+      document.getElementById('floatingPigWindow').classList.remove('show');
+      
+      // Clean up 3D resources
+      if (floatingRenderer) {
+        floatingRenderer.dispose();
+        if (floatingAnimationFrameId) {
+          cancelAnimationFrame(floatingAnimationFrameId);
+          floatingAnimationFrameId = null;
+        }
+      }
+    }
+    
+    function toggleFloatingPig() {
+      const floatingWindow = document.getElementById('floatingPigWindow');
+      const floatingContent = document.getElementById('floatingPigContent');
+      
+      isFloatingMinimized = !isFloatingMinimized;
+      
+      if (isFloatingMinimized) {
+        floatingWindow.classList.add('minimized');
+      } else {
+        floatingWindow.classList.remove('minimized');
+      }
+    }
+    
+    function initFloatingPig3D() {
+      const canvas = document.getElementById('floatingPigCanvas');
+      const container = canvas.parentElement;
+      
+      if (floatingRenderer) {
+        floatingRenderer.dispose();
+        if (floatingAnimationFrameId) cancelAnimationFrame(floatingAnimationFrameId);
+      }
+      
+      floatingScene = new THREE.Scene();
+      floatingScene.background = new THREE.Color(0xf0f0f0);
+      
+      floatingCamera = new THREE.PerspectiveCamera(50, 1, 0.1, 1000);
+      floatingCamera.position.set(0, 1, 2.5);
+      floatingCamera.lookAt(0, 0.2, 0);
+      
+      floatingRenderer = new THREE.WebGLRenderer({ 
+        canvas: canvas,
+        antialias: true
+      });
+      floatingRenderer.setSize(120, 120);
+      
+      const ambientLight = new THREE.AmbientLight(0xffffff, 0.8);
+      floatingScene.add(ambientLight);
+      
+      const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
+      directionalLight.position.set(2, 3, 2);
+      floatingScene.add(directionalLight);
+    }
+    
+    function createFloatingPig(attributes) {
+      if (!floatingScene) return;
+      
+      if (floatingPigMesh) {
+        floatingScene.remove(floatingPigMesh);
+        floatingPigMesh.traverse(child => {
+          if (child.geometry) child.geometry.dispose();
+          if (child.material) {
+            if (Array.isArray(child.material)) child.material.forEach(mat => mat.dispose());
+            else child.material.dispose();
+          }
+        });
+      }
+      
+      // Create the EXACT SAME pig as in the main window
+      const pigGroup = new THREE.Group();
+      
+      const skinColors = {
+        'Rosy Pink': 0xffb6c1, 'Charcoal Black': 0x333333, 'Spotted': 0xffb6c1,
+        'Russet Red': 0x8b5a2b, 'Ginger': 0xd27d1e, 'Pearl White': 0xf5f5f5,
+        'Chocolate Brown': 0x7b3f00, 'Golden': 0xffd700, 'Silver': 0xb0b0b0
+      };
+      
+      const pigColor = skinColors[attributes.skin] || 0xffb6c1;
+      const material = new THREE.MeshPhongMaterial({ color: pigColor, shininess: 20 });
+      
+      // Body
+      const bodyGeometry = new THREE.SphereGeometry(0.6, 24, 18);
+      bodyGeometry.scale(1.25, 0.85, 1.0);
+      const body = new THREE.Mesh(bodyGeometry, material);
+      body.position.y = 0.2;
+      body.castShadow = true;
+      body.receiveShadow = true;
+      pigGroup.add(body);
+      
+      // Head
+      const headGeometry = new THREE.SphereGeometry(0.4, 20, 16);
+      const head = new THREE.Mesh(headGeometry, material);
+      head.position.set(0, 0.55, 0.65);
+      head.castShadow = true;
+      pigGroup.add(head);
+      
+      // Snout
+      const snoutMaterialColor = new THREE.Color(pigColor).multiplyScalar(0.9);
+      const snoutGeometry = new THREE.CylinderGeometry(0.15, 0.12, 0.25, 12);
+      const snout = new THREE.Mesh(snoutGeometry, new THREE.MeshPhongMaterial({ color: snoutMaterialColor, shininess: 10 }));
+      snout.position.set(0, 0.45, 0.85);
+      snout.rotation.x = Math.PI / 2.5;
+      pigGroup.add(snout);
+      
+      // Nostrils
+      const nostrilGeometry = new THREE.CircleGeometry(0.035, 8);
+      const nostrilMaterial = new THREE.MeshBasicMaterial({ color: 0x442211 });
+      const nostril1 = new THREE.Mesh(nostrilGeometry, nostrilMaterial);
+      const nostril2 = new THREE.Mesh(nostrilGeometry, nostrilMaterial);
+      nostril1.position.set(-0.05, 0.47, 0.94);
+      nostril2.position.set(0.05, 0.47, 0.94);
+      nostril1.rotation.x = nostril2.rotation.x = -Math.PI / 3;
+      pigGroup.add(nostril1, nostril2);
+      
+      // Eyes
+      const eyeGeometry = new THREE.SphereGeometry(0.06, 10, 8);
+      const eyeMaterial = new THREE.MeshPhongMaterial({ color: 0x111111, shininess: 100 });
+      const eye1 = new THREE.Mesh(eyeGeometry, eyeMaterial);
+      const eye2 = new THREE.Mesh(eyeGeometry, eyeMaterial);
+      eye1.position.set(-0.16, 0.6, 0.85);
+      eye2.position.set(0.16, 0.6, 0.85);
+      pigGroup.add(eye1, eye2);
+      
+      // Ears
+      function createEarShape() {
+        const earShape = new THREE.Shape();
+        earShape.moveTo(0, 0);
+        earShape.lineTo(0, 0.3);
+        earShape.quadraticCurveTo(0.15, 0.35, 0.2, 0.2);
+        earShape.lineTo(0.1, 0);
+        earShape.closePath();
+        const extrudeSettings = { depth: 0.05, bevelEnabled: false };
+        return new THREE.ExtrudeGeometry(earShape, extrudeSettings);
+      }
+      const earGeometry = createEarShape();
+      const ear1 = new THREE.Mesh(earGeometry, material);
+      const ear2 = new THREE.Mesh(earGeometry, material);
+      ear1.position.set(-0.15, 0.7, 0.55);
+      ear2.position.set(0.05, 0.7, 0.55);
+      ear1.rotation.y = -Math.PI / 6;
+      ear1.rotation.z = Math.PI / 8;
+      ear2.scale.x = -1;
+      ear2.rotation.y = -Math.PI / 6;
+      ear2.rotation.z = Math.PI / 8;
+      pigGroup.add(ear1, ear2);
+      
+      // Legs
+      const legGeometry = new THREE.CylinderGeometry(0.1, 0.08, 0.5, 10);
+      const legMaterial = new THREE.MeshPhongMaterial({ color: pigColor, shininess: 15 });
+      const legPositions = [
+        { x: 0.4, z: 0.35, rotY: 0.1 }, { x: -0.4, z: 0.35, rotY: -0.1 },
+        { x: 0.35, z: -0.4, rotY: -0.1 }, { x: -0.35, z: -0.4, rotY: 0.1 }
+      ];
+      legPositions.forEach(pos => {
+        const leg = new THREE.Mesh(legGeometry, legMaterial);
+        leg.position.set(pos.x, -0.1, pos.z);
+        leg.rotation.y = pos.rotY || 0;
+        leg.rotation.z = (pos.x > 0 ? -1 : 1) * Math.PI / 12;
+        leg.castShadow = true;
+        pigGroup.add(leg);
+      });
+      
+      // Tail
+      const curve = new THREE.CatmullRomCurve3([
+        new THREE.Vector3(0, 0.2, -0.6),
+        new THREE.Vector3(0.05, 0.25, -0.7),
+        new THREE.Vector3(0, 0.2, -0.75),
+        new THREE.Vector3(-0.05, 0.15, -0.7)
+      ]);
+      const tailGeometry = new THREE.TubeGeometry(curve, 8, 0.03, 6, false);
+      const tail = new THREE.Mesh(tailGeometry, material);
+      pigGroup.add(tail);
+      
+      // Spots if spotted
+      if (attributes.skin === 'Spotted') {
+        const spotMaterial = new THREE.MeshPhongMaterial({ color: 0x654321, shininess: 5 });
+        for (let i = 0; i < 6; i++) {
+          const spotSize = Math.random() * 0.1 + 0.05;
+          const spot = new THREE.Mesh(new THREE.SphereGeometry(spotSize, 8, 6), spotMaterial);
+          const phi = Math.random() * Math.PI;
+          const theta = Math.random() * Math.PI * 2;
+          const R = 0.6;
+          spot.position.set(
+            R * Math.sin(phi) * Math.cos(theta) * 1.2,
+            R * Math.cos(phi) * 0.8 + 0.2,
+            R * Math.sin(phi) * Math.sin(theta) * 1.0
+          );
+          spot.scale.set(1, 0.5, 1);
+          body.add(spot);
+        }
+      }
+      
+      // Accessories
+      if (attributes.accessory && attributes.accessory !== "None") {
+        const accessoryMaterial = new THREE.MeshPhongMaterial({shininess: 50});
+        if (attributes.accessory === 'Top Hat') {
+          accessoryMaterial.color.setHex(0x111111);
+          const hatCrown = new THREE.Mesh(new THREE.CylinderGeometry(0.18, 0.22, 0.35, 16), accessoryMaterial);
+          hatCrown.position.set(0, 0.85, 0.65);
+          const hatBrim = new THREE.Mesh(new THREE.CylinderGeometry(0.33, 0.33, 0.05, 16), accessoryMaterial);
+          hatBrim.position.set(0, 0.68, 0.65);
+          head.add(hatCrown, hatBrim);
+        } else if (attributes.accessory === 'Crown') {
+          accessoryMaterial.color.setHex(0xffd700);
+          const crownBase = new THREE.Mesh(new THREE.CylinderGeometry(0.24, 0.26, 0.1, 12), accessoryMaterial);
+          crownBase.position.set(0, 0.72, 0.65);
+          head.add(crownBase);
+          for (let i = 0; i < 6; i++) {
+            const point = new THREE.Mesh(new THREE.ConeGeometry(0.04, 0.12, 4), accessoryMaterial);
+            const angle = (i * Math.PI * 2) / 6;
+            point.position.set(
+              Math.cos(angle) * 0.24, 0.1, Math.sin(angle) * 0.24
+            );
+            point.position.y += 0.72;
+            point.position.z += 0.65;
+            point.rotation.x = Math.PI/12;
+            head.add(point);
+          }
+        }
+      }
+      
+      // Scale for floating window (smaller than main window but with rarity scaling)
+      const baseScale = 0.6; // Base scale for floating window
+      const rarityMultiplier = attributes.rarity.name === 'Legendary' ? 1.15 : 
+                              attributes.rarity.name === 'Epic' ? 1.08 : 1.0;
+      pigGroup.scale.multiplyScalar(baseScale * rarityMultiplier);
+      pigGroup.position.y = -0.3;
+      
+      floatingScene.add(pigGroup);
+      floatingPigMesh = pigGroup;
+      
+      if (!floatingAnimationFrameId) animateFloatingPig();
+    }
+    
+    function animateFloatingPig() {
+      floatingAnimationFrameId = requestAnimationFrame(animateFloatingPig);
+      if (floatingPigMesh) {
+        floatingPigMesh.rotation.y += 0.01;
+        floatingPigMesh.position.y = Math.sin(Date.now() * 0.002) * 0.05;
+      }
+      if (floatingRenderer && floatingScene && floatingCamera) {
+        floatingRenderer.render(floatingScene, floatingCamera);
+      }
+    }
+    
+    // Make floating pig window draggable
+    let isDraggingFloating = false;
+    let floatingOffsetX, floatingOffsetY;
+    
+    const floatingHeader = document.getElementById('floatingPigHeader');
+    floatingHeader.addEventListener('mousedown', (e) => {
+      if (e.target.classList.contains('floating-control-btn')) return;
+      isDraggingFloating = true;
+      const floatingWindow = document.getElementById('floatingPigWindow');
+      floatingOffsetX = e.clientX - floatingWindow.offsetLeft;
+      floatingOffsetY = e.clientY - floatingWindow.offsetTop;
+      floatingWindow.style.cursor = 'grabbing';
+    });
+    
+    document.addEventListener('mousemove', (e) => {
+      if (isDraggingFloating) {
+        const floatingWindow = document.getElementById('floatingPigWindow');
+        const x = e.clientX - floatingOffsetX;
+        const y = e.clientY - floatingOffsetY;
+        const maxX = window.innerWidth - floatingWindow.offsetWidth;
+        const maxY = window.innerHeight - floatingWindow.offsetHeight;
+        
+        floatingWindow.style.left = 'auto';
+        floatingWindow.style.right = Math.max(0, Math.min(window.innerWidth - x - floatingWindow.offsetWidth, window.innerWidth - floatingWindow.offsetWidth)) + 'px';
+        floatingWindow.style.top = Math.max(0, Math.min(y, maxY)) + 'px';
+      }
+    });
+    
+    document.addEventListener('mouseup', () => {
+      if (isDraggingFloating) {
+        isDraggingFloating = false;
+        document.getElementById('floatingPigWindow').style.cursor = 'default';
       }
     });
   </script>
