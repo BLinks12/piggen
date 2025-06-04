@@ -1145,6 +1145,9 @@
         <span class="tray-icon" title="Volume"><svg width="16" height="16" viewBox="0 0 16 16"><rect x="2" y="6" width="3" height="4" fill="#888"/><polygon points="5,6 9,3 9,13 5,10" fill="#444"/></svg></span>
         <span class="tray-icon" title="Network"><svg width="16" height="16" viewBox="0 0 16 16"><circle cx="8" cy="12" r="2" fill="#1a90ff"/><path d="M4 10a4 4 0 0 1 8 0" stroke="#1a90ff" stroke-width="2" fill="none"/></svg></span>
         <span class="tray-icon" title="Pig Antivirus"><svg width="16" height="16" viewBox="0 0 16 16"><ellipse cx="8" cy="10" rx="5" ry="4" fill="#ffb6c1" stroke="#a05" stroke-width="1"/><ellipse cx="6" cy="9" rx="1" ry="1.2" fill="#fff"/><ellipse cx="10" cy="9" rx="1" ry="1.2" fill="#fff"/><ellipse cx="6" cy="9.2" rx="0.4" ry="0.5" fill="#333"/><ellipse cx="10" cy="9.2" rx="0.4" ry="0.5" fill="#333"/></svg></span>
+        <span class="tray-icon" title="Recycle Bin"><svg width="16" height="16" viewBox="0 0 16 16"><rect x="4" y="5" width="8" height="7" rx="2" fill="#e0e0e0" stroke="#888" stroke-width="1"/><rect x="6" y="7" width="4" height="3" fill="#b0b0b0"/></svg></span>
+        <span class="tray-icon" title="Pig Paint"><svg width="16" height="16" viewBox="0 0 16 16"><ellipse cx="8" cy="10" rx="5" ry="3" fill="#fffbe0" stroke="#a05" stroke-width="1"/><rect x="7" y="4" width="2" height="6" fill="#ffb6c1" stroke="#a05" stroke-width="0.5"/><circle cx="8" cy="4" r="1.2" fill="#ffb6c1" stroke="#a05" stroke-width="0.5"/></svg></span>
+        <span class="tray-icon" title="Pig Explorer"><svg width="16" height="16" viewBox="0 0 16 16"><rect x="2" y="4" width="12" height="8" rx="2" fill="#e0f7fa" stroke="#1a90ff" stroke-width="1"/><rect x="4" y="6" width="8" height="4" fill="#b3e5fc"/></svg></span>
       </div>
       <div class="balloon-tip" id="balloonTip" style="display:none;">
         <div class="balloon-arrow"></div>
@@ -2710,6 +2713,27 @@ Generated with Pig Generator 95!`;
         });
       }
     });
+
+    // Fake system notifications
+    const fakeBalloonMessages = [
+      'Pig Antivirus: No viruses found!',
+      'Network: Oinkline connected!',
+      'Recycle Bin is empty.',
+      'Pig Paint: New update available!',
+      'Pig Explorer: 1 new pig discovered!',
+      'Volume: Oink level optimal.',
+      'Pig Antivirus: Oinkware definitions up to date!',
+      'Network: OinkFi signal strong.',
+      'Pig Paint: Ready to doodle!',
+      'Pig Explorer: All files are pig-tastic!'
+    ];
+    function showRandomBalloonTip() {
+      const msg = fakeBalloonMessages[Math.floor(Math.random() * fakeBalloonMessages.length)];
+      showBalloonTip(msg);
+      // Schedule next
+      setTimeout(showRandomBalloonTip, 20000 + Math.random() * 20000);
+    }
+    setTimeout(showRandomBalloonTip, 15000);
   </script>
 </body>
 </html> 
