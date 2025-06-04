@@ -13,8 +13,6 @@
       overflow: hidden;
       height: 100vh;
       user-select: none;
-    function checkAnotherPig() {
-      // This function is no longer needed since it's one use per person
     }
     
     .desktop {
@@ -29,6 +27,19 @@
           transparent 1px,
           transparent 3px
         );
+      animation: backgroundShift 20s ease-in-out infinite;
+    }
+    
+    @keyframes backgroundShift {
+      0% {
+        background-position: 0% 0%;
+      }
+      50% {
+        background-position: 100% 100%;
+      }
+      100% {
+        background-position: 0% 0%;
+      }
     }
     
     .icon {
@@ -171,7 +182,8 @@
       width: 420px;
       background: #c0c0c0;
       border: 2px outset #dfdfdf;
-      box-shadow: 3px 3px 6px rgba(0,0,0,0.4);
+      box-shadow: 3px 3px 6px rgba(0,0,0,0.4),
+                 0 0 20px rgba(0,0,0,0.1);
       position: fixed;
       top: 50%;
       left: 50%;
@@ -182,8 +194,9 @@
       border-radius: 0;
       max-height: 90vh;
       z-index: 1000;
-      transition: opacity 0.15s ease-out, transform 0.15s ease-out;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
+    
     .window.open {
       display: block;
       opacity: 1;
@@ -201,6 +214,8 @@
       font-size: 11px;
       text-shadow: 1px 1px 1px #00000060;
       height: 20px;
+      cursor: move;
+      user-select: none;
     }
     
     .window-content {
@@ -248,7 +263,9 @@
       position: fixed;
       bottom: 0;
       width: 100%;
-      background: #c0c0c0;
+      background: rgba(192, 192, 192, 0.85);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
       border-top: 2px outset #dfdfdf;
       display: flex;
       justify-content: space-between;
@@ -258,6 +275,7 @@
       height: 28px;
       box-sizing: border-box;
       z-index: 2000;
+      box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
     }
     
     .start-btn {
@@ -308,19 +326,60 @@
       font-weight: bold;
       box-shadow: 1px 1px 2px rgba(0,0,0,0.2);
       padding: 6px 8px;
+      transition: all 0.2s ease;
+      position: relative;
+      overflow: hidden;
     }
-    .btn:hover { border-color: #efefef; }
+    
+    .btn:hover { 
+      border-color: #efefef;
+      transform: translateY(-1px);
+      box-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+    }
+    
     .btn:active {
       border: 1px inset #808080;
       background: #b0b0b0;
       box-shadow: none;
+      transform: translateY(1px);
     }
+    
     .btn:disabled {
       background: #c0c0c0;
       color: #808080;
       cursor: not-allowed;
       border: 1px outset #b0b0b0;
       box-shadow: none;
+      transform: none;
+    }
+    
+    .btn::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 5px;
+      height: 5px;
+      background: rgba(255, 255, 255, 0.5);
+      opacity: 0;
+      border-radius: 100%;
+      transform: scale(1, 1) translate(-50%);
+      transform-origin: 50% 50%;
+    }
+    
+    .btn:hover::after {
+      animation: ripple 1s ease-out;
+    }
+    
+    @keyframes ripple {
+      0% {
+        transform: scale(0, 0);
+        opacity: 0.5;
+      }
+      100% {
+        transform: scale(20, 20);
+        opacity: 0;
+      }
     }
     
     .progress-container {
@@ -702,7 +761,7 @@
     }
     
     .pig-assistant.minimized {
-      transform: translateY(120px);
+      /* no longer used for close */
     }
     
     .assistant-body {
@@ -715,6 +774,7 @@
       box-shadow: 3px 3px 8px rgba(0,0,0,0.3);
       cursor: pointer;
       margin: 0 auto;
+      pointer-events: auto;
     }
     
     .assistant-body::before {
@@ -906,10 +966,70 @@
       text-align: center;
       cursor: pointer;
       display: none;
+      z-index: 10;
+      pointer-events: auto;
     }
     
     .pig-assistant:hover .assistant-minimize {
       display: block;
+      pointer-events: auto;
+    }
+
+    .system-tray {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-left: auto;
+      margin-right: 6px;
+      position: relative;
+    }
+    .tray-icon {
+      width: 18px;
+      height: 18px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: #e0e0e0;
+      border: 1px solid #b0b0b0;
+      border-radius: 3px;
+      box-shadow: 1px 1px 2px rgba(0,0,0,0.08);
+      cursor: pointer;
+      transition: background 0.2s;
+      padding: 1px;
+    }
+    .tray-icon:hover {
+      background: #d0f0ff;
+    }
+    .balloon-tip {
+      position: absolute;
+      right: 0;
+      bottom: 32px;
+      min-width: 140px;
+      background: #ffffe0;
+      border: 1.5px solid #888;
+      border-radius: 8px;
+      box-shadow: 2px 2px 8px rgba(0,0,0,0.18);
+      padding: 10px 16px 8px 12px;
+      font-size: 11px;
+      color: #333;
+      z-index: 3000;
+      animation: balloonFadeIn 0.4s;
+      pointer-events: none;
+    }
+    .balloon-arrow {
+      position: absolute;
+      right: 12px;
+      bottom: -10px;
+      width: 0;
+      height: 0;
+      border-left: 8px solid transparent;
+      border-right: 8px solid transparent;
+      border-top: 10px solid #ffffe0;
+      filter: drop-shadow(0 1px 1px #888);
+    }
+    @keyframes balloonFadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
     }
   </style>
 </head>
@@ -1021,6 +1141,15 @@
         <span class="start-btn-icon"></span> Start
       </div>
       <div class="clock" id="clock"></div>
+      <div class="system-tray">
+        <span class="tray-icon" title="Volume"><svg width="16" height="16" viewBox="0 0 16 16"><rect x="2" y="6" width="3" height="4" fill="#888"/><polygon points="5,6 9,3 9,13 5,10" fill="#444"/></svg></span>
+        <span class="tray-icon" title="Network"><svg width="16" height="16" viewBox="0 0 16 16"><circle cx="8" cy="12" r="2" fill="#1a90ff"/><path d="M4 10a4 4 0 0 1 8 0" stroke="#1a90ff" stroke-width="2" fill="none"/></svg></span>
+        <span class="tray-icon" title="Pig Antivirus"><svg width="16" height="16" viewBox="0 0 16 16"><ellipse cx="8" cy="10" rx="5" ry="4" fill="#ffb6c1" stroke="#a05" stroke-width="1"/><ellipse cx="6" cy="9" rx="1" ry="1.2" fill="#fff"/><ellipse cx="10" cy="9" rx="1" ry="1.2" fill="#fff"/><ellipse cx="6" cy="9.2" rx="0.4" ry="0.5" fill="#333"/><ellipse cx="10" cy="9.2" rx="0.4" ry="0.5" fill="#333"/></svg></span>
+      </div>
+      <div class="balloon-tip" id="balloonTip" style="display:none;">
+        <div class="balloon-arrow"></div>
+        <span id="balloonText">Your pig is happy!</span>
+      </div>
     </div>
   </div>
 
@@ -1051,8 +1180,8 @@
         <button class="assistant-btn" onclick="assistantResponse('no')">No thanks</button>
       </div>
     </div>
-    <div class="assistant-body" onclick="toggleAssistant()">
-      <div class="assistant-minimize" onclick="minimizeAssistant(event)">−</div>
+    <div class="assistant-body" id="assistantBody">
+      <div class="assistant-minimize" id="assistantMinimize">×</div>
       <div class="assistant-ears">
         <div class="assistant-ear left"></div>
         <div class="assistant-ear right"></div>
@@ -1140,18 +1269,35 @@
       renderer.setSize(canvasContainer.clientWidth, canvasContainer.clientHeight);
       renderer.shadowMap.enabled = true;
       renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+      renderer.outputEncoding = THREE.sRGBEncoding;
       
-      const ambientLight = new THREE.AmbientLight(0xffffff, 0.7);
+      // Enhanced lighting setup
+      const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
       scene.add(ambientLight);
       
-      const directionalLight = new THREE.DirectionalLight(0xffffff, 0.9);
-      directionalLight.position.set(2.5, 3, 2);
-      directionalLight.castShadow = true;
-      directionalLight.shadow.mapSize.width = 1024;
-      directionalLight.shadow.mapSize.height = 1024;
-      directionalLight.shadow.camera.near = 0.5;
-      directionalLight.shadow.camera.far = 50;
-      scene.add(directionalLight);
+      const mainLight = new THREE.DirectionalLight(0xffffff, 0.8);
+      mainLight.position.set(2.5, 3, 2);
+      mainLight.castShadow = true;
+      mainLight.shadow.mapSize.width = 2048;
+      mainLight.shadow.mapSize.height = 2048;
+      mainLight.shadow.camera.near = 0.5;
+      mainLight.shadow.camera.far = 50;
+      mainLight.shadow.bias = -0.0001;
+      scene.add(mainLight);
+      
+      // Add rim light for better definition
+      const rimLight = new THREE.DirectionalLight(0xffffff, 0.3);
+      rimLight.position.set(-2, 2, -2);
+      scene.add(rimLight);
+      
+      // Add subtle point lights for more depth
+      const pointLight1 = new THREE.PointLight(0xffffff, 0.3);
+      pointLight1.position.set(2, 1, 2);
+      scene.add(pointLight1);
+      
+      const pointLight2 = new THREE.PointLight(0xffffff, 0.2);
+      pointLight2.position.set(-2, 1, -2);
+      scene.add(pointLight2);
 
       const groundGeometry = new THREE.PlaneGeometry(10, 10);
       const groundMaterial = new THREE.ShadowMaterial({ opacity: 0.3 });
@@ -1236,19 +1382,60 @@
       const eyePupilGeometry = new THREE.SphereGeometry(0.04, 10, 8);
       const eyePupilMaterial = new THREE.MeshPhongMaterial({ color: 0x111111, shininess: 100 });
       
-      // Eye whites
+      // Eye whites (attach to head)
       const eyeWhite1 = new THREE.Mesh(eyeWhiteGeometry, eyeWhiteMaterial);
       const eyeWhite2 = new THREE.Mesh(eyeWhiteGeometry, eyeWhiteMaterial);
-      eyeWhite1.position.set(-0.2, 0.55, 0.9);
-      eyeWhite2.position.set(0.2, 0.55, 0.9);
-      pigGroup.add(eyeWhite1, eyeWhite2);
-      
-      // Eye pupils
+      eyeWhite1.position.set(-0.16, 0.12, 0.48); // relative to head
+      eyeWhite2.position.set(0.16, 0.12, 0.48);
+      head.add(eyeWhite1, eyeWhite2);
+      // Eye pupils (attach to head)
       const eyePupil1 = new THREE.Mesh(eyePupilGeometry, eyePupilMaterial);
       const eyePupil2 = new THREE.Mesh(eyePupilGeometry, eyePupilMaterial);
-      eyePupil1.position.set(-0.2, 0.55, 0.94);
-      eyePupil2.position.set(0.2, 0.55, 0.94);
-      pigGroup.add(eyePupil1, eyePupil2);
+      eyePupil1.position.set(-0.16, 0.12, 0.54);
+      eyePupil2.position.set(0.16, 0.12, 0.54);
+      eyePupil1.scale.set(1.3, 1.3, 1.3);
+      eyePupil2.scale.set(1.3, 1.3, 1.3);
+      head.add(eyePupil1, eyePupil2);
+      // Eye highlights (attach to head)
+      const highlightGeometry = new THREE.SphereGeometry(0.02, 8, 6);
+      const highlightMaterial = new THREE.MeshPhongMaterial({ color: 0xffffff, shininess: 100, emissive: 0xffffff, emissiveIntensity: 0.7 });
+      const highlight1 = new THREE.Mesh(highlightGeometry, highlightMaterial);
+      const highlight2 = new THREE.Mesh(highlightGeometry, highlightMaterial);
+      highlight1.position.set(-0.18, 0.15, 0.57);
+      highlight2.position.set(0.14, 0.15, 0.57);
+      head.add(highlight1, highlight2);
+      // Blinking eyelids (attach to head)
+      const eyelidMaterial = new THREE.MeshPhongMaterial({ color: pigColor, transparent: true, opacity: 0.85 });
+      const eyelidGeometry = new THREE.SphereGeometry(0.081, 12, 10, 0, Math.PI * 2, 0, Math.PI / 2);
+      const eyelid1 = new THREE.Mesh(eyelidGeometry, eyelidMaterial);
+      const eyelid2 = new THREE.Mesh(eyelidGeometry, eyelidMaterial);
+      eyelid1.position.set(-0.16, 0.12, 0.481); // slightly above eye white
+      eyelid2.position.set(0.16, 0.12, 0.481);
+      eyelid1.scale.y = 0.01; // start open
+      eyelid2.scale.y = 0.01;
+      head.add(eyelid1, eyelid2);
+      // Animate blinking
+      if (!head.userData.blinkingSetup) {
+        head.userData.blinkingSetup = true;
+        function blink() {
+          // Close
+          let t = 0;
+          function closeLid() {
+            t += 0.15;
+            eyelid1.scale.y = eyelid2.scale.y = Math.min(1, t);
+            if (t < 1) requestAnimationFrame(closeLid);
+            else setTimeout(openLid, 120 + Math.random() * 100);
+          }
+          function openLid() {
+            t -= 0.15;
+            eyelid1.scale.y = eyelid2.scale.y = Math.max(0.01, t);
+            if (t > 0.01) requestAnimationFrame(openLid);
+            else setTimeout(blink, 2000 + Math.random() * 3000);
+          }
+          closeLid();
+        }
+        setTimeout(blink, 2000 + Math.random() * 2000);
+      }
       
       // More realistic pig ears - larger and floppier
       function createPigEarShape() {
@@ -1333,32 +1520,33 @@
         const accessoryMaterial = new THREE.MeshPhongMaterial({shininess: 70});
         if (attributes.accessory === 'Top Hat') {
           accessoryMaterial.color.setHex(0x111111);
-          const hatCrown = new THREE.Mesh(new THREE.CylinderGeometry(0.2, 0.24, 0.4, 20), accessoryMaterial);
-          hatCrown.position.set(0, 0.95, 0.75);
-          const hatBrim = new THREE.Mesh(new THREE.CylinderGeometry(0.36, 0.36, 0.06, 20), accessoryMaterial);
-          hatBrim.position.set(0, 0.75, 0.75);
+          const hatCrown = new THREE.Mesh(new THREE.CylinderGeometry(0.18, 0.22, 0.36, 20), accessoryMaterial);
+          hatCrown.position.set(0, 0.44, 0.13); // centered on head
+          hatCrown.scale.set(1.1, 1, 1.1);
+          const hatBrim = new THREE.Mesh(new THREE.CylinderGeometry(0.29, 0.29, 0.06, 20), accessoryMaterial);
+          hatBrim.position.set(0, 0.28, 0.13);
+          hatBrim.scale.set(1.2, 1, 1.2);
           head.add(hatCrown, hatBrim);
         } else if (attributes.accessory === 'Crown') {
           accessoryMaterial.color.setHex(0xffd700);
-          const crownBase = new THREE.Mesh(new THREE.CylinderGeometry(0.26, 0.28, 0.12, 16), accessoryMaterial);
-          crownBase.position.set(0, 0.82, 0.75);
+          const crownBase = new THREE.Mesh(new THREE.CylinderGeometry(0.22, 0.24, 0.10, 16), accessoryMaterial);
+          crownBase.position.set(0, 0.41, 0.13);
+          crownBase.scale.set(1.1, 1, 1.1);
           head.add(crownBase);
-          
           // Crown points
           for (let i = 0; i < 7; i++) {
-            const point = new THREE.Mesh(new THREE.ConeGeometry(0.05, 0.15, 6), accessoryMaterial);
+            const point = new THREE.Mesh(new THREE.ConeGeometry(0.045, 0.13, 6), accessoryMaterial);
             const angle = (i * Math.PI * 2) / 7;
             point.position.set(
-              Math.cos(angle) * 0.26, 0.88, Math.sin(angle) * 0.26 + 0.75
+              Math.cos(angle) * 0.17, 0.48, Math.sin(angle) * 0.13 + 0.13
             );
             point.rotation.x = Math.PI/10;
             head.add(point);
           }
-          
           // Add jewels
           const jewelMaterial = new THREE.MeshPhongMaterial({ color: 0xff0040, shininess: 100 });
-          const jewel = new THREE.Mesh(new THREE.OctahedronGeometry(0.04), jewelMaterial);
-          jewel.position.set(0, 0.82, 0.88);
+          const jewel = new THREE.Mesh(new THREE.OctahedronGeometry(0.03), jewelMaterial);
+          jewel.position.set(0, 0.41, 0.23);
           head.add(jewel);
         }
       }
@@ -1682,6 +1870,7 @@
       setTimeout(() => {
         initThreeJS();
         createPig(attr);
+        showBalloonTip('Your pig is happy!');
       }, 50);
     }
 
@@ -1930,9 +2119,12 @@ Generated with Pig Generator 95!`;
     }
     
     function minimizeAssistant(event) {
-      event.stopPropagation();
-      document.getElementById('pigAssistant').classList.add('minimized');
-      assistantMinimized = true;
+      if (event) event.stopPropagation();
+      const assistant = document.getElementById('pigAssistant');
+      if (assistant) {
+        assistant.style.display = 'none';
+        assistantMinimized = true;
+      }
     }
     
     function showAssistantMessage(message, actions = null) {
@@ -2143,21 +2335,52 @@ Generated with Pig Generator 95!`;
       floatingScene.background = new THREE.Color(0xf0f0f0);
       
       floatingCamera = new THREE.PerspectiveCamera(50, 1, 0.1, 1000);
-      floatingCamera.position.set(0, 1, 2.5);
-      floatingCamera.lookAt(0, 0.2, 0);
+      floatingCamera.position.set(0, 1.2, 3.2);
+      floatingCamera.lookAt(0, 0.3, 0);
       
       floatingRenderer = new THREE.WebGLRenderer({ 
         canvas: canvas,
-        antialias: true
+        antialias: true,
+        preserveDrawingBuffer: true
       });
       floatingRenderer.setSize(120, 120);
+      floatingRenderer.shadowMap.enabled = true;
+      floatingRenderer.shadowMap.type = THREE.PCFSoftShadowMap;
+      floatingRenderer.outputEncoding = THREE.sRGBEncoding;
       
-      const ambientLight = new THREE.AmbientLight(0xffffff, 0.8);
+      // Match main scene lighting setup
+      const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
       floatingScene.add(ambientLight);
       
-      const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
-      directionalLight.position.set(2, 3, 2);
-      floatingScene.add(directionalLight);
+      const mainLight = new THREE.DirectionalLight(0xffffff, 0.8);
+      mainLight.position.set(2.5, 3, 2);
+      mainLight.castShadow = true;
+      mainLight.shadow.mapSize.width = 2048;
+      mainLight.shadow.mapSize.height = 2048;
+      mainLight.shadow.camera.near = 0.5;
+      mainLight.shadow.camera.far = 50;
+      mainLight.shadow.bias = -0.0001;
+      floatingScene.add(mainLight);
+      
+      const rimLight = new THREE.DirectionalLight(0xffffff, 0.3);
+      rimLight.position.set(-2, 2, -2);
+      floatingScene.add(rimLight);
+      
+      const pointLight1 = new THREE.PointLight(0xffffff, 0.3);
+      pointLight1.position.set(2, 1, 2);
+      floatingScene.add(pointLight1);
+      
+      const pointLight2 = new THREE.PointLight(0xffffff, 0.2);
+      pointLight2.position.set(-2, 1, -2);
+      floatingScene.add(pointLight2);
+
+      const groundGeometry = new THREE.PlaneGeometry(10, 10);
+      const groundMaterial = new THREE.ShadowMaterial({ opacity: 0.3 });
+      const groundPlane = new THREE.Mesh(groundGeometry, groundMaterial);
+      groundPlane.rotation.x = -Math.PI / 2;
+      groundPlane.position.y = -0.8;
+      groundPlane.receiveShadow = true;
+      floatingScene.add(groundPlane);
     }
     
     function createFloatingPig(attributes) {
@@ -2174,7 +2397,7 @@ Generated with Pig Generator 95!`;
         });
       }
       
-      // Use the full detailed pig model
+      // Use the exact same pig creation logic as the main window
       const pigGroup = new THREE.Group();
       
       const skinColors = {
@@ -2184,155 +2407,231 @@ Generated with Pig Generator 95!`;
       };
       
       const pigColor = skinColors[attributes.skin] || 0xffb6c1;
-      const material = new THREE.MeshPhongMaterial({ color: pigColor, shininess: 20 });
+      const material = new THREE.MeshPhongMaterial({ color: pigColor, shininess: 30 });
       
-      // Full detailed body
-      const bodyGeometry = new THREE.SphereGeometry(0.6, 24, 18);
-      bodyGeometry.scale(1.25, 0.85, 1.0);
+      // More realistic pig body - rounder and more barrel-shaped
+      const bodyGeometry = new THREE.SphereGeometry(0.7, 32, 24);
+      bodyGeometry.scale(1.4, 1.0, 1.1);
       const body = new THREE.Mesh(bodyGeometry, material);
-      body.position.y = 0.2;
+      body.position.y = 0.3;
       body.castShadow = true;
       body.receiveShadow = true;
       pigGroup.add(body);
       
-      // Full detailed head
-      const headGeometry = new THREE.SphereGeometry(0.4, 20, 16);
+      // Add a belly bulge for more pig-like appearance
+      const bellyGeometry = new THREE.SphereGeometry(0.5, 24, 16);
+      bellyGeometry.scale(1.2, 0.8, 1.0);
+      const belly = new THREE.Mesh(bellyGeometry, material);
+      belly.position.set(0, -0.1, 0.2);
+      body.add(belly);
+      
+      // Larger, more proportionate head
+      const headGeometry = new THREE.SphereGeometry(0.45, 24, 20);
+      headGeometry.scale(1.0, 0.9, 1.1);
       const head = new THREE.Mesh(headGeometry, material);
-      head.position.set(0, 0.55, 0.65);
+      head.position.set(0, 0.5, 0.75);
       head.castShadow = true;
       pigGroup.add(head);
       
-      // Snout
-      const snoutMaterialColor = new THREE.Color(pigColor).multiplyScalar(0.9);
-      const snoutGeometry = new THREE.CylinderGeometry(0.15, 0.12, 0.25, 12);
-      const snout = new THREE.Mesh(snoutGeometry, new THREE.MeshPhongMaterial({ color: snoutMaterialColor, shininess: 10 }));
-      snout.position.set(0, 0.45, 0.85);
-      snout.rotation.x = Math.PI / 2.5;
+      // More prominent snout
+      const snoutMaterialColor = new THREE.Color(pigColor).multiplyScalar(0.85);
+      const snoutGeometry = new THREE.CylinderGeometry(0.18, 0.14, 0.3, 16);
+      const snout = new THREE.Mesh(snoutGeometry, new THREE.MeshPhongMaterial({ color: snoutMaterialColor, shininess: 40 }));
+      snout.position.set(0, 0.35, 1.0);
+      snout.rotation.x = Math.PI / 2.2;
+      snout.scale.set(1.1, 1, 0.8); // Wider snout
       pigGroup.add(snout);
       
-      // Nostrils
-      const nostrilGeometry = new THREE.CircleGeometry(0.035, 8);
-      const nostrilMaterial = new THREE.MeshBasicMaterial({ color: 0x442211 });
-      const nostril1 = new THREE.Mesh(nostrilGeometry, nostrilMaterial);
-      const nostril2 = new THREE.Mesh(nostrilGeometry, nostrilMaterial);
-      nostril1.position.set(-0.05, 0.47, 0.94);
-      nostril2.position.set(0.05, 0.47, 0.94);
-      nostril1.rotation.x = nostril2.rotation.x = -Math.PI / 3;
+      // Larger, more visible nostrils
+      const nostrilGeometry = new THREE.EllipseCurve(0, 0, 0.045, 0.06, 0, 2 * Math.PI, false, 0);
+      const nostrilShape = new THREE.ShapeGeometry(new THREE.Shape(nostrilGeometry.getPoints(12)));
+      const nostrilMaterial = new THREE.MeshBasicMaterial({ color: 0x2a1515 });
+      const nostril1 = new THREE.Mesh(nostrilShape, nostrilMaterial);
+      const nostril2 = new THREE.Mesh(nostrilShape, nostrilMaterial);
+      nostril1.position.set(-0.06, 0.38, 1.12);
+      nostril2.position.set(0.06, 0.38, 1.12);
+      nostril1.rotation.x = nostril2.rotation.x = -Math.PI / 2.8;
       pigGroup.add(nostril1, nostril2);
       
-      // Eyes
-      const eyeGeometry = new THREE.SphereGeometry(0.06, 10, 8);
-      const eyeMaterial = new THREE.MeshPhongMaterial({ color: 0x111111, shininess: 100 });
-      const eye1 = new THREE.Mesh(eyeGeometry, eyeMaterial);
-      const eye2 = new THREE.Mesh(eyeGeometry, eyeMaterial);
-      eye1.position.set(-0.16, 0.6, 0.85);
-      eye2.position.set(0.16, 0.6, 0.85);
-      pigGroup.add(eye1, eye2);
+      // Smaller, more pig-like eyes
+      const eyeWhiteGeometry = new THREE.SphereGeometry(0.08, 12, 10);
+      const eyeWhiteMaterial = new THREE.MeshPhongMaterial({ color: 0xffffff, shininess: 60 });
+      const eyePupilGeometry = new THREE.SphereGeometry(0.04, 10, 8);
+      const eyePupilMaterial = new THREE.MeshPhongMaterial({ color: 0x111111, shininess: 100 });
       
-      // Ears
-      function createEarShape() {
+      // Eye whites (attach to head)
+      const eyeWhite1 = new THREE.Mesh(eyeWhiteGeometry, eyeWhiteMaterial);
+      const eyeWhite2 = new THREE.Mesh(eyeWhiteGeometry, eyeWhiteMaterial);
+      eyeWhite1.position.set(-0.16, 0.12, 0.48); // relative to head
+      eyeWhite2.position.set(0.16, 0.12, 0.48);
+      head.add(eyeWhite1, eyeWhite2);
+      // Eye pupils (attach to head)
+      const eyePupil1 = new THREE.Mesh(eyePupilGeometry, eyePupilMaterial);
+      const eyePupil2 = new THREE.Mesh(eyePupilGeometry, eyePupilMaterial);
+      eyePupil1.position.set(-0.16, 0.12, 0.54);
+      eyePupil2.position.set(0.16, 0.12, 0.54);
+      eyePupil1.scale.set(1.3, 1.3, 1.3);
+      eyePupil2.scale.set(1.3, 1.3, 1.3);
+      head.add(eyePupil1, eyePupil2);
+      // Eye highlights (attach to head)
+      const highlightGeometry = new THREE.SphereGeometry(0.02, 8, 6);
+      const highlightMaterial = new THREE.MeshPhongMaterial({ color: 0xffffff, shininess: 100, emissive: 0xffffff, emissiveIntensity: 0.7 });
+      const highlight1 = new THREE.Mesh(highlightGeometry, highlightMaterial);
+      const highlight2 = new THREE.Mesh(highlightGeometry, highlightMaterial);
+      highlight1.position.set(-0.18, 0.15, 0.57);
+      highlight2.position.set(0.14, 0.15, 0.57);
+      head.add(highlight1, highlight2);
+      // Blinking eyelids (attach to head)
+      const eyelidMaterial = new THREE.MeshPhongMaterial({ color: pigColor, transparent: true, opacity: 0.85 });
+      const eyelidGeometry = new THREE.SphereGeometry(0.081, 12, 10, 0, Math.PI * 2, 0, Math.PI / 2);
+      const eyelid1 = new THREE.Mesh(eyelidGeometry, eyelidMaterial);
+      const eyelid2 = new THREE.Mesh(eyelidGeometry, eyelidMaterial);
+      eyelid1.position.set(-0.16, 0.12, 0.481); // slightly above eye white
+      eyelid2.position.set(0.16, 0.12, 0.481);
+      eyelid1.scale.y = 0.01; // start open
+      eyelid2.scale.y = 0.01;
+      head.add(eyelid1, eyelid2);
+      // Animate blinking
+      if (!head.userData.blinkingSetup) {
+        head.userData.blinkingSetup = true;
+        function blink() {
+          // Close
+          let t = 0;
+          function closeLid() {
+            t += 0.15;
+            eyelid1.scale.y = eyelid2.scale.y = Math.min(1, t);
+            if (t < 1) requestAnimationFrame(closeLid);
+            else setTimeout(openLid, 120 + Math.random() * 100);
+          }
+          function openLid() {
+            t -= 0.15;
+            eyelid1.scale.y = eyelid2.scale.y = Math.max(0.01, t);
+            if (t > 0.01) requestAnimationFrame(openLid);
+            else setTimeout(blink, 2000 + Math.random() * 3000);
+          }
+          closeLid();
+        }
+        setTimeout(blink, 2000 + Math.random() * 2000);
+      }
+      
+      // More realistic pig ears - larger and floppier
+      function createPigEarShape() {
         const earShape = new THREE.Shape();
         earShape.moveTo(0, 0);
-        earShape.lineTo(0, 0.3);
-        earShape.quadraticCurveTo(0.15, 0.35, 0.2, 0.2);
-        earShape.lineTo(0.1, 0);
+        earShape.lineTo(-0.05, 0.35);
+        earShape.quadraticCurveTo(0.1, 0.4, 0.25, 0.25);
+        earShape.quadraticCurveTo(0.3, 0.15, 0.2, 0);
         earShape.closePath();
-        const extrudeSettings = { depth: 0.05, bevelEnabled: false };
+        const extrudeSettings = { depth: 0.06, bevelEnabled: true, bevelThickness: 0.02, bevelSize: 0.02 };
         return new THREE.ExtrudeGeometry(earShape, extrudeSettings);
       }
-      const earGeometry = createEarShape();
+      const earGeometry = createPigEarShape();
       const ear1 = new THREE.Mesh(earGeometry, material);
       const ear2 = new THREE.Mesh(earGeometry, material);
-      ear1.position.set(-0.15, 0.7, 0.55);
-      ear2.position.set(0.05, 0.7, 0.55);
-      ear1.rotation.y = -Math.PI / 6;
-      ear1.rotation.z = Math.PI / 8;
+      ear1.position.set(-0.2, 0.65, 0.65);
+      ear2.position.set(0.2, 0.65, 0.65);
+      ear1.rotation.set(0, -Math.PI / 5, Math.PI / 6);
+      ear2.rotation.set(0, Math.PI / 5, -Math.PI / 6);
       ear2.scale.x = -1;
-      ear2.rotation.y = -Math.PI / 6;
-      ear2.rotation.z = Math.PI / 8;
       pigGroup.add(ear1, ear2);
       
-      // Legs  
-      const legGeometry = new THREE.CylinderGeometry(0.1, 0.08, 0.5, 10);
+      // Sturdier, more realistic legs
+      const legGeometry = new THREE.CylinderGeometry(0.12, 0.1, 0.5, 12);
+      const hoofGeometry = new THREE.CylinderGeometry(0.11, 0.11, 0.1, 12);
       const legMaterial = new THREE.MeshPhongMaterial({ color: pigColor, shininess: 15 });
+      const hoofMaterial = new THREE.MeshPhongMaterial({ color: 0x1a1a1a, shininess: 50 });
+      
       const legPositions = [
-        { x: 0.4, z: 0.35, rotY: 0.1 }, { x: -0.4, z: 0.35, rotY: -0.1 },
-        { x: 0.35, z: -0.4, rotY: -0.1 }, { x: -0.35, z: -0.4, rotY: 0.1 }
+        { x: 0.45, z: 0.4, rotZ: 0.05 }, { x: -0.45, z: 0.4, rotZ: -0.05 },
+        { x: 0.4, z: -0.45, rotZ: 0.05 }, { x: -0.4, z: -0.45, rotZ: -0.05 }
       ];
+      
       legPositions.forEach(pos => {
         const leg = new THREE.Mesh(legGeometry, legMaterial);
-        leg.position.set(pos.x, -0.1, pos.z);
-        leg.rotation.y = pos.rotY || 0;
-        leg.rotation.z = (pos.x > 0 ? -1 : 1) * Math.PI / 12;
+        leg.position.set(pos.x, -0.05, pos.z);
+        leg.rotation.z = pos.rotZ;
         leg.castShadow = true;
+        
+        // Add hooves
+        const hoof = new THREE.Mesh(hoofGeometry, hoofMaterial);
+        hoof.position.y = -0.25;
+        leg.add(hoof);
+        
         pigGroup.add(leg);
       });
       
-      // Tail
-      const curve = new THREE.CatmullRomCurve3([
-        new THREE.Vector3(0, 0.2, -0.6),
-        new THREE.Vector3(0.05, 0.25, -0.7),
-        new THREE.Vector3(0, 0.2, -0.75),
-        new THREE.Vector3(-0.05, 0.15, -0.7)
+      // Curlier tail
+      const tailCurve = new THREE.CatmullRomCurve3([
+        new THREE.Vector3(0, 0.3, -0.7),
+        new THREE.Vector3(0.1, 0.4, -0.8),
+        new THREE.Vector3(0.15, 0.5, -0.85),
+        new THREE.Vector3(0.1, 0.6, -0.8),
+        new THREE.Vector3(0, 0.55, -0.75),
+        new THREE.Vector3(-0.05, 0.45, -0.8)
       ]);
-      const tailGeometry = new THREE.TubeGeometry(curve, 8, 0.03, 6, false);
+      const tailGeometry = new THREE.TubeGeometry(tailCurve, 16, 0.04, 8, false);
       const tail = new THREE.Mesh(tailGeometry, material);
       pigGroup.add(tail);
       
-      // Spots if needed
+      // Improved spots pattern
       if (attributes.skin === 'Spotted') {
-        const spotMaterial = new THREE.MeshPhongMaterial({ color: 0x654321, shininess: 5 });
-        for (let i = 0; i < 6; i++) {
-          const spotSize = Math.random() * 0.1 + 0.05;
-          const spot = new THREE.Mesh(new THREE.SphereGeometry(spotSize, 8, 6), spotMaterial);
-          const phi = Math.random() * Math.PI;
+        const spotMaterial = new THREE.MeshPhongMaterial({ color: 0x4d2d1a, shininess: 20 });
+        for (let i = 0; i < 8; i++) {
+          const spotSize = Math.random() * 0.12 + 0.06;
+          const spot = new THREE.Mesh(new THREE.SphereGeometry(spotSize, 10, 8), spotMaterial);
+          const phi = Math.random() * Math.PI * 0.6 + Math.PI * 0.2;
           const theta = Math.random() * Math.PI * 2;
-          const R = 0.6;
+          const R = 0.65;
           spot.position.set(
-            R * Math.sin(phi) * Math.cos(theta) * 1.2,
-            R * Math.cos(phi) * 0.8 + 0.2,
-            R * Math.sin(phi) * Math.sin(theta) * 1.0
+            R * Math.sin(phi) * Math.cos(theta) * 1.3,
+            R * Math.cos(phi) * 0.9,
+            R * Math.sin(phi) * Math.sin(theta) * 1.1
           );
-          spot.scale.set(1, 0.5, 1);
+          spot.scale.set(1.5, 0.7, 1.2);
           body.add(spot);
         }
       }
       
-      // Accessories
+      // Improved accessories
       if (attributes.accessory && attributes.accessory !== "None") {
-        const accessoryMaterial = new THREE.MeshPhongMaterial({shininess: 50});
+        const accessoryMaterial = new THREE.MeshPhongMaterial({shininess: 70});
         if (attributes.accessory === 'Top Hat') {
           accessoryMaterial.color.setHex(0x111111);
-          const hatCrown = new THREE.Mesh(new THREE.CylinderGeometry(0.18, 0.22, 0.35, 16), accessoryMaterial);
-          hatCrown.position.set(0, 0.85, 0.65);
-          const hatBrim = new THREE.Mesh(new THREE.CylinderGeometry(0.33, 0.33, 0.05, 16), accessoryMaterial);
-          hatBrim.position.set(0, 0.68, 0.65);
+          const hatCrown = new THREE.Mesh(new THREE.CylinderGeometry(0.18, 0.22, 0.36, 20), accessoryMaterial);
+          hatCrown.position.set(0, 0.44, 0.13); // centered on head
+          hatCrown.scale.set(1.1, 1, 1.1);
+          const hatBrim = new THREE.Mesh(new THREE.CylinderGeometry(0.29, 0.29, 0.06, 20), accessoryMaterial);
+          hatBrim.position.set(0, 0.28, 0.13);
+          hatBrim.scale.set(1.2, 1, 1.2);
           head.add(hatCrown, hatBrim);
         } else if (attributes.accessory === 'Crown') {
           accessoryMaterial.color.setHex(0xffd700);
-          const crownBase = new THREE.Mesh(new THREE.CylinderGeometry(0.24, 0.26, 0.1, 12), accessoryMaterial);
-          crownBase.position.set(0, 0.72, 0.65);
+          const crownBase = new THREE.Mesh(new THREE.CylinderGeometry(0.22, 0.24, 0.10, 16), accessoryMaterial);
+          crownBase.position.set(0, 0.41, 0.13);
+          crownBase.scale.set(1.1, 1, 1.1);
           head.add(crownBase);
-          for (let i = 0; i < 6; i++) {
-            const point = new THREE.Mesh(new THREE.ConeGeometry(0.04, 0.12, 4), accessoryMaterial);
-            const angle = (i * Math.PI * 2) / 6;
+          // Crown points
+          for (let i = 0; i < 7; i++) {
+            const point = new THREE.Mesh(new THREE.ConeGeometry(0.045, 0.13, 6), accessoryMaterial);
+            const angle = (i * Math.PI * 2) / 7;
             point.position.set(
-              Math.cos(angle) * 0.24, 0.1, Math.sin(angle) * 0.24
+              Math.cos(angle) * 0.17, 0.48, Math.sin(angle) * 0.13 + 0.13
             );
-            point.position.y += 0.72;
-            point.position.z += 0.65;
-            point.rotation.x = Math.PI/12;
+            point.rotation.x = Math.PI/10;
             head.add(point);
           }
+          // Add jewels
+          const jewelMaterial = new THREE.MeshPhongMaterial({ color: 0xff0040, shininess: 100 });
+          const jewel = new THREE.Mesh(new THREE.OctahedronGeometry(0.03), jewelMaterial);
+          jewel.position.set(0, 0.41, 0.23);
+          head.add(jewel);
         }
       }
       
-      // Scale for floating window (smaller than main window but with proper rarity scaling)
-      const rarityMultiplier = attributes.rarity.name === 'Legendary' ? 1.15 : 
-                             attributes.rarity.name === 'Epic' ? 1.08 : 1.0;
-      const floatingScale = 0.6 * rarityMultiplier; // 60% of original size
-      pigGroup.scale.multiplyScalar(floatingScale);
-      pigGroup.position.y = -0.2;
+      const scaleMultiplier = attributes.rarity.name === 'Legendary' ? 1.15 : 
+                            attributes.rarity.name === 'Epic' ? 1.08 : 1.0;
+      pigGroup.scale.multiplyScalar(scaleMultiplier);
+      pigGroup.position.y = -0.3;
       
       floatingScene.add(pigGroup);
       floatingPigMesh = pigGroup;
@@ -2343,8 +2642,8 @@ Generated with Pig Generator 95!`;
     function animateFloatingPig() {
       floatingAnimationFrameId = requestAnimationFrame(animateFloatingPig);
       if (floatingPigMesh) {
-        floatingPigMesh.rotation.y += 0.01;
-        floatingPigMesh.position.y = Math.sin(Date.now() * 0.002) * 0.05;
+        floatingPigMesh.rotation.y += 0.008;
+        floatingPigMesh.position.y = -0.3 + Math.sin(Date.now() * 0.002) * 0.05;
       }
       if (floatingRenderer && floatingScene && floatingCamera) {
         floatingRenderer.render(floatingScene, floatingCamera);
@@ -2385,7 +2684,32 @@ Generated with Pig Generator 95!`;
         document.getElementById('floatingPigWindow').style.cursor = 'default';
       }
     });
+
+    function showBalloonTip(message) {
+      const tip = document.getElementById('balloonTip');
+      const text = document.getElementById('balloonText');
+      text.textContent = message;
+      tip.style.display = 'block';
+      setTimeout(() => {
+        tip.style.display = 'none';
+      }, 3500);
+    }
+
+    // Fix assistant-body/minimize click conflict
+    document.addEventListener('DOMContentLoaded', function() {
+      const assistantBody = document.getElementById('assistantBody');
+      const minimizeBtn = document.getElementById('assistantMinimize');
+      if (assistantBody && minimizeBtn) {
+        minimizeBtn.addEventListener('click', function(e) {
+          e.stopPropagation();
+          minimizeAssistant(e);
+        });
+        assistantBody.addEventListener('click', function(e) {
+          if (e.target === minimizeBtn) return;
+          toggleAssistant();
+        });
+      }
+    });
   </script>
 </body>
-</html>Img.style.display = "none";
-      sharePreview
+</html> 
