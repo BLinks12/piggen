@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Pig Generator 95 - Enhanced Edition</title>
+  <title>BlockPigs - $BACON Generator</title>
   <style>
     body {
       margin: 0;
@@ -1058,14 +1058,14 @@
 </head>
 <body>
   <div class="desktop">
-    <!-- Pig Generator Icon -->
+            <!-- BlockPigs Icon -->
     <div class="icon" ondblclick="openAppWindow()" tabindex="0"> 
       <div class="icon-image">
         <div class="pixel-pig-icon">
           <div class="pixel-pig-snout"></div>
         </div>
       </div>
-      <div class="icon-label">PigGen95.exe</div>
+              <div class="icon-label">BlockPigs.exe</div>
     </div>
     
     <!-- X.com Icon -->
@@ -1107,7 +1107,7 @@
     <!-- Main App Window -->
     <div class="window" id="appWindow">
       <div class="window-header" id="appWindowHeader"> 
-        <span>Pig Generator 95 - Enhanced</span>
+        <span>BlockPigs - $BACON</span>
         <div class="close-btn" onclick="closeAppWindow()">×</div>
       </div>
       <div class="window-content">
@@ -1116,9 +1116,9 @@
           <input type="text" id="twitter" placeholder="e.g. elonmusk (no @)" maxlength="15">
         </div>
         <div class="form-group" style="font-size: 10px; color: #666; margin-top: -5px; margin-bottom: 10px;">
-          ⚠️ You can only generate ONE pig EVER. Choose your handle wisely!
+          ⚠️ You can only generate ONE $BACON pig EVER. Choose your handle wisely!
         </div>
-        <button class="btn" onclick="generatePig()" id="generateBtn">Generate My Pig</button>
+                  <button class="btn" onclick="generatePig()" id="generateBtn">Generate My $BACON</button>
         
         <div id="error" class="error"></div> 
         <div class="progress-container">
@@ -1153,20 +1153,20 @@
     <!-- Help Window -->
     <div class="window" id="helpWindow">
       <div class="window-header" id="helpWindowHeader">
-        <span>Pig Generator 95 Help</span>
+        <span>BlockPigs Help</span>
         <div class="close-btn" onclick="closeHelpWindow()">×</div>
       </div>
       <div class="window-content help-content">
-        <h3>Welcome to Pig Generator 95!</h3>
+                  <h3>Welcome to BlockPigs!</h3>
         <p>This retro app creates your ONE AND ONLY unique pig companion! Here's how it works:</p>
         <ul>
           <li><strong>Open the App</strong>: Double-click the "PigGen95.exe" icon on the desktop.</li>
-          <li><strong>Enter Your Handle</strong>: Type any Twitter/X handle (without @) to generate a pig.</li>
-          <li><strong>Generate</strong>: Click "Generate My Pig" to create your pig. <strong>WARNING: You only get ONE pig EVER!</strong></li>
+                      <li><strong>Enter Your Handle</strong>: Type any Twitter/X handle (without @) to generate a $BACON pig.</li>
+                      <li><strong>Generate</strong>: Click "Generate My $BACON" to create your pig. <strong>WARNING: You only get ONE pig EVER!</strong></li>
           <li><strong>View Your Pig</strong>: See your pig's 3D sprite, stats, and rarity.</li>
           <li><strong>Share</strong>: Click "Share on X" to post your pig or "Copy Details" to save its stats.</li>
         </ul>
-        <p><strong style="color: #ff0000;">⚠️ IMPORTANT:</strong> You can only generate ONE pig per person. Once you generate a pig for any handle, you cannot generate another one. Choose wisely!</p>
+                  <p><strong style="color: #ff0000;">⚠️ IMPORTANT:</strong> You can only generate ONE $BACON pig per person. Once you generate a pig for any handle, you cannot generate another one. Choose wisely!</p>
         <p>Have fun creating your digital piggy! Check the Rarity Guide to learn about your pig's exclusivity.</p>
       </div>
     </div>
@@ -1770,7 +1770,7 @@
       
       // Check if user has already generated a pig
       if (hasGeneratedPig) {
-        showError("You've already generated your one unique pig! Each person can only generate one pig.");
+        showError("You've already generated your one unique $BACON pig! Each person can only generate one pig.");
         return;
       }
       
@@ -1793,12 +1793,12 @@
         
         // Update button text temporarily
         const generateBtn = document.getElementById("generateBtn");
-        generateBtn.textContent = "Viewing Existing Pig";
+                  generateBtn.textContent = "Viewing Existing $BACON";
         generateBtn.disabled = true;
         
         setTimeout(() => {
           displayResult(existingPig.handle, existingPig.attributes);
-          generateBtn.textContent = "Generate My Pig";
+          generateBtn.textContent = "Generate My $BACON";
           generateBtn.disabled = false;
         }, 1500);
         
@@ -1950,9 +1950,9 @@
       // Permanently disable the generate button if this is a new pig
       if (isNewPig) {
         generateBtn.disabled = true;
-        generateBtn.textContent = "Pig Generated! (One Per Person)";
+        generateBtn.textContent = "$BACON Generated! (One Per Person)";
         twitterInput.disabled = true;
-        twitterInput.placeholder = "You've used your one pig generation!";
+                  twitterInput.placeholder = "You've used your one $BACON generation!";
       }
       
       setTimeout(() => {
@@ -1991,7 +1991,7 @@
 
     function openShareConfirmation() {
       if (!currentPig || !renderer) {
-        alert("Please generate a pig first!");
+        alert("Please generate a $BACON pig first!");
         return;
       }
       
@@ -2038,9 +2038,9 @@
       const { name, handle, attributes } = currentPig;
       const { rarity, breed, trait, accessory } = attributes;
       
-      let tweetText = `Behold! My #PigGenerator95 creation for ${handle}: ${name}! ✨
+              let tweetText = `Behold! My #BlockPigs $BACON creation for ${handle}: ${name}! ✨
 A magnificent ${rarity.name} ${breed} pig, known for its ${trait} personality and stylish ${accessory}.
-Generate your own: [Your App Link Here] #DigitalPig #RetroGaming`;
+Generate your own: https://www.piggen95.fun/ #BlockPigs $BACON `;
       
       const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(tweetText)}`;
       window.open(twitterUrl, '_blank', 'width=600,height=450,resizable=yes,scrollbars=yes');
@@ -2068,7 +2068,7 @@ Personality: ${attributes.trait} | Mood: ${attributes.mood}
 Accessory: ${attributes.accessory} | Hobby: ${attributes.hobby}
 Born: ${attributes.birthdate}
 Stats: Cuteness ${attributes.cuteness}, Intelligence ${attributes.intelligence}, Luck ${attributes.luck}
-Generated with Pig Generator 95!`;
+Generated with BlockPigs - $BACON!`;
       
       navigator.clipboard.writeText(details).then(() => {
         showError("Pig details copied to clipboard! Oink-tastic!");
@@ -2130,7 +2130,7 @@ Generated with Pig Generator 95!`;
     let currentAssistantState = 'greeting';
     
     const assistantTips = [
-      "Did you know? You only get to generate ONE pig EVER! Make it count! 🌟",
+              "Did you know? You only get to generate ONE $BACON pig EVER! Make it count! 🌟",
       "Pro tip: Once you generate a pig, that's it! No take-backs, no do-overs!",
       "Fun fact: Legendary pigs appear only 0.5% of the time. Hope you get lucky on your ONE chance! ✨",
       "Psst! The rarer your pig, the bigger it appears in 3D. Legendary pigs are 15% larger!",
@@ -2139,7 +2139,7 @@ Generated with Pig Generator 95!`;
       "Tip: Click 'Copy Details' to save your pig's stats. It's your ONLY pig, so keep it safe!",
       "Your pig's mood affects its entire vibe. Happy pigs bring good luck! 🍀",
       "Secret: Once generated, your pig is yours forever. Even I can't change it! 🔒",
-      "Remember: One person, one pig. That's the sacred rule of Pig Generator 95! 🐷"
+      "Remember: One person, one pig. That's the sacred rule of BlockPigs! 🐷💰"
     ];
     
     const assistantResponses = {
