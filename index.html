@@ -1116,9 +1116,9 @@
           <input type="text" id="twitter" placeholder="e.g. elonmusk (no @)" maxlength="15">
         </div>
         <div class="form-group" style="font-size: 10px; color: #666; margin-top: -5px; margin-bottom: 10px;">
-          ⚠️ You can only generate ONE $BPIGS pig EVER. Choose your handle wisely!
+          ⚠️ You can only generate ONE $PIGFUN pig EVER. Choose your handle wisely!
         </div>
-                  <button class="btn" onclick="generatePig()" id="generateBtn">Generate My $BPIGS</button>
+                  <button class="btn" onclick="generatePig()" id="generateBtn">Generate My $PIGFUN</button>
         
         <div id="error" class="error"></div> 
         <div class="progress-container">
@@ -1161,12 +1161,12 @@
         <p>This retro app creates your ONE AND ONLY unique pig companion! Here's how it works:</p>
         <ul>
           <li><strong>Open the App</strong>: Double-click the "PigGen95.exe" icon on the desktop.</li>
-                      <li><strong>Enter Your Handle</strong>: Type any Twitter/X handle (without @) to generate a $BPIGS pig.</li>
-                      <li><strong>Generate</strong>: Click "Generate My $BPIGS" to create your pig. <strong>WARNING: You only get ONE pig EVER!</strong></li>
+                      <li><strong>Enter Your Handle</strong>: Type any Twitter/X handle (without @) to generate a $PIGFUN pig.</li>
+                      <li><strong>Generate</strong>: Click "Generate My $PIGFUN" to create your pig. <strong>WARNING: You only get ONE pig EVER!</strong></li>
           <li><strong>View Your Pig</strong>: See your pig's 3D sprite, stats, and rarity.</li>
           <li><strong>Share</strong>: Click "Share on X" to post your pig or "Copy Details" to save its stats.</li>
         </ul>
-                  <p><strong style="color: #ff0000;">⚠️ IMPORTANT:</strong> You can only generate ONE $BPIGS pig per person. Once you generate a pig for any handle, you cannot generate another one. Choose wisely!</p>
+                  <p><strong style="color: #ff0000;">⚠️ IMPORTANT:</strong> You can only generate ONE $PIGFUN pig per person. Once you generate a pig for any handle, you cannot generate another one. Choose wisely!</p>
         <p>Have fun creating your digital piggy! Check the Rarity Guide to learn about your pig's exclusivity.</p>
       </div>
     </div>
@@ -1770,7 +1770,7 @@
       
       // Check if user has already generated a pig
       if (hasGeneratedPig) {
-        showError("You've already generated your one unique $BPIGS pig! Each person can only generate one pig.");
+        showError("You've already generated your one unique $PIGFUN pig! Each person can only generate one pig.");
         return;
       }
       
@@ -1793,12 +1793,12 @@
         
         // Update button text temporarily
         const generateBtn = document.getElementById("generateBtn");
-                  generateBtn.textContent = "Viewing Existing $BPIGS";
+                  generateBtn.textContent = "Viewing Existing $PIGFUN";
         generateBtn.disabled = true;
         
         setTimeout(() => {
           displayResult(existingPig.handle, existingPig.attributes);
-          generateBtn.textContent = "Generate My $BPIGS";
+          generateBtn.textContent = "Generate My $PIGFUN";
           generateBtn.disabled = false;
         }, 1500);
         
@@ -1950,9 +1950,9 @@
       // Permanently disable the generate button if this is a new pig
       if (isNewPig) {
         generateBtn.disabled = true;
-        generateBtn.textContent = "$BPIGS Generated! (One Per Person)";
+        generateBtn.textContent = "$PIGFUN Generated! (One Per Person)";
         twitterInput.disabled = true;
-                  twitterInput.placeholder = "You've used your one $BPIGS generation!";
+                  twitterInput.placeholder = "You've used your one $PIGFUN generation!";
       }
       
       setTimeout(() => {
@@ -1991,7 +1991,7 @@
 
     function openShareConfirmation() {
       if (!currentPig || !renderer) {
-        alert("Please generate a $BPIGS pig first!");
+        alert("Please generate a $PIGFUN pig first!");
         return;
       }
       
@@ -2038,7 +2038,7 @@
       const { name, handle, attributes } = currentPig;
       const { rarity, breed, trait, accessory } = attributes;
       
-              let tweetText = `Behold! My $BPIGS creation for ${handle}: ${name}! ✨
+              let tweetText = `Behold! My $PIGFUN creation for ${handle}: ${name}! ✨
 A magnificent ${rarity.name} ${breed} pig, known for its ${trait} personality and stylish ${accessory}.
 Generate your own: https://www.piggen95.fun/  `;
       
@@ -2130,7 +2130,7 @@ Generated with Pig Generator 95 - $PIGFUN!`;
     let currentAssistantState = 'greeting';
     
     const assistantTips = [
-              "Did you know? You only get to generate ONE $BPIGS pig EVER! Make it count! 🌟",
+              "Did you know? You only get to generate ONE $PIGFUN pig EVER! Make it count! 🌟",
       "Pro tip: Once you generate a pig, that's it! No take-backs, no do-overs!",
       "Fun fact: Legendary pigs appear only 0.5% of the time. Hope you get lucky on your ONE chance! ✨",
       "Psst! The rarer your pig, the bigger it appears in 3D. Legendary pigs are 15% larger!",
